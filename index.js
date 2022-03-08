@@ -126,3 +126,21 @@ client.on('message', (channel, tags, message, self) => {
     return
   }
 })
+
+// RATE-LIMITING / MESSAGE LISTENER
+//
+// add timestamp to duplicate command to set "cool out" period for command's next use by user
+// set "cool out" period per user or per command or both?
+//
+// FUTURE SERATO SCRAPE FEATURES
+//
+// add !np previous to scrape the 2nd to last entry from serato live playlist
+// (let users id the track before your current one)
+//
+// add !np start to scrape 1st entry from serato live playlist
+// (let users see what you began your set with)
+//
+// add !np random to scrape random entry from serato live playlist along with its timestamp
+// (let users pick a random title from your set thus far and when you played it 
+// to use as a sort of overall "vibe check" for your stream)
+
