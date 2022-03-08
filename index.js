@@ -33,8 +33,9 @@ client.on('message', (channel, tags, message, self) => {
   console.log('MESSAGE: ', message)
   if (self || !message.startsWith('!')) {
     return
-  }
+  } 
 
+  // parse command and options from message
   const args = message.slice(1).split(' ')
   const command = args.shift().toLowerCase()
 
@@ -90,27 +91,38 @@ client.on('message', (channel, tags, message, self) => {
     )
   }
 
-  // check if the same user has entered the same command consecutively more than once
-  if (lastCommand == command && lastUser == tags.username) {
-    console.log(true)
-    commandCount++
-    console.log('COMMAND COUNT: ', commandCount)
-    // redirect user to another command on rate limit
-    if (commandCount === 3) {
-      rateLimited()
-      // ignore further commands from user if spamming
-    } else if (commandCount > 3) {
-      return
-      // run command otherwise
+  // list of current commands in this script for our client connection to listen for
+  const commandList = ['test', 'np']
+
+  // check if command is in list
+  if (commandList.includes(command)) {
+    // check if the same user has entered the same command consecutively more than once
+    if (lastCommand == command && lastUser == tags.username) {
+      console.log(true)
+      commandCount++
+      console.log('COMMAND COUNT: ', commandCount)
+      // redirect user to another command on rate limit
+      if (commandCount === 3) {
+        rateLimited()
+        // ignore further commands from user if spamming
+      } else if (commandCount > 3) {
+        return
+        // run command otherwise
+      } else {
+        runCommand(command)
+      }
+      // if not, call method/function that runs switch selector, set vars and counter
     } else {
+      console.log(false)
+      lastCommand = command
+      lastUser = tags.username
+      commandCount = 1
       runCommand(command)
     }
   } else {
-    // if not, call method/function that runs switch selector, set vars and counter
-    console.log(false)
-    lastCommand = command
-    lastUser = tags.username
-    commandCount = 1
-    runCommand(command)
+    // if command is not in list, reset count and return w/o response
+    // we only want this script to listen for commands within its purview
+    commandCount = 0
+    return
   }
 })
