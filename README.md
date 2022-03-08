@@ -30,6 +30,7 @@ TWITCH_BOT_USERNAME='the_name_of_the_bot_account'
 TWITCH_CHANNEL_NAME='your_main_channel's_name'
 
 SERATO_DISPLAY_NAME="your_serato_profile_display_name"
+
 <hr>
 
 #### Node Dependencies:
@@ -53,6 +54,10 @@ After starting the playlist stream, your Serato profile will pop up in a new bro
 Save the changes and begin playing tracks in your Serato DJ software.  You should begin to see the tracks played in the Serato live playlist window in your browser; at this point, the !np command should behave as expected when used in your Twitch channel's chat.
 
 <hr>
+
+#### Testing:
+
+Tested and verified working using Serato DJ Pro 2.5.9 both with the script running locally (via RPi) and remotely (via Heroku - the included Procfile is there for easy deployment to the service).
 
 #### Questions:
 
