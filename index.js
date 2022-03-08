@@ -7,6 +7,11 @@ const dotenv = require("dotenv");
 // secure twitch oauth token for tmi
 dotenv.config();
 
+// global vars to track and prevent command spamming
+let lastCommand
+let lastUser
+let commandCount = 0
+
 // create tmi instance
 const client = new tmi.Client({
   options: { debug: true },
@@ -32,6 +37,22 @@ client.on("message", (channel, tags, message, self) => {
 
   const args = message.slice(1).split(" ");
   const command = args.shift().toLowerCase();
+
+  // check if the same user has entered the same command consecutively more than once
+  if (lastCommand == command && lastUser == tags.username ) {
+    console.log(true) 
+    commandCount++   
+    console.log("COMMAND COUNT: ", commandCount)
+    // add logic to check command count
+    // add logic for general command cap and specialized command caps (!lights random, etc)
+    // if spamming, return with no response    
+  } else {
+    // if not, call method/function that runs switch selector, set vars and counter    
+    console.log(false)
+    lastCommand = command
+    lastUser = tags.username
+    commandCount = 1    
+  }
 
   switch (command) {
     // test command to verify client connection to twitch chat
