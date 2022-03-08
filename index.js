@@ -10,6 +10,7 @@ dotenv.config()
 // global vars to track and prevent command spamming
 let lastCommand
 let lastUser
+let lastArgs = ''
 let commandCount = 0
 
 // create tmi instance
@@ -37,7 +38,7 @@ client.on('message', (channel, tags, message, self) => {
 
   // parse command and options from message
   const args = message.slice(1).split(' ')
-  const command = args.shift().toLowerCase()
+  const command = args.shift().toLowerCase()  
 
   // function to execute chat command
   const runCommand = (command) => {
@@ -58,16 +59,22 @@ client.on('message', (channel, tags, message, self) => {
         // If they do so, this bot will NOT work unless it's also updated match what's in their .env file
 
         // serato live playlist page to scrape
-        const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/live`
+        const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/3-6-2022_2`
         const scrapeData = async () => {
           try {
             const { data } = await axios.get(url)
             const $ = cheerio.load(data)
-            const results = $('div.playlist-trackname')
-            // return the most recent entry as chat response
-            let nowplaying = results.last().text()
-            // trim any leading whitespace from the response before posting
-            client.say(channel, `Now playing: ${nowplaying.trim()}`)
+            const results = $('div.playlist-trackname')                      
+            if (args.length === 0) {
+              // return the most recent entry as chat response
+              console.log("UH HUH")
+              let nowplaying = results.last().text()
+              client.say(channel, `Now playing: ${nowplaying.trim()}`)
+            } else if (args == 'previous') {
+              console.log("YUUUUP")
+              let previousTrack = results[results.length - 2]
+              client.say(channel, `Previous track: ${previousTrack.children[0].data.trim()}`)
+            }
           } catch (err) {
             console.error(err)
             client.say(channel, "Looks like that isn't working right now.")
@@ -123,6 +130,7 @@ client.on('message', (channel, tags, message, self) => {
     // if command is not in list, reset count and return w/o response
     // we only want this script to listen for commands within its purview
     commandCount = 0
+    // reset args    
     return
   }
 })
