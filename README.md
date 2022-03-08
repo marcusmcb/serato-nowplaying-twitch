@@ -48,7 +48,9 @@ After cloning the repo and adding the necessary .env to secure your credentials,
 
 To ensure the script is working, start a Serato live playlist stream by following the directions <a href="https://support.serato.com/hc/en-us/articles/228019568-Live-Playlists">here</a>.  
 
-After starting the playlist stream, your Serato profile will pop up in a new browser window.  Click the "start live playlist" button by scrolling down a bit.  Once done, click the "edit details" button to the right and make sure the playlist is set to "public" (Serato sets this to "private" by default).  Save the changes and begin playing tracks in your Serato DJ software.  You should begin to see the tracks played in the Serato live playlist window in your browser; at this point, the !np command should behave as expected when used in your Twitch channel's chat.
+After starting the playlist stream, your Serato profile will pop up in a new browser window.  Click the "start live playlist" button by scrolling down a bit.  Once done, click the "edit details" button to the right and make sure the playlist is set to "public" (Serato sets this to "private" by default).  
+
+Save the changes and begin playing tracks in your Serato DJ software.  You should begin to see the tracks played in the Serato live playlist window in your browser; at this point, the !np command should behave as expected when used in your Twitch channel's chat.
 
 <hr>
 
@@ -60,6 +62,6 @@ Feel free to message me with any questions regrading the script, configs/setup, 
 
 #### The idea here...
 
-To create a Node script that scrapes that most recently played track from your Serato live playlist page and return the text value as a Twitch chat command response.  As a DJ who live-streams this is probably the most common question I see asked in the chats of such channels.  
+To create a Node script that scrapes that most recently played track from your Serato live playlist page (via Axios/Cheerio) and return the text value as a Twitch chat command response.  As a DJ who live-streams this is probably the most common question I see asked in the chats of such channels.  
 
 Marcus McBride, 2022.
