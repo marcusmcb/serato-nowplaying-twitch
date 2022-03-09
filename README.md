@@ -8,9 +8,9 @@ The index.js file in this repo runs as a message listener for your Twitch channe
 
 * !test (to test communication with Twitch via tmi.js)
 * !np (scrapes the most recent entry in a Serato live playlist & returns its text as a response)
-* !np previous (scrapes the 2nd most entry...)
+* !np previous (scrapes the 2nd most recent entry...)
 * !np start (scrapes the data from the track you began your live playlist with)
-* !np vibecheck (scrapes a random entry from your live playlist and returns it... along with a timestamp (in dev))
+* !np vibecheck (scrapes a random entry from your live playlist and returns it... along with a timestamp (the latter's in dev))
 
 <hr>
 
