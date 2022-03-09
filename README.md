@@ -18,6 +18,7 @@ The index.js file in this repo runs as a message listener for your Twitch channe
 
 * 03/08/2022 - added rate-limiting to prevent the user from spamming the same command consecutively more than twice
 * 03/08/2022 - added list of chat commands within the scope of this script to prevent response conflicts from other chatbots also listening to the same Twitch channel
+* 03/08/2022 - added "previous" "start" and "vibecheck" as options/args for the !np command
 
 <hr>
 
