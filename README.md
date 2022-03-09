@@ -28,7 +28,7 @@ Node <a href='https://nodejs.org/en/'>14.x</a> installed.
 
 <hr>
 
-#### Twitch OAuth token & connecting to the tmi.js client
+#### Twitch OAuth token (connecting via the tmi.js client)
 
 To connect the tmi.js client to your Twitch channel, you'll need to generate an <a href="https://twitchapps.com/tmi/">OAuth Token</a>.  
 
