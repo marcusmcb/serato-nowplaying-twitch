@@ -38,6 +38,7 @@ client.on('message', (channel, tags, message, self) => {
   // parse command and options from message
   const args = message.slice(1).split(' ')
   const command = args.shift().toLowerCase()
+  const channelName = channel.slice(1).split('#')
 
   // function to execute chat command
   const runCommand = (command) => {
@@ -56,10 +57,10 @@ client.on('message', (channel, tags, message, self) => {
         // test page to scrape:
         //
         // const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/3-6-2022_2`
-        // 
+        //
         // * check to see if editing/updating display name in live playlist details alters the live URL
 
-        // serato live playlist page to scrape        
+        // serato live playlist page to scrape
         const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/live`
         const scrapeData = async () => {
           try {
@@ -69,13 +70,11 @@ client.on('message', (channel, tags, message, self) => {
 
             // default option
             if (args.length === 0) {
-              console.log('UH HUH')
               let nowplaying = results.last().text()
               client.say(channel, `Now playing: ${nowplaying.trim()}`)
 
               // !np previous
             } else if (args == 'previous') {
-              console.log('YUUUUP')
               let previousTrack = results[results.length - 2]
               client.say(
                 channel,
@@ -88,13 +87,16 @@ client.on('message', (channel, tags, message, self) => {
               let randomTrack = results[randomIndex]
               client.say(
                 channel,
-                `Random track: ${randomTrack.children[0].data.trim()}`
+                `${channelName} played ${randomTrack.children[0].data.trim()} earlier in this stream.`
               )
 
               // !np start
             } else if (args == 'start') {
               let firstTrack = results.first().text()
-              client.say(channel, `First track: ${firstTrack.trim()}`)
+              client.say(
+                channel,
+                `${channelName} kicked off this stream with ${firstTrack.trim()}`
+              )
 
               // !np options
             } else if (args == 'options') {
@@ -144,10 +146,10 @@ client.on('message', (channel, tags, message, self) => {
       commandCount++
       console.log('COMMAND COUNT: ', commandCount)
       // redirect user to another command on rate limit
-      if (commandCount === 3) {
+      if (commandCount === 6) {
         rateLimited()
         // ignore further commands from user if spamming
-      } else if (commandCount > 3) {
+      } else if (commandCount > 6) {
         return
         // run command otherwise
       } else {
@@ -175,4 +177,9 @@ client.on('message', (channel, tags, message, self) => {
 //
 // add timestamp to duplicate command to set "cool out" period for command's next use by user
 // set "cool out" period per user or per command or both?
-
+//
+// FRONT END / DESKTOP APP
+//
+// electron.js?
+//
+// pc / mobile / mac (how many stream from macs?)
