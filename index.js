@@ -51,14 +51,16 @@ client.on('message', (channel, tags, message, self) => {
         break
       // now playing
       case 'np':
-        // *** NOTE ***
+        // *** NOTES ***
 
-        // SERATO_DISPLAY_NAME is set to the user's Serato profile display name by default
-        // When starting a Serato live playlist session the user can update/edit their display name.
-        // If they do so, this bot will NOT work unless it's also updated match what's in their .env file
+        // test page to scrape:
+        //
+        // const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/3-6-2022_2`
+        // 
+        // * check to see if editing/updating display name in live playlist details alters the live URL
 
-        // serato live playlist page to scrape
-        const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/3-6-2022_2`
+        // serato live playlist page to scrape        
+        const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/live`
         const scrapeData = async () => {
           try {
             const { data } = await axios.get(url)
