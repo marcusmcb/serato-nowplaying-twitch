@@ -10,7 +10,6 @@ dotenv.config()
 // global vars to track and prevent command spamming
 let lastCommand
 let lastUser
-let lastArgs = ''
 let commandCount = 0
 
 // create tmi instance
@@ -34,11 +33,11 @@ client.on('message', (channel, tags, message, self) => {
   console.log('MESSAGE: ', message)
   if (self || !message.startsWith('!')) {
     return
-  } 
+  }
 
   // parse command and options from message
   const args = message.slice(1).split(' ')
-  const command = args.shift().toLowerCase()  
+  const command = args.shift().toLowerCase()
 
   // function to execute chat command
   const runCommand = (command) => {
@@ -64,18 +63,52 @@ client.on('message', (channel, tags, message, self) => {
           try {
             const { data } = await axios.get(url)
             const $ = cheerio.load(data)
-            const results = $('div.playlist-trackname')                      
+            const results = $('div.playlist-trackname')
+
+            // default option
             if (args.length === 0) {
-              // return the most recent entry as chat response
-              console.log("UH HUH")
+              console.log('UH HUH')
               let nowplaying = results.last().text()
               client.say(channel, `Now playing: ${nowplaying.trim()}`)
+
+              // !np previous
             } else if (args == 'previous') {
-              console.log("YUUUUP")
+              console.log('YUUUUP')
               let previousTrack = results[results.length - 2]
-              client.say(channel, `Previous track: ${previousTrack.children[0].data.trim()}`)
+              client.say(
+                channel,
+                `Previous track: ${previousTrack.children[0].data.trim()}`
+              )
+
+              // !np vibecheck
+            } else if (args == 'vibecheck') {
+              let randomIndex = Math.floor(Math.random() * results.length)
+              let randomTrack = results[randomIndex]
+              client.say(
+                channel,
+                `Random track: ${randomTrack.children[0].data.trim()}`
+              )
+
+              // !np start
+            } else if (args == 'start') {
+              let firstTrack = results.first().text()
+              client.say(channel, `First track: ${firstTrack.trim()}`)
+
+              // !np options
+            } else if (args == 'options') {
+              client.say(
+                channel,
+                'Command Options: !np (current song), !np start (first song), !np previous (previous song), !np vibecheck (random song we already played)'
+              )
+              // default catch-all for any args passed that are undefined
+            } else {
+              client.say(
+                channel,
+                'Command Options: !np (current song), !np start (first song), !np previous (previous song), !np vibecheck (random song we already played)'
+              )
             }
           } catch (err) {
+            // if the scrape fails
             console.error(err)
             client.say(channel, "Looks like that isn't working right now.")
           }
@@ -128,9 +161,10 @@ client.on('message', (channel, tags, message, self) => {
     }
   } else {
     // if command is not in list, reset count and return w/o response
-    // we only want this script to listen for commands within its purview
+    // we only want this script to listen for commands within the commandList
+    // prevents response and rate-limiting conflicts w/other bots configured for the same channel
     commandCount = 0
-    // reset args    
+    // reset args
     return
   }
 })
@@ -139,16 +173,4 @@ client.on('message', (channel, tags, message, self) => {
 //
 // add timestamp to duplicate command to set "cool out" period for command's next use by user
 // set "cool out" period per user or per command or both?
-//
-// FUTURE SERATO SCRAPE FEATURES
-//
-// add !np previous to scrape the 2nd to last entry from serato live playlist
-// (let users id the track before your current one)
-//
-// add !np start to scrape 1st entry from serato live playlist
-// (let users see what you began your set with)
-//
-// add !np random to scrape random entry from serato live playlist along with its timestamp
-// (let users pick a random title from your set thus far and when you played it 
-// to use as a sort of overall "vibe check" for your stream)
 
