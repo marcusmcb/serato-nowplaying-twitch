@@ -56,17 +56,18 @@ client.on('message', (channel, tags, message, self) => {
 
         // test page to scrape:
         //
-        // const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/3-6-2022_2`
+        const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/3-6-2022_2`
         //
         // * check to see if editing/updating display name in live playlist details alters the live URL
 
         // serato live playlist page to scrape
-        const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/live`
+        // const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/live`
         const scrapeData = async () => {
           try {
             const { data } = await axios.get(url)
             const $ = cheerio.load(data)
             const results = $('div.playlist-trackname')
+            const timestamp = $('div.playlist-tracktime')
 
             // default option
             if (args.length === 0) {
@@ -85,6 +86,17 @@ client.on('message', (channel, tags, message, self) => {
             } else if (args == 'vibecheck') {
               let randomIndex = Math.floor(Math.random() * results.length)
               let randomTrack = results[randomIndex]
+              let randomTrackTimestamp = timestamp[randomIndex]  
+              randomTrackTimestamp = randomTrackTimestamp.children[0].data.trim()
+              let currentTrackTimestamp = timestamp.last().text()
+              currentTrackTimestamp = currentTrackTimestamp.trim()              
+              console.log("----------------------------------------")
+              console.log("RANDOM TIMESTAMP: ", randomTrackTimestamp)
+              console.log("CURRENT TIMESTAMP: ", currentTrackTimestamp)  
+              let x = new Date(currentTrackTimestamp)
+              console.log("X ", x)
+              console.log("")                         
+              console.log(currentTrackTimestamp - randomTrackTimestamp)
               client.say(
                 channel,
                 `${channelName} played ${randomTrack.children[0].data.trim()} earlier in this stream.`
