@@ -84,23 +84,40 @@ client.on('message', (channel, tags, message, self) => {
 
               // !np vibecheck
             } else if (args == 'vibecheck') {
+              // select random index & parse track and timestamp data from the result
               let randomIndex = Math.floor(Math.random() * results.length)
               let randomTrack = results[randomIndex]
-              let randomTrackTimestamp = timestamp[randomIndex]  
-              randomTrackTimestamp = randomTrackTimestamp.children[0].data.trim()
+              let randomTrackTimestamp = timestamp[randomIndex]
+              randomTrackTimestamp =
+                randomTrackTimestamp.children[0].data.trim()
               let currentTrackTimestamp = timestamp.last().text()
-              currentTrackTimestamp = currentTrackTimestamp.trim()              
-              console.log("----------------------------------------")
-              console.log("RANDOM TIMESTAMP: ", randomTrackTimestamp)
-              console.log("CURRENT TIMESTAMP: ", currentTrackTimestamp)  
-              let x = new Date(currentTrackTimestamp)
-              console.log("X ", x)
-              console.log("")                         
-              console.log(currentTrackTimestamp - randomTrackTimestamp)
-              client.say(
-                channel,
-                `${channelName} played ${randomTrack.children[0].data.trim()} earlier in this stream.`
-              )
+              currentTrackTimestamp = currentTrackTimestamp.trim()
+
+              // NOTE - the Serato live playlist page doesn't return a full Date timestamp
+              // Jan 1, 2020 is used as a filler/dummy value in the interim
+              // add logic to parse the current date portion from Date.now() and concat to
+              // values listed below
+
+              // calculate how long along the random selection was played
+              let x = new Date(`Jan 1, 2020 ${currentTrackTimestamp}`)
+              let y = new Date(`Jan 1, 2020 ${randomTrackTimestamp}`)
+              let res = Math.abs(x - y) / 1000
+              let hours = Math.floor(res / 3600) % 24
+              let minutes = Math.floor(res / 60) % 60
+              let seconds = res % 60
+
+              // if random index timestamp has an hours value
+              if (hours > 0) {
+                client.say(
+                  channel,
+                  `${channelName} played "${randomTrack.children[0].data.trim()}" ${hours} hour & ${minutes} minutes ago in this stream.`
+                )
+              } else {
+                client.say(
+                  channel,
+                  `${channelName} played "${randomTrack.children[0].data.trim()}" ${minutes} minutes ago in this stream.`
+                )
+              }
 
               // !np start
             } else if (args == 'start') {
