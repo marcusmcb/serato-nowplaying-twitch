@@ -55,13 +55,12 @@ client.on('message', (channel, tags, message, self) => {
         // *** NOTES ***
 
         // test page to scrape:
-        //
-        const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/3-6-2022_2`
-        //
+        // const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/3-6-2022_2`
+        
         // * check to see if editing/updating display name in live playlist details alters the live URL
 
         // serato live playlist page to scrape
-        // const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/live`
+        const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/live`
         const scrapeData = async () => {
           try {
             const { data } = await axios.get(url)
@@ -98,6 +97,8 @@ client.on('message', (channel, tags, message, self) => {
               // add logic to parse the current date portion from Date.now() and concat to
               // values listed below
 
+              // what happens with a Serato live playlist when it hits midnight? (date/page conflicts)
+
               // calculate how long along the random selection was played
               let x = new Date(`Jan 1, 2020 ${currentTrackTimestamp}`)
               let y = new Date(`Jan 1, 2020 ${randomTrackTimestamp}`)
@@ -106,12 +107,22 @@ client.on('message', (channel, tags, message, self) => {
               let minutes = Math.floor(res / 60) % 60
               let seconds = res % 60
 
+              let a = new Date()
+              console.log('A: ', a)
+
               // if random index timestamp has an hours value
               if (hours > 0) {
-                client.say(
-                  channel,
-                  `${channelName} played "${randomTrack.children[0].data.trim()}" ${hours} hour & ${minutes} minutes ago in this stream.`
-                )
+                if (hours > 1) {
+                  client.say(
+                    channel,
+                    `${channelName} played "${randomTrack.children[0].data.trim()}" ${hours} hours & ${minutes} minutes ago in this stream.`
+                  )
+                } else {
+                  client.say(
+                    channel,
+                    `${channelName} played "${randomTrack.children[0].data.trim()}" ${hours} hour & ${minutes} minutes ago in this stream.`
+                  )
+                }
               } else {
                 client.say(
                   channel,
@@ -131,7 +142,7 @@ client.on('message', (channel, tags, message, self) => {
             } else if (args == 'options') {
               client.say(
                 channel,
-                'Command Options: !np (current song), !np start (first song), !np previous (previous song), !np vibecheck (random song we already played)'
+                'Command Options: !np (current song), !np start (first song), !np previous (previous song), !np vibecheck (try it & find out)'
               )
               // default catch-all for any args passed that are undefined
             } else {
@@ -164,7 +175,8 @@ client.on('message', (channel, tags, message, self) => {
     )
   }
 
-  // list of current commands in this script for our client connection to listen for
+  // master list of current commands in this script for our client connection to listen for
+  // any commands added/updated above need to be added/updated here
   const commandList = ['test', 'np']
 
   // check if command is in list
@@ -202,13 +214,48 @@ client.on('message', (channel, tags, message, self) => {
   }
 })
 
+// --------------------------------------------
 // RATE-LIMITING / MESSAGE LISTENER
 //
 // add timestamp to duplicate command to set "cool out" period for command's next use by user
 // set "cool out" period per user or per command or both?
 //
+// --------------------------------------------
+// OPTION TO CHECK IF AN ARTIST HAS BEEN PLAYED
+//
+// !dyp (artist name)
+// "did you play (artist name)"?"
+//
+// set logic for dyp in main switch
+//
+// from cheerio data ($) --> query div array for (artist)
+//
+// check length for more than 1 entry
+// if so, return total x played & most recent with timestamp
+// otherwise, return "yes" along with timestamp
+//
+// should we say what was last played by (artist name) or leave it vague?
+//
+// 
+// --------------------------------------------
 // FRONT END / DESKTOP APP
 //
 // electron.js?
 //
 // pc / mobile / mac (how many stream from macs?)
+// 
+// --------------------------------------------
+// credential form: OAuth key, bot name, streamer name, Serato display name (check live page)
+// once entered, write as .env file with necessary process vars
+// 
+// reset button text from "add" to "update"
+// if updated, rewrite/overwrite .env file...
+//
+// --------------------------------------------
+// user options to enable/disable specific commands
+// 
+// --------------------------------------------
+// display twitch connection status in UI
+// 
+// 
+
