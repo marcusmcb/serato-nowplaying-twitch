@@ -52,13 +52,6 @@ client.on('message', (channel, tags, message, self) => {
         break
       // now playing
       case 'np':
-        // *** NOTES ***
-
-        // test page to scrape:
-        // const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/3-6-2022_2`
-        
-        // * check to see if editing/updating display name in live playlist details alters the live URL
-
         // serato live playlist page to scrape
         const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/live`
         const scrapeData = async () => {
@@ -92,26 +85,20 @@ client.on('message', (channel, tags, message, self) => {
               let currentTrackTimestamp = timestamp.last().text()
               currentTrackTimestamp = currentTrackTimestamp.trim()
 
-              // NOTE - the Serato live playlist page doesn't return a full Date timestamp
-              // Jan 1, 2020 is used as a filler/dummy value in the interim
-              // add logic to parse the current date portion from Date.now() and concat to
-              // values listed below
-
-              // what happens with a Serato live playlist when it hits midnight? (date/page conflicts)
-
-              // calculate how long along the random selection was played
-              let x = new Date(`Jan 1, 2020 ${currentTrackTimestamp}`)
-              let y = new Date(`Jan 1, 2020 ${randomTrackTimestamp}`)
+              // calculate how long ago in the stream the random selection was played
+              // date strings are "fudged" for formatting purposes to easily make the time calculation
+              let x = new Date(`Jan 1, 2022 ${currentTrackTimestamp}`)
+              let y = new Date(`Jan 1, 2022 ${randomTrackTimestamp}`)
               let res = Math.abs(x - y) / 1000
               let hours = Math.floor(res / 3600) % 24
               let minutes = Math.floor(res / 60) % 60
               let seconds = res % 60
 
-              let a = new Date()
-              console.log('A: ', a)
+              let a = new Date()              
 
               // if random index timestamp has an hours value
               if (hours > 0) {
+                // if that hours value is > 1
                 if (hours > 1) {
                   client.say(
                     channel,
@@ -166,7 +153,7 @@ client.on('message', (channel, tags, message, self) => {
     }
   }
 
-  // user is limited to 2 consecutive uses of each command
+  // user is limited to 6 consecutive uses of each command
   // beyond that cap, user is prompted to use another command
   const rateLimited = () => {
     client.say(
@@ -213,49 +200,4 @@ client.on('message', (channel, tags, message, self) => {
     return
   }
 })
-
-// --------------------------------------------
-// RATE-LIMITING / MESSAGE LISTENER
-//
-// add timestamp to duplicate command to set "cool out" period for command's next use by user
-// set "cool out" period per user or per command or both?
-//
-// --------------------------------------------
-// OPTION TO CHECK IF AN ARTIST HAS BEEN PLAYED
-//
-// !dyp (artist name)
-// "did you play (artist name)"?"
-//
-// set logic for dyp in main switch
-//
-// from cheerio data ($) --> query div array for (artist)
-//
-// check length for more than 1 entry
-// if so, return total x played & most recent with timestamp
-// otherwise, return "yes" along with timestamp
-//
-// should we say what was last played by (artist name) or leave it vague?
-//
-// 
-// --------------------------------------------
-// FRONT END / DESKTOP APP
-//
-// electron.js?
-//
-// pc / mobile / mac (how many stream from macs?)
-// 
-// --------------------------------------------
-// credential form: OAuth key, bot name, streamer name, Serato display name (check live page)
-// once entered, write as .env file with necessary process vars
-// 
-// reset button text from "add" to "update"
-// if updated, rewrite/overwrite .env file...
-//
-// --------------------------------------------
-// user options to enable/disable specific commands
-// 
-// --------------------------------------------
-// display twitch connection status in UI
-// 
-// 
 
