@@ -65,6 +65,10 @@ After starting the playlist stream, your Serato profile will pop up in a new bro
 
 Save the changes and begin playing tracks in your Serato DJ software.  You should begin to see the tracks played in the Serato live playlist window in your browser; at this point, the !np command should behave as expected when used in your Twitch channel's chat.
 
+#### A note on file tags:
+
+The tidier your audio file tags are, the better.  However that text appears in your Serato is how it'll appear in the chat.  Just a heads up.
+
 <hr>
 
 #### Testing:
