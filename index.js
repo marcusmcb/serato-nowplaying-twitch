@@ -53,7 +53,7 @@ client.on('message', (channel, tags, message, self) => {
       // now playing
       case 'np':
         // serato live playlist page to scrape
-        const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/live`
+        // const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/live`
         const scrapeData = async () => {
           try {
             const { data } = await axios.get(url)
@@ -61,6 +61,17 @@ client.on('message', (channel, tags, message, self) => {
             const results = $('div.playlist-trackname')
             const timestamp = $('div.playlist-tracktime')
 
+            let tracksPlayed = []
+
+            for (let i = 0; i < results.length; i++) {
+              let trackId = results[i].children[0].data.trim()
+              tracksPlayed.push(trackId)
+            }            
+
+            setTimeout(() => {
+              console.log("TRACKS PLAYED ARRAY: ", tracksPlayed)
+            }, 500)
+            
             // default option
             if (args.length === 0) {
               let nowplaying = results.last().text()
