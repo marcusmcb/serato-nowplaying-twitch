@@ -42,7 +42,9 @@ client.on('message', (channel, tags, message, self) => {
 
   // url to scrape for testing purposes
   // const url = 'https://serato.com/playlists/DJ_Marcus_McBride/3-11-2022'
-  const url = 'https://serato.com/playlists/DJ_Marcus_McBride/live'
+
+  // user's live 
+  const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/live`
 
   console.log('ARGS: ', args)
 
@@ -64,7 +66,7 @@ client.on('message', (channel, tags, message, self) => {
             `Add an artist's name after the command to see if ${channelName} has played them yet in this stream.`
           )
         } else {
-          const dataScrape = async () => {
+          const scrapeData = async () => {
             try {
               // data scrape
               const { data } = await axios.get(url)
@@ -119,7 +121,7 @@ client.on('message', (channel, tags, message, self) => {
               client.say(channel, "That doesn't seem to be working right now.")
             }
           }
-          dataScrape()
+          scrapeData()
         }
         break
 
