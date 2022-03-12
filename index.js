@@ -40,6 +40,12 @@ client.on('message', (channel, tags, message, self) => {
   const command = args.shift().toLowerCase()
   const channelName = channel.slice(1).split('#')
 
+  // url to scrape for testing purposes
+  // const url = 'https://serato.com/playlists/DJ_Marcus_McBride/3-11-2022'
+  const url = 'https://serato.com/playlists/DJ_Marcus_McBride/live'
+
+  console.log('ARGS: ', args)
+
   // function to execute chat command
   const runCommand = (command) => {
     switch (command) {
@@ -52,86 +58,79 @@ client.on('message', (channel, tags, message, self) => {
         break
 
       case 'dyp':
-        const url1 = 'https://serato.com/playlists/DJ_Marcus_McBride/3-11-2022'
-        const dataScrape = async () => {
-          try {
-            // data scrape
-            const { data } = await axios.get(url1)
-            const $ = cheerio.load(data)
-            const results = $('div.playlist-trackname')
-            const timestamp = $('div.playlist-tracktime')
+        if (args.length === 0) {
+          client.say(
+            channel,
+            `Add an artist's name after the command to see if ${channelName} has played them yet in this stream.`
+          )
+        } else {
+          const dataScrape = async () => {
+            try {
+              // data scrape
+              const { data } = await axios.get(url)
+              const $ = cheerio.load(data)
+              const results = $('div.playlist-trackname')
+              const timestamp = $('div.playlist-tracktime')
 
-            let tracksPlayed = []
+              let tracksPlayed = []
 
-            // push tracks played so far to array
-            for (let i = 0; i < results.length; i++) {
-              let trackId = results[i].children[0].data.trim()
-              tracksPlayed.push(trackId)
-            }
-
-            // search array for command option (artist)
-            let searchResults = []
-            let searchTerm = `${args}`.replaceAll(',', ' ')
-            console.log('SEARCH TERM: ', searchTerm)
-            for (let i = 0; i < tracksPlayed.length; i++) {
-              if (
-                tracksPlayed[i].toLowerCase().includes(searchTerm.toLowerCase())
-              ) {
-                searchResults.push(tracksPlayed[i])
+              // push tracks played so far to array
+              for (let i = 0; i < results.length; i++) {
+                let trackId = results[i].children[0].data.trim()
+                tracksPlayed.push(trackId)
               }
-            }
 
-            setTimeout(() => {
-              if (searchResults.length === 0) {
-                console.log(`couldn't find ${searchTerm}`)
-                client.say(
-                  channel,
-                  `${channelName} has not played ${searchTerm} so far in this stream.`
-                )
-              } else if (searchResults.length === 1) {
-                client.say(
-                  channel,
-                  `${channelName} has played ${searchTerm} ${searchResults.length} time so far in this stream.`
-                )
-              } else if (searchResults.length > 1) {
-                console.log(searchResults)
-                client.say(
-                  channel,
-                  `${channelName} has played ${searchTerm} ${searchResults.length} times so far in this stream.`
-                )
+              // search array for command option (artist)
+              let searchResults = []
+              let searchTerm = `${args}`.replaceAll(',', ' ')
+              console.log("-------------------------------------")
+              console.log('SEARCH TERM: ', searchTerm)
+              for (let i = 0; i < tracksPlayed.length; i++) {
+                if (
+                  tracksPlayed[i]
+                    .toLowerCase()
+                    .includes(searchTerm.toLowerCase())
+                ) {
+                  searchResults.push(tracksPlayed[i])
+                }
               }
-            }, 500)
-          } catch (err) {
-            console.log(err)
+
+              setTimeout(() => {
+                if (searchResults.length === 0) {
+                  client.say(
+                    channel,
+                    `${channelName} has not played ${searchTerm} so far in this stream.`
+                  )
+                } else if (searchResults.length === 1) {
+                  client.say(
+                    channel,
+                    `${channelName} has played ${searchTerm} ${searchResults.length} time so far in this stream.`
+                  )
+                } else if (searchResults.length > 1) {
+                  console.log(searchResults)
+                  client.say(
+                    channel,
+                    `${channelName} has played ${searchTerm} ${searchResults.length} times so far in this stream.`
+                  )
+                }
+              }, 500)
+            } catch (err) {
+              console.log(err)
+              client.say(channel, "That doesn't seem to be working right now.")
+            }
           }
+          dataScrape()
         }
-        dataScrape()
         break
 
       // now playing
-      case 'np':
-        // serato playlist to scrape for testing purposes
-        const url = 'https://serato.com/playlists/DJ_Marcus_McBride/3-11-2022'
-
-        // serato live playlist page to scrape
-        // const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/live`
+      case 'np':        
         const scrapeData = async () => {
           try {
             const { data } = await axios.get(url)
             const $ = cheerio.load(data)
             const results = $('div.playlist-trackname')
             const timestamp = $('div.playlist-tracktime')
-
-            let tracksPlayed = []
-
-            for (let i = 0; i < results.length; i++) {
-              let trackId = results[i].children[0].data.trim()
-              tracksPlayed.push(trackId)
-            }
-
-            setTimeout(() => {
-              console.log('TRACKS PLAYED ARRAY: ', tracksPlayed)
-            }, 500)
 
             // default option
             if (args.length === 0) {
@@ -272,3 +271,6 @@ client.on('message', (channel, tags, message, self) => {
     return
   }
 })
+
+// add ignorelist for args passed to !dyp that aren't proper artist names (pronouns, letters, etc)
+// return custom response if matched
