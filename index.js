@@ -43,7 +43,7 @@ client.on('message', (channel, tags, message, self) => {
   // url to scrape for testing purposes
   // const url = 'https://serato.com/playlists/DJ_Marcus_McBride/3-11-2022'
 
-  // user's live 
+  // url to scrape for user's Serato live playlist page
   const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/live`
 
   console.log('ARGS: ', args)
@@ -58,7 +58,7 @@ client.on('message', (channel, tags, message, self) => {
           'Your Twitch chat is properly linked to this script!'
         )
         break
-
+      // dyp (did you play) command
       case 'dyp':
         if (args.length === 0) {
           client.say(
@@ -72,7 +72,7 @@ client.on('message', (channel, tags, message, self) => {
               const { data } = await axios.get(url)
               const $ = cheerio.load(data)
               const results = $('div.playlist-trackname')
-              const timestamp = $('div.playlist-tracktime')
+              // const timestamp = $('div.playlist-tracktime')
 
               let tracksPlayed = []
 
@@ -85,7 +85,7 @@ client.on('message', (channel, tags, message, self) => {
               // search array for command option (artist)
               let searchResults = []
               let searchTerm = `${args}`.replaceAll(',', ' ')
-              console.log("-------------------------------------")
+              console.log('-------------------------------------')
               console.log('SEARCH TERM: ', searchTerm)
               for (let i = 0; i < tracksPlayed.length; i++) {
                 if (
@@ -97,6 +97,7 @@ client.on('message', (channel, tags, message, self) => {
                 }
               }
 
+              // dev note - rewrite as proper async/await call
               setTimeout(() => {
                 if (searchResults.length === 0) {
                   client.say(
@@ -126,7 +127,7 @@ client.on('message', (channel, tags, message, self) => {
         break
 
       // now playing
-      case 'np':        
+      case 'np':
         const scrapeData = async () => {
           try {
             const { data } = await axios.get(url)
@@ -134,7 +135,7 @@ client.on('message', (channel, tags, message, self) => {
             const results = $('div.playlist-trackname')
             const timestamp = $('div.playlist-tracktime')
 
-            // default option
+            // !np (default w/no options)
             if (args.length === 0) {
               let nowplaying = results.last().text()
               client.say(channel, `Now playing: ${nowplaying.trim()}`)
@@ -145,6 +146,14 @@ client.on('message', (channel, tags, message, self) => {
               client.say(
                 channel,
                 `Previous track: ${previousTrack.children[0].data.trim()}`
+              )
+
+              // !np start
+            } else if (args == 'start') {
+              let firstTrack = results.first().text()
+              client.say(
+                channel,
+                `${channelName} kicked off this stream with ${firstTrack.trim()}`
               )
 
               // !np vibecheck
@@ -167,8 +176,6 @@ client.on('message', (channel, tags, message, self) => {
               let minutes = Math.floor(res / 60) % 60
               let seconds = res % 60
 
-              let a = new Date()
-
               // if random index timestamp has an hours value
               if (hours > 0) {
                 // if that hours value is > 1
@@ -190,21 +197,13 @@ client.on('message', (channel, tags, message, self) => {
                 )
               }
 
-              // !np start
-            } else if (args == 'start') {
-              let firstTrack = results.first().text()
-              client.say(
-                channel,
-                `${channelName} kicked off this stream with ${firstTrack.trim()}`
-              )
-
               // !np options
             } else if (args == 'options') {
               client.say(
                 channel,
                 'Command Options: !np (current song), !np start (first song), !np previous (previous song), !np vibecheck (try it & find out)'
               )
-              // default catch-all for any args passed that are undefined
+              // default catch-all for any args passed that are not defined
             } else {
               client.say(
                 channel,
