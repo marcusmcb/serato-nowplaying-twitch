@@ -6,11 +6,12 @@ The index.js file in this repo runs as a message listener for your Twitch channe
 
 #### Chat Commands:
 
-* !test (to test communication with Twitch via tmi.js)
-* !np (scrapes the most recent entry in a Serato live playlist & returns its text as a response)
-* !np previous (scrapes the 2nd most recent entry...)
-* !np start (scrapes the data from the track you began your live playlist with)
-* !np vibecheck (scrapes a random entry from your live playlist and returns it... along with a timestamp (the latter's in dev))
+* !test - to test communication with Twitch via tmi.js
+* !np - scrapes the most recent entry in a Serato live playlist & returns its text as a response
+* !np previous - scrapes the 2nd most recent entry...
+* !np start - scrapes the data from the track you began your live playlist with
+* !np vibecheck - scrapes a random entry from your live playlist and returns it & how long ago you played it, a way for your listeners to gauge the "vibe" of your set so far
+* !dyp (artist name) - queries the page scrape for the artist's name; if valid, the response displays how many times the artist has been played in your stream so far
 
 <hr>
 
@@ -20,6 +21,7 @@ The index.js file in this repo runs as a message listener for your Twitch channe
 * 03/08/2022 - added list of chat commands within the scope of this script to prevent response conflicts from other chatbots also listening to the same Twitch channel
 * 03/08/2022 - added "previous" "start" and "vibecheck" as options/args for the !np command
 * 03/10/2022 - added timestamp calculation to "vibecheck" option to display how long ago you played the track in your livestream set
+* 03/11/2022 - added "dyp" command (did you play) to let viewers query your Serato live playlist through your Twitch channel
 
 <hr>
 

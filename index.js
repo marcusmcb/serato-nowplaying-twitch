@@ -51,6 +51,7 @@ client.on('message', (channel, tags, message, self) => {
   // function to execute chat command
   const runCommand = (command) => {
     switch (command) {
+
       // test command to verify client connection to twitch chat
       case 'test':
         client.say(
@@ -58,6 +59,7 @@ client.on('message', (channel, tags, message, self) => {
           'Your Twitch chat is properly linked to this script!'
         )
         break
+        
       // dyp (did you play) command
       case 'dyp':
         if (args.length === 0) {
