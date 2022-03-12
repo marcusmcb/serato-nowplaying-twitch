@@ -50,10 +50,15 @@ client.on('message', (channel, tags, message, self) => {
           'Your Twitch chat is properly linked to this script!'
         )
         break
+
       // now playing
       case 'np':
+        
+        // serato playlist to scrape for testing purposes
+        // const url = 'https://serato.com/playlists/DJ_Marcus_McBride/3-11-2022'
+
         // serato live playlist page to scrape
-        // const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/live`
+        const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/live`
         const scrapeData = async () => {
           try {
             const { data } = await axios.get(url)
