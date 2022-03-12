@@ -51,14 +51,70 @@ client.on('message', (channel, tags, message, self) => {
         )
         break
 
+      case 'dyp':
+        const url1 = 'https://serato.com/playlists/DJ_Marcus_McBride/3-11-2022'
+        const dataScrape = async () => {
+          try {
+            // data scrape
+            const { data } = await axios.get(url1)
+            const $ = cheerio.load(data)
+            const results = $('div.playlist-trackname')
+            const timestamp = $('div.playlist-tracktime')
+
+            let tracksPlayed = []
+
+            // push tracks played so far to array
+            for (let i = 0; i < results.length; i++) {
+              let trackId = results[i].children[0].data.trim()
+              tracksPlayed.push(trackId)
+            }
+
+            // search array for command option (artist)
+            let searchResults = []
+            let searchTerm = `${args}`.replaceAll(',', ' ')
+            console.log('SEARCH TERM: ', searchTerm)
+            for (let i = 0; i < tracksPlayed.length; i++) {
+              if (
+                tracksPlayed[i].toLowerCase().includes(searchTerm.toLowerCase())
+              ) {
+                searchResults.push(tracksPlayed[i])
+              }
+            }
+
+            setTimeout(() => {
+              if (searchResults.length === 0) {
+                console.log(`couldn't find ${searchTerm}`)
+                client.say(
+                  channel,
+                  `${channelName} has not played ${searchTerm} so far in this stream.`
+                )
+              } else if (searchResults.length === 1) {
+                client.say(
+                  channel,
+                  `${channelName} has played ${searchTerm} ${searchResults.length} time so far in this stream.`
+                )
+              } else if (searchResults.length > 1) {
+                console.log(searchResults)
+                client.say(
+                  channel,
+                  `${channelName} has played ${searchTerm} ${searchResults.length} times so far in this stream.`
+                )
+              }
+            }, 500)
+          } catch (err) {
+            console.log(err)
+          }
+        }
+        dataScrape()
+        break
+
       // now playing
       case 'np':
-        
         // serato playlist to scrape for testing purposes
-        // const url = 'https://serato.com/playlists/DJ_Marcus_McBride/3-11-2022'
+        const url = 'https://serato.com/playlists/DJ_Marcus_McBride/3-11-2022'
 
         // serato live playlist page to scrape
-        const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/live`
+        // const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/live`
         const scrapeData = async () => {
           try {
             const { data } = await axios.get(url)
@@ -71,12 +127,12 @@ client.on('message', (channel, tags, message, self) => {
             for (let i = 0; i < results.length; i++) {
               let trackId = results[i].children[0].data.trim()
               tracksPlayed.push(trackId)
-            }            
+            }
 
             setTimeout(() => {
-              console.log("TRACKS PLAYED ARRAY: ", tracksPlayed)
+              console.log('TRACKS PLAYED ARRAY: ', tracksPlayed)
             }, 500)
-            
+
             // default option
             if (args.length === 0) {
               let nowplaying = results.last().text()
@@ -110,7 +166,7 @@ client.on('message', (channel, tags, message, self) => {
               let minutes = Math.floor(res / 60) % 60
               let seconds = res % 60
 
-              let a = new Date()              
+              let a = new Date()
 
               // if random index timestamp has an hours value
               if (hours > 0) {
@@ -180,7 +236,7 @@ client.on('message', (channel, tags, message, self) => {
 
   // master list of current commands in this script for our client connection to listen for
   // any commands added/updated above need to be added/updated here
-  const commandList = ['test', 'np']
+  const commandList = ['test', 'np', 'dyp']
 
   // check if command is in list
   if (commandList.includes(command)) {
@@ -216,4 +272,3 @@ client.on('message', (channel, tags, message, self) => {
     return
   }
 })
-
