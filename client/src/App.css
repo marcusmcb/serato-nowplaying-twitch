@@ -24,5 +24,10 @@
 }
 
 .column {
-  border: 1px dotted black;  
+  border: 1px dotted black;
+  padding: 2px;  
+}
+
+form {
+  padding: 2px;
 }
