@@ -22,6 +22,7 @@ The index.js file in this repo runs as a message listener for your Twitch channe
 * 03/08/2022 - added "previous" "start" and "vibecheck" as options/args for the !np command
 * 03/10/2022 - added timestamp calculation to "vibecheck" option to display how long ago you played the track in your livestream set
 * 03/11/2022 - added "dyp" command (did you play) to let viewers query your Serato live playlist through your Twitch channel
+* 03/13/2022 - added React to begin building out a UI (in development)
 
 <hr>
 
