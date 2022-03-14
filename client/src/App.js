@@ -19,17 +19,14 @@ const App = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log("FORM VALUES: ", userCreds)
     await axios
       .post('http://localhost:5000/start', userCreds)
       .then((response) => {
         console.log(response)
-        console.log('creds added')
-        let dataReturn = document.querySelector(".data-return")
-        dataReturn.innerHTML = "Creds Added"
+        let dataReturn = document.querySelector('.data-return')
+        dataReturn.innerHTML = response.data
       })
       .catch((err) => console.log(err))
-    // write values to .env file
   }
 
   const startScript = (e) => {

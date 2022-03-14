@@ -10,7 +10,7 @@ app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
-app.post('/start', (req, res) => {
+app.post('/start', async (req, res) => {
   console.log('REQ: ', req.body)
   let userValues =
     'TWITCH_OAUTH_TOKEN=' +
@@ -26,7 +26,7 @@ app.post('/start', (req, res) => {
     `"${req.body.SERATO_DISPLAY_NAME}"` +
     '\n' 
 
-  fs.writeFile('._env', userValues, (err) => {
+  await fs.writeFile('._env', userValues, (err) => {
     if (err) {
       console.log(err)
     } else {
