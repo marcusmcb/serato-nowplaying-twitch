@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import axios from 'axios'
 import './App.css'
 
 const App = () => {
@@ -14,11 +15,34 @@ const App = () => {
       ...userCreds,
       [e.target.name]: e.target.value,
     })
-  }   
+  }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log(userCreds)
+    console.log("FORM VALUES: ", userCreds)
+    await axios
+      .post('http://localhost:5000/start', userCreds)
+      .then((response) => {
+        console.log(response)
+        console.log('creds added')
+        let dataReturn = document.querySelector(".data-return")
+        dataReturn.innerHTML = "Creds Added"
+      })
+      .catch((err) => console.log(err))
+    // write values to .env file
+  }
+
+  const startScript = (e) => {
+    console.log('HERE')
+    // check for .env file on click
+    // if none, prompt user to enter values
+    // if present, start bot script
+  }
+
+  const updateCreds = (e) => {
+    console.log('HERE')
+    // pull values from .env file
+    // place values in respective form fields for update
   }
 
   return (
@@ -72,12 +96,11 @@ const App = () => {
               />
             </label>
           </form>
-          <form
-            onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit}>
             <button type='submit'>Submit</button>
           </form>
         </div>
-        <div className='column'>
+        <div className='column data-return'>
           <p>Two</p>
         </div>
       </div>
