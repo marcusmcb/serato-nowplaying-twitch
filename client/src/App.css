@@ -28,6 +28,12 @@
   padding: 2px;  
 }
 
-form {
+form, .server-response {
   padding: 2px;
+}
+
+.server-response {
+  color: green;
+  font-weight: 600;
+  padding-top: 15px;
 }

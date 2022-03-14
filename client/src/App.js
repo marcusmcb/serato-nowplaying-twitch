@@ -23,10 +23,18 @@ const App = () => {
       .post('http://localhost:5000/start', userCreds)
       .then((response) => {
         console.log(response)
-        let dataReturn = document.querySelector('.data-return')
+        let dataReturn = document.querySelector('.server-response')
         dataReturn.innerHTML = response.data
       })
       .catch((err) => console.log(err))
+  }
+
+  const handleStart = async (e) => {
+    e.preventDefault()
+    await axios.post('http://localhost:5000/launch')
+    .then((response) => {
+      console.log(response)
+    })
   }
 
   const startScript = (e) => {
@@ -96,6 +104,12 @@ const App = () => {
           <form onSubmit={handleSubmit}>
             <button type='submit'>Submit</button>
           </form>
+          <form onSubmit={handleStart}>
+            <button type='submit'>Start</button>
+          </form>
+          <div className='server-response'>
+
+          </div>
         </div>
         <div className='column data-return'>
           <p>Two</p>
