@@ -37,6 +37,14 @@ const App = () => {
     })
   }
 
+  const endScript = async (e) => {
+    e.preventDefault()
+    await axios.post('http://localhost:5000/endScript')
+    .then((response) => {
+      console.log(response)
+    })
+  }
+
   const startScript = (e) => {
     console.log('HERE')
     // check for .env file on click
@@ -106,6 +114,9 @@ const App = () => {
           </form>
           <form onSubmit={handleStart}>
             <button type='submit'>Start</button>
+          </form>
+          <form onSubmit={endScript}>
+            <button type='submit'>Kill</button>
           </form>
           <div className='server-response'>
 

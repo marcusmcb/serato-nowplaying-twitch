@@ -7,6 +7,8 @@ const childProcess = require('child_process')
 const PORT = 5000 || process.env.PORT
 const app = express()
 
+var process
+
 app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -27,24 +29,22 @@ app.post('/start', async (req, res) => {
     `"${req.body.SERATO_DISPLAY_NAME}"` +
     '\n'
 
-  await fs.writeFile('._env', userValues, (err) => {
+  await fs.writeFile('.env', userValues, (err) => {
     if (err) {
       console.log(err)
     } else {
       console.log('File created successfully.')
-      console.log(fs.readFileSync('._env', 'utf8'))
+      console.log(fs.readFileSync('.env', 'utf8'))
     }
   })
   res.send('Credentials saved.')
 })
 
 app.post('/launch', async (req, res) => {
-  function runScript(scriptPath, callback) {
+  const runScript = (scriptPath, callback) => {
     // keep track of whether callback has been invoked to prevent multiple invocations
     var invoked = false
-
-    var process = childProcess.fork(scriptPath)
-
+    process = childProcess.fork(scriptPath)
     // listen for errors as they may prevent the exit event from firing
     process.on('error', function (err) {
       if (invoked) return
@@ -62,12 +62,24 @@ app.post('/launch', async (req, res) => {
   }
 
   // Now we can run a script and invoke a callback when complete, e.g.
-  runScript('./index.js', function (err) {
-    if (err) throw err
-    console.log('finished running some-script.js')
+  runScript('./index.js', (err) => {
+    if (err) {
+      console.log(err)
+    } else {      
+      res.send('Chat bot connected.')
+    }
   })
+})
+
+app.post('/endScript', (req, res) => {
+  process.on('exit', (code) => {
+    console.log(`Process exited with code: ${code}`)
+  })
+  res.send("Successfully killed the script")
 })
 
 app.listen(PORT, () => {
   console.log(`Server is listening on port: ${PORT}`)
 })
+
+// start and kill processes for node script endpoints?
