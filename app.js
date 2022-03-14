@@ -3,11 +3,12 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 const fs = require('fs')
 const childProcess = require('child_process')
+const ps = require('ps-node')
 
 const PORT = 5000 || process.env.PORT
 const app = express()
 
-var process
+let processId
 
 app.use(cors())
 app.use(bodyParser.json())
@@ -45,6 +46,9 @@ app.post('/launch', async (req, res) => {
     // keep track of whether callback has been invoked to prevent multiple invocations
     var invoked = false
     process = childProcess.fork(scriptPath)
+    processId = process.pid
+    console.log("* * * * * * * * * * * * *")
+    console.log(process.pid)    
     // listen for errors as they may prevent the exit event from firing
     process.on('error', function (err) {
       if (invoked) return
@@ -72,10 +76,58 @@ app.post('/launch', async (req, res) => {
 })
 
 app.post('/endScript', (req, res) => {
-  process.on('exit', (code) => {
-    console.log(`Process exited with code: ${code}`)
-  })
-  res.send("Successfully killed the script")
+  ps.lookup(
+    {      
+      arguments: './index.js',
+    },
+    function (err, resultList) {
+      if (err) {
+        throw new Error(err)
+      }
+
+      resultList.forEach(function (process) {
+        if (process) {
+          console.log(
+            'PID: %s, COMMAND: %s, ARGUMENTS: %s',
+            process.pid,
+            process.command,
+            process.arguments
+          )
+        }
+      })
+    }
+  )
+  console.log(processId)
+  // ps.kill(`'${processId}'`, (err) => {
+  //   if (err) {
+  //     throw new Error(err)
+  //   } else {
+  //     console.log('Process %s has been killed')
+  //   }
+  // })
+  // ps.lookup(
+  //   {
+  //     command: 'node',
+  //     psargs: 'ux',
+  //   },
+  //   function (err, resultList) {
+  //     if (err) {
+  //       throw new Error(err)
+  //     }
+
+  //     resultList.forEach(function (process) {
+  //       if (process) {
+  //         console.log('-------------------------------------------')
+  //         console.log(
+  //           'PID: %s, COMMAND: %s, ARGUMENTS: %s',
+  //           process.pid,
+  //           process.command,
+  //           process.arguments
+  //         )
+  //       }
+  //     })
+  //   }
+  // )
 })
 
 app.listen(PORT, () => {
