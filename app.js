@@ -4,11 +4,11 @@ const bodyParser = require('body-parser')
 const fs = require('fs')
 const childProcess = require('child_process')
 const ps = require('ps-node')
-
 const PORT = 5000 || process.env.PORT
 const app = express()
 
 let processId
+let newProcess
 
 app.use(cors())
 app.use(bodyParser.json())
@@ -46,14 +46,20 @@ app.post('/launch', async (req, res) => {
     // keep track of whether callback has been invoked to prevent multiple invocations
     var invoked = false
     process = childProcess.fork(scriptPath)
+    newProcess = process
     processId = process.pid
     console.log("* * * * * * * * * * * * *")
-    console.log(process.pid)    
+    console.log(process.pid)            
     // listen for errors as they may prevent the exit event from firing
     process.on('error', function (err) {
       if (invoked) return
       invoked = true
       callback(err)
+    })
+
+    process.on('SIGINT', () => {
+      console.log("* * * * * * * * * * * * * * * * *")
+      console.log('Receiving SIGINT signal in Node.')
     })
 
     // execute the callback once the process has finished running
@@ -75,40 +81,10 @@ app.post('/launch', async (req, res) => {
   })
 })
 
-app.post('/endScript', (req, res) => {
-  ps.lookup(
-    {      
-      arguments: './index.js',
-    },
-    function (err, resultList) {
-      if (err) {
-        throw new Error(err)
-      }
-
-      resultList.forEach(function (process) {
-        if (process) {
-          console.log(
-            'PID: %s, COMMAND: %s, ARGUMENTS: %s',
-            process.pid,
-            process.command,
-            process.arguments
-          )
-        }
-      })
-    }
-  )
-  console.log(processId)
-  // ps.kill(`'${processId}'`, (err) => {
-  //   if (err) {
-  //     throw new Error(err)
-  //   } else {
-  //     console.log('Process %s has been killed')
-  //   }
-  // })
+app.post('/endScript', (newProcess, req, res) => {
   // ps.lookup(
-  //   {
-  //     command: 'node',
-  //     psargs: 'ux',
+  //   {      
+  //     arguments: './index.js',
   //   },
   //   function (err, resultList) {
   //     if (err) {
@@ -117,7 +93,6 @@ app.post('/endScript', (req, res) => {
 
   //     resultList.forEach(function (process) {
   //       if (process) {
-  //         console.log('-------------------------------------------')
   //         console.log(
   //           'PID: %s, COMMAND: %s, ARGUMENTS: %s',
   //           process.pid,
@@ -128,10 +103,16 @@ app.post('/endScript', (req, res) => {
   //     })
   //   }
   // )
+  // console.log(processId)
+  ps.kill(newProcess.pid, (err) => {
+    if (err) {
+      throw new Error(err)
+    } else {
+      console.log('Process %s has been killed')
+    }
+  })  
 })
 
 app.listen(PORT, () => {
   console.log(`Server is listening on port: ${PORT}`)
 })
-
-// start and kill processes for node script endpoints?
