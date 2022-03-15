@@ -4,11 +4,13 @@ const bodyParser = require('body-parser')
 const fs = require('fs')
 const childProcess = require('child_process')
 const ps = require('ps-node')
+const kill = require('tree-kill')
+var exec = require('child_process').exec
+
 const PORT = 5000 || process.env.PORT
 const app = express()
 
-let processId
-let newProcess
+let child
 
 app.use(cors())
 app.use(bodyParser.json())
@@ -42,75 +44,24 @@ app.post('/start', async (req, res) => {
 })
 
 app.post('/launch', async (req, res) => {
-  const runScript = (scriptPath, callback) => {
-    // keep track of whether callback has been invoked to prevent multiple invocations
-    var invoked = false
-    process = childProcess.fork(scriptPath)
-    newProcess = process
-    processId = process.pid
-    console.log("* * * * * * * * * * * * *")
-    console.log(process.pid)            
-    // listen for errors as they may prevent the exit event from firing
-    process.on('error', function (err) {
-      if (invoked) return
-      invoked = true
-      callback(err)
-    })
-
-    process.on('SIGINT', () => {
-      console.log("* * * * * * * * * * * * * * * * *")
-      console.log('Receiving SIGINT signal in Node.')
-    })
-
-    // execute the callback once the process has finished running
-    process.on('exit', function (code) {
-      if (invoked) return
-      invoked = true
-      var err = code === 0 ? null : new Error('exit code ' + code)
-      callback(err)
-    })
-  }
-
-  // Now we can run a script and invoke a callback when complete, e.g.
-  runScript('./index.js', (err) => {
-    if (err) {
-      console.log(err)
-    } else {      
-      res.send('Chat bot connected.')
+  child = exec('node index.js', (err, stdout, stderr) => {
+    if (stdout) console.log('stdout: ' + stdout)
+    if (stderr) console.log('stderr: ' + stderr)
+    if (err !== null) {
+      console.log('exec error: ' + err)
     }
+  })
+  console.log("CHILD PID: ", child.pid)  
+  processId = child.pid
+  console.log("PROCESS ID: ", processId)
+  child.stdout.on('data', function (log_data) {
+    console.log(log_data)
   })
 })
 
-app.post('/endScript', (newProcess, req, res) => {
-  // ps.lookup(
-  //   {      
-  //     arguments: './index.js',
-  //   },
-  //   function (err, resultList) {
-  //     if (err) {
-  //       throw new Error(err)
-  //     }
-
-  //     resultList.forEach(function (process) {
-  //       if (process) {
-  //         console.log(
-  //           'PID: %s, COMMAND: %s, ARGUMENTS: %s',
-  //           process.pid,
-  //           process.command,
-  //           process.arguments
-  //         )
-  //       }
-  //     })
-  //   }
-  // )
-  // console.log(processId)
-  ps.kill(newProcess.pid, (err) => {
-    if (err) {
-      throw new Error(err)
-    } else {
-      console.log('Process %s has been killed')
-    }
-  })  
+app.post('/endScript', async (newProcess, req, res) => {
+  console.log(child.pid)
+  kill(child.pid)
 })
 
 app.listen(PORT, () => {
