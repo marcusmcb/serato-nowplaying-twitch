@@ -2,8 +2,6 @@ const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const fs = require('fs')
-const childProcess = require('child_process')
-const ps = require('ps-node')
 const kill = require('tree-kill')
 var exec = require('child_process').exec
 
