@@ -131,6 +131,7 @@ client.on('message', (channel, tags, message, self) => {
       // now playing
       case 'np':
         const scrapeData = async () => {
+          console.log(url)
           try {
             const { data } = await axios.get(url)
             const $ = cheerio.load(data)
