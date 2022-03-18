@@ -4,18 +4,17 @@ const bodyParser = require('body-parser')
 const fs = require('fs')
 const { spawn } = require('child_process')
 
-// const kill = require('tree-kill')
-// var exec = require('child_process').exec
-
 const PORT = 5000 || process.env.PORT
 const app = express()
 
+// global var to carry pid value
 let child
 
 app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
+// api endpoint to save user creds as .env file
 app.post('/saveCreds', async (req, res) => {
   console.log('REQ: ', req.body)
   let userValues =
@@ -43,6 +42,7 @@ app.post('/saveCreds', async (req, res) => {
   res.send('Credentials saved.')
 })
 
+// api endpoint to start serato bot script
 app.get('/startBot', (req, res) => {
   let pid = spawn(`node`, [__dirname + '\\index.js'])
   pid.on('error', (err) => {
@@ -54,26 +54,10 @@ app.get('/startBot', (req, res) => {
   res.send({ pid: pid.pid })
 })
 
-// app.post('/launch', async (req, res) => {
-//   child = exec('node index.js', (err, stdout, stderr) => {
-//     if (stdout) console.log('stdout: ' + stdout)
-//     if (stderr) console.log('stderr: ' + stderr)
-//     if (err !== null) {
-//       console.log('exec error: ' + err)
-//     }
-//   })
-//   console.log('CHILD PID: ', child.pid)
-//   processId = child.pid
-//   console.log('PROCESS ID: ', processId)
-//   child.stdout.on('data', function (log_data) {
-//     console.log(log_data)
-//   })
-// })
-
+// api endpoint to kill serato bot script
 app.get('/endBot/:pid', (req, res) => {
   let pid = req.params.pid
-  console.log('PID: ', pid)
-  // spawn(`taskkill`, [`/F /PID ${pid}`])
+  console.log('PID: ', pid)  
   let x = spawn('taskkill', ['/PID', pid, '/F'])
   x.on('error', (err) => {
     console.log(err)
@@ -84,11 +68,7 @@ app.get('/endBot/:pid', (req, res) => {
   res.send('Done')
 })
 
-// app.post('/endScript', async (newProcess, req, res) => {
-//   console.log(child.pid)
-//   kill(child.pid)
-// })
-
+// main app port listener
 app.listen(PORT, () => {
   console.log(`Server is listening on port: ${PORT}`)
 })
