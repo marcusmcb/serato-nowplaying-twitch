@@ -278,3 +278,5 @@ client.on('message', (channel, tags, message, self) => {
 
 // add ignorelist for args passed to !dyp that aren't proper artist names (pronouns, letters, etc)
 // return custom response if matched
+// apply .env process to save user settings via json file (further dev later on)
+// pass user settings from .env to params in script (rate limiting, feature availability, etc)
