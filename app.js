@@ -16,7 +16,7 @@ app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
-app.post('/start', async (req, res) => {
+app.post('/saveCreds', async (req, res) => {
   console.log('REQ: ', req.body)
   let userValues =
     'TWITCH_OAUTH_TOKEN=' +
@@ -43,7 +43,7 @@ app.post('/start', async (req, res) => {
   res.send('Credentials saved.')
 })
 
-app.get('/launch', (req, res) => {
+app.get('/startBot', (req, res) => {
   let pid = spawn(`node`, [__dirname + '\\index.js'])
   pid.on('error', (err) => {
     console.log(err)
@@ -70,7 +70,7 @@ app.get('/launch', (req, res) => {
 //   })
 // })
 
-app.get('/endScript/:pid', (req, res) => {
+app.get('/endBot/:pid', (req, res) => {
   let pid = req.params.pid
   console.log('PID: ', pid)
   // spawn(`taskkill`, [`/F /PID ${pid}`])
@@ -84,10 +84,10 @@ app.get('/endScript/:pid', (req, res) => {
   res.send('Done')
 })
 
-app.post('/endScript', async (newProcess, req, res) => {
-  console.log(child.pid)
-  kill(child.pid)
-})
+// app.post('/endScript', async (newProcess, req, res) => {
+//   console.log(child.pid)
+//   kill(child.pid)
+// })
 
 app.listen(PORT, () => {
   console.log(`Server is listening on port: ${PORT}`)

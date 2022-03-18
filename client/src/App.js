@@ -3,7 +3,7 @@ import axios from 'axios'
 import './App.css'
 
 const App = () => {
-
+  // var to store pid from spawned node process
   let id
 
   const [userCreds, setUserCreds] = useState({
@@ -20,10 +20,10 @@ const App = () => {
     })
   }
 
-  const handleSubmit = async (e) => {
+  const saveUserCreds = async (e) => {
     e.preventDefault()
     await axios
-      .post('http://localhost:5000/start', userCreds)
+      .post('http://localhost:5000/saveCreds', userCreds)
       .then((response) => {
         console.log(response)
         let dataReturn = document.querySelector('.server-response')
@@ -32,31 +32,25 @@ const App = () => {
       .catch((err) => console.log(err))
   }
 
-  const handleStart = async (e) => {
-    e.preventDefault()    
-    await axios.get('http://localhost:5000/launch')
-    .then((response) => {      
+  const startBot = async (e) => {
+    e.preventDefault()
+    await axios.get('http://localhost:5000/startBot').then((response) => {
       let { pid } = response.data
       id = pid
       console.log(pid)
-      // pid = response.data.pid            
-      
+      // pid = response.data.pid
+      let dataReturn = document.querySelector('.server-response')
+      dataReturn.innerHTML = 'Bot script started'
     })
   }
 
-  const endScript = async (e) => {
+  const endBot = async (e) => {
     e.preventDefault()
-    await axios.get(`http://localhost:5000/endScript/${id}`)
-    .then((response) => {
+    await axios.get(`http://localhost:5000/endBot/${id}`).then((response) => {
       console.log(response)
+      let dataReturn = document.querySelector('.server-response')
+      dataReturn.innerHTML = 'Bot script ended'
     })
-  }
-
-  const startScript = (e) => {
-    console.log('HERE')
-    // check for .env file on click
-    // if none, prompt user to enter values
-    // if present, start bot script
   }
 
   const updateCreds = (e) => {
@@ -116,26 +110,22 @@ const App = () => {
               />
             </label>
           </form>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={saveUserCreds}>
             <button type='submit'>Submit</button>
           </form>
-          <form onSubmit={handleStart}>
+          <form onSubmit={startBot}>
             <button type='submit'>Start</button>
           </form>
-          <form onSubmit={endScript}>
+          <form onSubmit={endBot}>
             <button type='submit'>Kill</button>
           </form>
-          <div className='server-response'>
-
-          </div>
+          <div className='server-response'></div>
         </div>
         <div className='column data-return'>
           <p>Two</p>
         </div>
       </div>
-      <div className='app-footer'>
-        <p>MCB Engineering, 2022</p>
-      </div>
+      <div className='app-footer'>{/* <p>MCB Engineering, 2022</p> */}</div>
     </div>
   )
 }
