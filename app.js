@@ -2,8 +2,10 @@ const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const fs = require('fs')
-const kill = require('tree-kill')
-var exec = require('child_process').exec
+const { spawn } = require('child_process')
+
+// const kill = require('tree-kill')
+// var exec = require('child_process').exec
 
 const PORT = 5000 || process.env.PORT
 const app = express()
@@ -41,20 +43,45 @@ app.post('/start', async (req, res) => {
   res.send('Credentials saved.')
 })
 
-app.post('/launch', async (req, res) => {
-  child = exec('node index.js', (err, stdout, stderr) => {
-    if (stdout) console.log('stdout: ' + stdout)
-    if (stderr) console.log('stderr: ' + stderr)
-    if (err !== null) {
-      console.log('exec error: ' + err)
-    }
+app.get('/launch', (req, res) => {
+  let pid = spawn(`node`, [__dirname + '\\index.js'])
+  pid.on('error', (err) => {
+    console.log(err)
   })
-  console.log("CHILD PID: ", child.pid)  
-  processId = child.pid
-  console.log("PROCESS ID: ", processId)
-  child.stdout.on('data', function (log_data) {
-    console.log(log_data)
+  pid.stdout.on('data', (data) => {
+    console.log(`stdout: ${data}`)
   })
+  res.send({ pid: pid.pid })
+})
+
+// app.post('/launch', async (req, res) => {
+//   child = exec('node index.js', (err, stdout, stderr) => {
+//     if (stdout) console.log('stdout: ' + stdout)
+//     if (stderr) console.log('stderr: ' + stderr)
+//     if (err !== null) {
+//       console.log('exec error: ' + err)
+//     }
+//   })
+//   console.log('CHILD PID: ', child.pid)
+//   processId = child.pid
+//   console.log('PROCESS ID: ', processId)
+//   child.stdout.on('data', function (log_data) {
+//     console.log(log_data)
+//   })
+// })
+
+app.get('/endScript/:pid', (req, res) => {
+  let pid = req.params.pid
+  console.log('PID: ', pid)
+  // spawn(`taskkill`, [`/F /PID ${pid}`])
+  let x = spawn('taskkill', ['/PID', pid, '/F'])
+  x.on('error', (err) => {
+    console.log(err)
+  })
+  x.stdout.on('data', (data) => {
+    console.log(`stdout: ${data}`)
+  })
+  res.send('Done')
 })
 
 app.post('/endScript', async (newProcess, req, res) => {

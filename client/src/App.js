@@ -3,6 +3,9 @@ import axios from 'axios'
 import './App.css'
 
 const App = () => {
+
+  let id
+
   const [userCreds, setUserCreds] = useState({
     TWITCH_OAUTH_TOKEN: '',
     TWITCH_CHANNEL_NAME: '',
@@ -30,16 +33,20 @@ const App = () => {
   }
 
   const handleStart = async (e) => {
-    e.preventDefault()
-    await axios.post('http://localhost:5000/launch')
-    .then((response) => {
-      console.log(response)
+    e.preventDefault()    
+    await axios.get('http://localhost:5000/launch')
+    .then((response) => {      
+      let { pid } = response.data
+      id = pid
+      console.log(pid)
+      // pid = response.data.pid            
+      
     })
   }
 
   const endScript = async (e) => {
     e.preventDefault()
-    await axios.post('http://localhost:5000/endScript')
+    await axios.get(`http://localhost:5000/endScript/${id}`)
     .then((response) => {
       console.log(response)
     })
