@@ -30,7 +30,7 @@ app.post('/saveCreds', async (req, res) => {
     'SERATO_DISPLAY_NAME=' +
     `"${req.body.SERATO_DISPLAY_NAME}"` +
     '\n'
-
+  // add try/catch block to snag any writefile errors
   await fs.writeFile('.env', userValues, (err) => {
     if (err) {
       console.log(err)
@@ -46,6 +46,7 @@ app.post('/saveCreds', async (req, res) => {
 app.get('/startBot', (req, res) => {
   let pid = spawn(`node`, [__dirname + '\\index.js'])
   pid.on('error', (err) => {
+    // add error checking from stderr here
     console.log(err)
   })
   pid.stdout.on('data', (data) => {
@@ -59,6 +60,7 @@ app.get('/endBot/:pid', (req, res) => {
   let pid = req.params.pid
   console.log('PID: ', pid)  
   let x = spawn('taskkill', ['/PID', pid, '/F'])
+  // add error checking from taskkill here
   x.on('error', (err) => {
     console.log(err)
   })
