@@ -3,8 +3,8 @@
 }
 
 .App {  
-  /* background-color: rgba(255, 255, 0, 0.856); */
-  color: black;  
+  background-color: rgba(255, 255, 0, 0.856);
+  color: black;
 }
 
 .app-title {  
@@ -12,6 +12,7 @@
   justify-content: center;
   align-items: center;  
   height: 50px;
+  border-bottom: .1em solid black;
 }
 
 .app-footer {
@@ -23,8 +24,8 @@
 
 .row {
   display: grid;  
-  grid-template-columns: 50% 50%;
-  height: 200px;
+  grid-template-columns: auto auto;  
+  padding-top: 10px;
 }
 
 .script-button-row {
@@ -33,50 +34,18 @@
   justify-content: center;
 }
 
-.column {
-  border: 1px dotted black;
-  margin-left: 10px;
-  margin-right: 10px;  
+.column-left {  
+  margin-left: 10px; 
 }
 
-form, .server-response {
-  padding: 2px;
+.column-right {
+  margin-right: 10px;
 }
 
 .server-response {
   color: green;
   font-weight: 600;
   padding-top: 15px;
-}
-
-.info-icon {
-  width: 20px;
-  height: 20px;    
-}
-
-.ui-form {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 20px;  
-}
-
-.ui-button-row {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;  
-  margin-top: 20px;
-}
-
-.form-button {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  margin-bottom: 10px;
-}
-
-.form-field {
-  padding: 2px !important;
 }
 
 .ui-button {

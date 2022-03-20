@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import axios from 'axios'
-import infoIcon from '../src/images/info_icon.png'
+import { Button, Form, FormGroup, Input, Label } from 'reactstrap'
 import './App.css'
 
-const App = (props) => {
+const App = () => {
   // var to store pid from spawned node process
   let id
 
@@ -64,63 +64,64 @@ const App = (props) => {
         <p>!npChatBot</p>
       </div>
       <div className='row'>
-        <div className='column'>
-          <form>
-            <label>
-              <input
+        <div className='column-left'>
+          <Form className='form' onSubmit={saveUserCreds}>
+            <FormGroup>
+              {/* <Label for='exampleEmail'>Username</Label> */}
+              <Input
                 type='text'
                 name='TWITCH_OAUTH_TOKEN'
                 value={userCreds.TWITCH_OAUTH_TOKEN}
                 onChange={handleChange}
-                placeholder='your TMI OAuth key'
+                placeholder='your Twitch OAuth key'
+                size='sm'
+                className='w-50'
               />
-            </label>
-            <img className='info-icon' src={infoIcon}></img>
-          </form>
-          <form>
-            <label>
-              <input
+            </FormGroup>
+            <FormGroup>
+              {/* <Label for='examplePassword'>Password</Label> */}
+              <Input
                 type='text'
-                value={userCreds.TWITCH_CHANNEL_NAME}
                 name='TWITCH_CHANNEL_NAME'
+                value={userCreds.TWITCH_CHANNEL_NAME}
                 onChange={handleChange}
                 placeholder='your Twitch channel name'
+                size='sm'
+                className='w-50'
               />
-            </label>
-            <img className='info-icon' src={infoIcon}></img>
-          </form>
-          <form>
-            <label>
-              <input
+            </FormGroup>
+            <FormGroup>
+              {/* <Label for='examplePassword'>Password</Label> */}
+              <Input
                 type='text'
                 name='TWITCH_BOT_USERNAME'
                 value={userCreds.TWITCH_BOT_USERNAME}
                 onChange={handleChange}
-                placeholder='your chatbot name'
+                placeholder='your Twitch chatbot name'
+                size='sm'
+                className='w-50'
               />
-            </label>
-            <img className='info-icon' src={infoIcon}></img>
-          </form>
-          <form>
-            <label>
-              <input
+            </FormGroup>
+            <FormGroup>
+              {/* <Label for='examplePassword'>Password</Label> */}
+              <Input
                 type='text'
                 name='SERATO_DISPLAY_NAME'
                 value={userCreds.SERATO_DISPLAY_NAME}
                 onChange={handleChange}
-                placeholder='your Serato Profile Name'
+                placeholder='your Serato display name'
+                size='sm'
+                className='w-50'
               />
-            </label>
-            <img className='info-icon' src={infoIcon}></img>
-          </form>
-          <form onSubmit={saveUserCreds}>
+            </FormGroup>
             <button className='ui-button' type='submit'>
               Submit
             </button>
-          </form>
-          <div className='server-response'></div>
+          </Form>
+
+          <div className='server-response'>Enter your credentials above.</div>
         </div>
-        <div className='column data-return'>
+        <div className='column-right'>
           <div className='script-button-row'>
             <form onSubmit={startBot}>
               <button className='ui-button' type='submit'>
