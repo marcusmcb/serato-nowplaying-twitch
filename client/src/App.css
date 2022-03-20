@@ -1,6 +1,10 @@
+.font-face-gm {
+  font-family: "Roboto";
+}
+
 .App {  
   /* background-color: rgba(255, 255, 0, 0.856); */
-  color: black;
+  color: black;  
 }
 
 .app-title {  
@@ -75,12 +79,12 @@ form, .server-response {
   padding: 2px !important;
 }
 
-.foo-button {
+.ui-button {
   display: inline-block;
   padding: 0.35em 1.2em;
   border: 0.1em solid #020202;
   margin: 0 0.3em 0.3em 0;
-  border-radius: .12em;
+  border-radius: .42em;
   box-sizing: border-box;  
   background-color: black;
   color: white;

@@ -59,7 +59,7 @@ const App = (props) => {
   }
 
   return (
-    <div className='App'>
+    <div className='App font-face-gm'>
       <div className='app-title'>
         <p>!npChatBot</p>
       </div>
@@ -114,7 +114,7 @@ const App = (props) => {
             <img className='info-icon' src={infoIcon}></img>
           </form>
           <form onSubmit={saveUserCreds}>
-            <button className='foo-button' type='submit'>
+            <button className='ui-button' type='submit'>
               Submit
             </button>
           </form>
@@ -123,12 +123,12 @@ const App = (props) => {
         <div className='column data-return'>
           <div className='script-button-row'>
             <form onSubmit={startBot}>
-              <button className='foo-button' type='submit'>
+              <button className='ui-button' type='submit'>
                 Start
               </button>
             </form>
             <form onSubmit={endBot}>
-              <button className='foo-button' type='submit'>
+              <button className='ui-button' type='submit'>
                 Kill
               </button>
             </form>
