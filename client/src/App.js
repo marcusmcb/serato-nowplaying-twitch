@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import axios from 'axios'
 import { Button, Form, FormGroup, Input, Label } from 'reactstrap'
+import Titlebar from './components/Titlebar'
 import './App.css'
 
 const App = () => {
@@ -61,7 +62,7 @@ const App = () => {
   return (
     <div className='App font-face-gm'>
       <div className='app-title'>
-        <p>!npChatBot</p>
+        <Titlebar/>
       </div>
       <div className='row'>
         <div className='column-left'>

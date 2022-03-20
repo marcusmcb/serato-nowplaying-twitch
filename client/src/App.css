@@ -7,14 +7,6 @@
   color: black;
 }
 
-.app-title {  
-  display: flex;
-  justify-content: center;
-  align-items: center;  
-  height: 50px;
-  border-bottom: .1em solid black;
-}
-
 .app-footer {
   display: flex;
   justify-content: center;

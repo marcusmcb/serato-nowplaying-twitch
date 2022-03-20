@@ -1,0 +1,8 @@
+.app-title {  
+  display: flex;
+  /* justify-content: center; */
+  align-items: center;  
+  height: 50px;
+  border-bottom: .1em solid black;
+  margin-left: 10px;
+}
