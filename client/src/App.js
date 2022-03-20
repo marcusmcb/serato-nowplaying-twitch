@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import axios from 'axios'
+import infoIcon from '../src/images/info_icon.png'
 import './App.css'
 
-const App = () => {
+const App = (props) => {
   // var to store pid from spawned node process
   let id
 
@@ -12,6 +13,12 @@ const App = () => {
     TWITCH_BOT_USERNAME: '',
     SERATO_DISPLAY_NAME: '',
   })
+
+  const styles = {
+    input: {
+      height: 50,
+    },
+  }
 
   const handleChange = (e) => {
     setUserCreds({
@@ -37,8 +44,6 @@ const App = () => {
     await axios.get('http://localhost:5000/startBot').then((response) => {
       let { pid } = response.data
       id = pid
-      console.log(pid)
-      // pid = response.data.pid
       let dataReturn = document.querySelector('.server-response')
       dataReturn.innerHTML = 'Bot script started'
     })
@@ -53,16 +58,10 @@ const App = () => {
     })
   }
 
-  const updateCreds = (e) => {
-    console.log('HERE')
-    // pull values from .env file
-    // place values in respective form fields for update
-  }
-
   return (
     <div className='App'>
       <div className='app-title'>
-        <p>!npBot for Serato Pro DJ & Twitch</p>
+        <p>!npChatBot</p>
       </div>
       <div className='row'>
         <div className='column'>
@@ -76,6 +75,7 @@ const App = () => {
                 placeholder='your TMI OAuth key'
               />
             </label>
+            <img className='info-icon' src={infoIcon}></img>
           </form>
           <form>
             <label>
@@ -84,9 +84,10 @@ const App = () => {
                 value={userCreds.TWITCH_CHANNEL_NAME}
                 name='TWITCH_CHANNEL_NAME'
                 onChange={handleChange}
-                placeholder='Twitch Channel Name'
+                placeholder='your Twitch channel name'
               />
             </label>
+            <img className='info-icon' src={infoIcon}></img>
           </form>
           <form>
             <label>
@@ -95,9 +96,10 @@ const App = () => {
                 name='TWITCH_BOT_USERNAME'
                 value={userCreds.TWITCH_BOT_USERNAME}
                 onChange={handleChange}
-                placeholder='Chat Bot Name'
+                placeholder='your chatbot name'
               />
             </label>
+            <img className='info-icon' src={infoIcon}></img>
           </form>
           <form>
             <label>
@@ -106,23 +108,31 @@ const App = () => {
                 name='SERATO_DISPLAY_NAME'
                 value={userCreds.SERATO_DISPLAY_NAME}
                 onChange={handleChange}
-                placeholder='Serato Profile Name'
+                placeholder='your Serato Profile Name'
               />
             </label>
+            <img className='info-icon' src={infoIcon}></img>
           </form>
           <form onSubmit={saveUserCreds}>
-            <button type='submit'>Submit</button>
-          </form>
-          <form onSubmit={startBot}>
-            <button type='submit'>Start</button>
-          </form>
-          <form onSubmit={endBot}>
-            <button type='submit'>Kill</button>
+            <button className='foo-button' type='submit'>
+              Submit
+            </button>
           </form>
           <div className='server-response'></div>
         </div>
         <div className='column data-return'>
-          <p>Two</p>
+          <div className='script-button-row'>
+            <form onSubmit={startBot}>
+              <button className='foo-button' type='submit'>
+                Start
+              </button>
+            </form>
+            <form onSubmit={endBot}>
+              <button className='foo-button' type='submit'>
+                Kill
+              </button>
+            </form>
+          </div>
         </div>
       </div>
       <div className='app-footer'>{/* <p>MCB Engineering, 2022</p> */}</div>

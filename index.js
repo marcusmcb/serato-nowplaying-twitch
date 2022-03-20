@@ -40,13 +40,8 @@ client.on('message', (channel, tags, message, self) => {
   const command = args.shift().toLowerCase()
   const channelName = channel.slice(1).split('#')
 
-  // url to scrape for testing purposes
-  // const url = 'https://serato.com/playlists/DJ_Marcus_McBride/3-11-2022'
-
   // url to scrape for user's Serato live playlist page
   const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/live`
-
-  console.log('ARGS: ', args)
 
   // function to execute chat command
   const runCommand = (command) => {
@@ -130,8 +125,7 @@ client.on('message', (channel, tags, message, self) => {
 
       // now playing
       case 'np':
-        const scrapeData = async () => {
-          console.log(url)
+        const scrapeData = async () => {          
           try {
             const { data } = await axios.get(url)
             const $ = cheerio.load(data)
@@ -244,10 +238,8 @@ client.on('message', (channel, tags, message, self) => {
   // check if command is in list
   if (commandList.includes(command)) {
     // check if the same user has entered the same command consecutively more than once
-    if (lastCommand == command && lastUser == tags.username) {
-      console.log(true)
-      commandCount++
-      console.log('COMMAND COUNT: ', commandCount)
+    if (lastCommand == command && lastUser == tags.username) {      
+      commandCount++      
       // redirect user to another command on rate limit
       if (commandCount === 6) {
         rateLimited()
@@ -259,8 +251,7 @@ client.on('message', (channel, tags, message, self) => {
         runCommand(command)
       }
       // if not, call method/function that runs switch selector, set vars and counter
-    } else {
-      console.log(false)
+    } else {      
       lastCommand = command
       lastUser = tags.username
       commandCount = 1

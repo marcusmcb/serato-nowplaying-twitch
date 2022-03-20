@@ -15,8 +15,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
 // api endpoint to save user creds as .env file
-app.post('/saveCreds', async (req, res) => {
-  console.log('REQ: ', req.body)
+app.post('/saveCreds', async (req, res) => {  
   let userValues =
     'TWITCH_OAUTH_TOKEN=' +
     `"${req.body.TWITCH_OAUTH_TOKEN}"` +
@@ -51,7 +50,12 @@ app.get('/startBot', (req, res) => {
   })
   pid.stdout.on('data', (data) => {
     console.log(`stdout: ${data}`)
-  })
+    // let temp = data
+    // if (temp.includes("error")) {
+    //   console.log("YUP")
+    //   res.send(temp)
+    // }
+  })   
   res.send({ pid: pid.pid })
 })
 
@@ -59,12 +63,12 @@ app.get('/startBot', (req, res) => {
 app.get('/endBot/:pid', (req, res) => {
   let pid = req.params.pid
   console.log('PID: ', pid)  
-  let x = spawn('taskkill', ['/PID', pid, '/F'])
+  let killPid = spawn('taskkill', ['/PID', pid, '/F'])
   // add error checking from taskkill here
-  x.on('error', (err) => {
+  killPid.on('error', (err) => {
     console.log(err)
   })
-  x.stdout.on('data', (data) => {
+  killPid.stdout.on('data', (data) => {
     console.log(`stdout: ${data}`)
   })
   res.send('Done')

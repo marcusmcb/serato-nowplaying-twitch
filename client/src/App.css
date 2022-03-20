@@ -1,5 +1,5 @@
 .App {  
-  background-color: rgba(255, 255, 0, 0.856);
+  /* background-color: rgba(255, 255, 0, 0.856); */
   color: black;
 }
 
@@ -7,7 +7,7 @@
   display: flex;
   justify-content: center;
   align-items: center;  
-  height: 100px;
+  height: 50px;
 }
 
 .app-footer {
@@ -19,13 +19,20 @@
 
 .row {
   display: grid;  
-  grid-template-columns: auto auto;
+  grid-template-columns: 50% 50%;
   height: 200px;
+}
+
+.script-button-row {
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content: center;
 }
 
 .column {
   border: 1px dotted black;
-  padding: 2px;  
+  margin-left: 10px;
+  margin-right: 10px;  
 }
 
 form, .server-response {
@@ -37,3 +44,45 @@ form, .server-response {
   font-weight: 600;
   padding-top: 15px;
 }
+
+.info-icon {
+  width: 20px;
+  height: 20px;    
+}
+
+.ui-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px;  
+}
+
+.ui-button-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;  
+  margin-top: 20px;
+}
+
+.form-button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.form-field {
+  padding: 2px !important;
+}
+
+.foo-button {
+  display: inline-block;
+  padding: 0.35em 1.2em;
+  border: 0.1em solid #020202;
+  margin: 0 0.3em 0.3em 0;
+  border-radius: .12em;
+  box-sizing: border-box;  
+  background-color: black;
+  color: white;
+}
+
