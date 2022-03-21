@@ -3,7 +3,10 @@ import './titlebar.css'
 
 const Titlebar = () => {
   return (
-    <h4>!npChatBot for Serato & Twitch</h4>
+    <div className='font-face-gm2 title-box'>
+      <h3>!npChatBot</h3>
+      <h6>for Serato & Twitch</h6>
+    </div>    
   )
 }
 

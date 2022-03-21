@@ -4,3 +4,17 @@
    url("../src/fonts/roboto/Roboto-Regular.ttf") format("truetype");
   font-weight: bold;
   }
+
+@font-face {
+  font-family: "Rubik";
+  src: local("Rubik"),
+   url("../src/fonts/rubik/RubikMonoOne-Regular.ttf") format("truetype");
+  font-weight: bold;
+  }
+
+@font-face {
+  font-family: "Josefin";
+  src: local("Josefin"),
+   url("../src/fonts/josefin/JosefinSans-Regular.ttf") format("truetype");
+  font-weight: bold;
+  }

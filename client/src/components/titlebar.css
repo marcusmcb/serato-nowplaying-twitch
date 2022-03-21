@@ -1,8 +1,16 @@
 .app-title {  
   display: flex;
   /* justify-content: center; */
-  align-items: center;  
-  height: 50px;
+  align-items: center;    
   border-bottom: .1em solid black;
   margin-left: 10px;
 }
+
+.title-box {
+  margin-top: 10px;
+}
+
+.title-box h3, h6 {  
+  margin: 0;
+}
+

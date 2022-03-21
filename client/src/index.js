@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import '../src/fonts/roboto/Roboto-Regular.ttf'
+import '../src/fonts/rubik/RubikMonoOne-Regular.ttf'
+import '../src/fonts/josefin/JosefinSans-Regular.ttf'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import App from './App';

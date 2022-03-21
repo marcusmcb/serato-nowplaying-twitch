@@ -62,75 +62,93 @@ const App = () => {
   return (
     <div className='App font-face-gm'>
       <div className='app-title'>
-        <Titlebar/>
+        <Titlebar />
       </div>
       <div className='row'>
         <div className='column-left'>
+          <div>
+            <h5 className='font-face-gm2'>User Credentials:</h5>
+          </div>
           <Form className='form' onSubmit={saveUserCreds}>
-            <FormGroup>
-              {/* <Label for='exampleEmail'>Username</Label> */}
-              <Input
-                type='text'
-                name='TWITCH_OAUTH_TOKEN'
-                value={userCreds.TWITCH_OAUTH_TOKEN}
-                onChange={handleChange}
-                placeholder='your Twitch OAuth key'
-                size='sm'
-                className='w-50'
-              />
-            </FormGroup>
-            <FormGroup>
-              {/* <Label for='examplePassword'>Password</Label> */}
-              <Input
-                type='text'
-                name='TWITCH_CHANNEL_NAME'
-                value={userCreds.TWITCH_CHANNEL_NAME}
-                onChange={handleChange}
-                placeholder='your Twitch channel name'
-                size='sm'
-                className='w-50'
-              />
-            </FormGroup>
-            <FormGroup>
-              {/* <Label for='examplePassword'>Password</Label> */}
-              <Input
-                type='text'
-                name='TWITCH_BOT_USERNAME'
-                value={userCreds.TWITCH_BOT_USERNAME}
-                onChange={handleChange}
-                placeholder='your Twitch chatbot name'
-                size='sm'
-                className='w-50'
-              />
-            </FormGroup>
-            <FormGroup>
-              {/* <Label for='examplePassword'>Password</Label> */}
-              <Input
-                type='text'
-                name='SERATO_DISPLAY_NAME'
-                value={userCreds.SERATO_DISPLAY_NAME}
-                onChange={handleChange}
-                placeholder='your Serato display name'
-                size='sm'
-                className='w-50'
-              />
-            </FormGroup>
-            <button className='ui-button' type='submit'>
-              Submit
+            <div className='field-row'>
+              <FormGroup>
+                {/* <Label for='exampleEmail'>Username</Label> */}
+                <Input
+                  type='text'
+                  name='TWITCH_OAUTH_TOKEN'
+                  value={userCreds.TWITCH_OAUTH_TOKEN}
+                  onChange={handleChange}
+                  placeholder='your Twitch OAuth key'
+                  size='sm'
+                />
+              </FormGroup>
+              <div className='info-icon'>?
+              </div>
+            </div>
+            <div className='field-row'>
+              <FormGroup>
+                {/* <Label for='examplePassword'>Password</Label> */}
+                <Input
+                  type='text'
+                  name='TWITCH_CHANNEL_NAME'
+                  value={userCreds.TWITCH_CHANNEL_NAME}
+                  onChange={handleChange}
+                  placeholder='your Twitch channel name'
+                  size='sm'
+                />
+              </FormGroup>
+              <div className='info-icon'>?
+              </div>
+            </div>
+            <div className='field-row'>
+              <FormGroup>
+                {/* <Label for='examplePassword'>Password</Label> */}
+                <Input
+                  type='text'
+                  name='TWITCH_BOT_USERNAME'
+                  value={userCreds.TWITCH_BOT_USERNAME}
+                  onChange={handleChange}
+                  placeholder='your Twitch chatbot name'
+                  size='sm'
+                />
+              </FormGroup>
+              <div className='info-icon'>?
+              </div>
+            </div>
+            <div className='field-row'>
+              <FormGroup>
+                {/* <Label for='examplePassword'>Password</Label> */}
+                <Input
+                  type='text'
+                  name='SERATO_DISPLAY_NAME'
+                  value={userCreds.SERATO_DISPLAY_NAME}
+                  onChange={handleChange}
+                  placeholder='your Serato display name'
+                  size='sm'                  
+                />
+              </FormGroup>
+              <div className='info-icon'>?
+              </div>
+            </div>
+
+            <button className='ui-button font-face-gm2' type='submit'>
+              Save
             </button>
           </Form>
 
-          <div className='server-response'>Enter your credentials above.</div>
+          <div className='server-response font-face-gm2'>
+            Enter your credentials above.
+          </div>
         </div>
         <div className='column-right'>
           <div className='script-button-row'>
             <form onSubmit={startBot}>
-              <button className='ui-button' type='submit'>
+              <button className='ui-button font-face-gm2' type='submit'>
                 Start
               </button>
             </form>
             <form onSubmit={endBot}>
-              <button className='ui-button' type='submit'>
+              <button className='ui-button font-face-gm2' type='submit'>
                 Kill
               </button>
             </form>
