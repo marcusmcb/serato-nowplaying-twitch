@@ -18,3 +18,24 @@
    url("../src/fonts/josefin/JosefinSans-Regular.ttf") format("truetype");
   font-weight: bold;
   }
+
+@font-face {
+  font-family: "Fira-Sans";
+  src: local("Fira-Sans"),
+   url("../src/fonts/fira_sans/FiraSans-Regular.ttf") format("truetype");
+  font-weight: bold;
+  }
+
+@font-face {
+  font-family: "Signika";
+  src: local("Signika"),
+   url("../src/fonts/signika_negative/SignikaNegative-Regular.ttf") format("truetype");
+  font-weight: bold;
+  }
+
+@font-face {
+  font-family: "Source-Sans";
+  src: local("Source-Sans"),
+   url("../src/fonts/source_sans_pro/SourceSansPro-Regular.ttf") format("truetype");
+  font-weight: bold;
+  }

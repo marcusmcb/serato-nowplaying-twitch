@@ -4,6 +4,9 @@ import './index.css';
 import '../src/fonts/roboto/Roboto-Regular.ttf'
 import '../src/fonts/rubik/RubikMonoOne-Regular.ttf'
 import '../src/fonts/josefin/JosefinSans-Regular.ttf'
+import '../src/fonts/fira_sans/FiraSans-Regular.ttf'
+import '../src/fonts/signika_negative/SignikaNegative-Regular.ttf'
+import '../src/fonts/source_sans_pro/SourceSansPro-Regular.ttf'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import App from './App';

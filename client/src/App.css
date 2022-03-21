@@ -10,6 +10,18 @@
   font-family: "Josefin";
 }
 
+.font-face-gm3 {
+  font-family: "Fira-Sans";
+}
+
+.font-face-gm4 {
+  font-family: "Signika";
+}
+
+.font-face-gm5 {
+  font-family: "Source-Sans";
+}
+
 .App {  
   background-color: rgba(255, 255, 0, 0.856);
   color: black;
