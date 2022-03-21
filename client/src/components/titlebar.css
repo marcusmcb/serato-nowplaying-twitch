@@ -1,13 +1,14 @@
 .app-title {  
-  display: flex;
-  /* justify-content: center; */
+  display: flex;  
   align-items: center;    
-  border-bottom: .1em solid black;
+  border-bottom: 5px outset #ffff00da;
   margin-left: 10px;
+  margin-right: 10px;
 }
 
 .title-box {
   margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .title-box h3, h6 {  

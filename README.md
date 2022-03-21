@@ -22,7 +22,8 @@ The index.js file in this repo runs as a message listener for your Twitch channe
 * 03/08/2022 - added "previous" "start" and "vibecheck" as options/args for the !np command
 * 03/10/2022 - added timestamp calculation to "vibecheck" option to display how long ago you played the track in your livestream set
 * 03/11/2022 - added "dyp" command (did you play) to let viewers query your Serato live playlist through your Twitch channel
-* 03/13/2022 - added React to begin building out a UI (in development)
+* 03/13/2022 - began front-end/desktop app development for script
+* 03/21/2022 - front-end/desktop app both tested & working
 
 <hr>
 
@@ -86,6 +87,6 @@ Feel free to message me with any questions regrading the script, configs/setup, 
 
 #### The idea here...
 
-To create a Node script that scrapes that most recently played track from your Serato live playlist page (via Axios/Cheerio) and return the text value as a Twitch chat command response.  As a DJ who live-streams this is probably the most common question I see asked in the chats of such channels.  
+To build out a set of interactive tools for your Twitch viewers to see what music you're currently playing (or have previously played) in your livestream DJ sets using Serato.  This repo began as a simple Node script and is currently in development as an Electron app.
 
 Marcus McBride, 2022.

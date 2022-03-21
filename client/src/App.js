@@ -60,14 +60,14 @@ const App = () => {
   }
 
   return (
-    <div className='App font-face-gm'>
+    <div className='App font-face-gm3'>
       <div className='app-title'>
         <Titlebar />
       </div>
       <div className='row'>
         <div className='column-left'>
           <div>
-            <h5 className='font-face-gm2'>User Credentials:</h5>
+            <h5 className='font-face-gm3'>User Credentials:</h5>
           </div>
           <Form className='form' onSubmit={saveUserCreds}>
             <div className='field-row'>
@@ -78,11 +78,11 @@ const App = () => {
                   name='TWITCH_OAUTH_TOKEN'
                   value={userCreds.TWITCH_OAUTH_TOKEN}
                   onChange={handleChange}
-                  placeholder='your Twitch OAuth key'
-                  size='sm'
+                  placeholder='your Twitch&copy; OAuth key'
+                  bsSize='sm'
                 />
               </FormGroup>
-              <div className='info-icon'>?
+              <div className='info-icon font-face-gm3'>?
               </div>
             </div>
             <div className='field-row'>
@@ -93,11 +93,11 @@ const App = () => {
                   name='TWITCH_CHANNEL_NAME'
                   value={userCreds.TWITCH_CHANNEL_NAME}
                   onChange={handleChange}
-                  placeholder='your Twitch channel name'
-                  size='sm'
+                  placeholder='your Twitch&copy; channel name'
+                  bsSize='sm'
                 />
               </FormGroup>
-              <div className='info-icon'>?
+              <div className='info-icon font-face-gm3'>?
               </div>
             </div>
             <div className='field-row'>
@@ -108,11 +108,11 @@ const App = () => {
                   name='TWITCH_BOT_USERNAME'
                   value={userCreds.TWITCH_BOT_USERNAME}
                   onChange={handleChange}
-                  placeholder='your Twitch chatbot name'
-                  size='sm'
+                  placeholder='your Twitch&copy; chatbot name'
+                  bsSize='sm'
                 />
               </FormGroup>
-              <div className='info-icon'>?
+              <div className='info-icon font-face-gm3'>?
               </div>
             </div>
             <div className='field-row'>
@@ -123,32 +123,32 @@ const App = () => {
                   name='SERATO_DISPLAY_NAME'
                   value={userCreds.SERATO_DISPLAY_NAME}
                   onChange={handleChange}
-                  placeholder='your Serato display name'
-                  size='sm'                  
+                  placeholder='your Serato&copy; display name'
+                  bsSize='sm'                  
                 />
               </FormGroup>
-              <div className='info-icon'>?
+              <div className='info-icon font-face-gm3'>?
               </div>
             </div>
 
-            <button className='ui-button font-face-gm2' type='submit'>
+            <button className='ui-button font-face-gm5' type='submit'>
               Save
             </button>
           </Form>
 
-          <div className='server-response font-face-gm2'>
+          <div className='server-response font-face-gm3'>
             Enter your credentials above.
           </div>
         </div>
         <div className='column-right'>
           <div className='script-button-row'>
             <form onSubmit={startBot}>
-              <button className='ui-button font-face-gm2' type='submit'>
+              <button className='ui-button font-face-gm5' type='submit'>
                 Start
               </button>
             </form>
             <form onSubmit={endBot}>
-              <button className='ui-button font-face-gm2' type='submit'>
+              <button className='ui-button font-face-gm5' type='submit'>
                 Kill
               </button>
             </form>
