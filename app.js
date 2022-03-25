@@ -15,7 +15,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
 // api endpoint to save user creds as .env file
-app.post('/saveCreds', async (req, res) => {  
+app.post('/saveCreds', async (req, res) => {
   let userValues =
     'TWITCH_OAUTH_TOKEN=' +
     `"${req.body.TWITCH_OAUTH_TOKEN}"` +
@@ -50,19 +50,21 @@ app.get('/startBot', (req, res) => {
   })
   pid.stdout.on('data', (data) => {
     console.log(`stdout: ${data}`)
-    // let temp = data
-    // if (temp.includes("error")) {
-    //   console.log("YUP")
-    //   res.send(temp)
-    // }
-  })   
-  res.send({ pid: pid.pid })
+  })
+  if (pid.stderr) {
+    pid.stderr.on('data', (data) => {
+      console.log(`stderr: ${data}`)
+      res.send({ error: `${data}`})
+    })
+  } else {
+    res.send({ pid: pid.pid })
+  }
 })
 
 // api endpoint to kill serato bot script
 app.get('/endBot/:pid', (req, res) => {
   let pid = req.params.pid
-  console.log('PID: ', pid)  
+  console.log('PID: ', pid)
   let killPid = spawn('taskkill', ['/PID', pid, '/F'])
   // add error checking from taskkill here
   killPid.on('error', (err) => {

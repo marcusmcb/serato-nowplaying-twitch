@@ -43,10 +43,17 @@ const App = () => {
   const startBot = async (e) => {
     e.preventDefault()
     await axios.get('http://localhost:5000/startBot').then((response) => {
-      let { pid } = response.data
-      id = pid
-      let dataReturn = document.querySelector('.server-response')
-      dataReturn.innerHTML = 'Bot script started'
+      if (response.data.error) {
+        console.log('RESPONSE: ', response.data.error)
+        let botError = response.data.error
+        let dataReturn = document.querySelector('.server-response')
+        dataReturn.innerHTML = botError
+      } else {
+        let { pid } = response.data
+        id = pid
+        let dataReturn = document.querySelector('.server-response')
+        dataReturn.innerHTML = 'Bot script started'
+      }
     })
   }
 
@@ -82,8 +89,7 @@ const App = () => {
                   bsSize='sm'
                 />
               </FormGroup>
-              <div className='info-icon font-face-gm3'>?
-              </div>
+              <div className='info-icon font-face-gm3'>?</div>
             </div>
             <div className='field-row'>
               <FormGroup>
@@ -97,8 +103,7 @@ const App = () => {
                   bsSize='sm'
                 />
               </FormGroup>
-              <div className='info-icon font-face-gm3'>?
-              </div>
+              <div className='info-icon font-face-gm3'>?</div>
             </div>
             <div className='field-row'>
               <FormGroup>
@@ -112,8 +117,7 @@ const App = () => {
                   bsSize='sm'
                 />
               </FormGroup>
-              <div className='info-icon font-face-gm3'>?
-              </div>
+              <div className='info-icon font-face-gm3'>?</div>
             </div>
             <div className='field-row'>
               <FormGroup>
@@ -124,11 +128,10 @@ const App = () => {
                   value={userCreds.SERATO_DISPLAY_NAME}
                   onChange={handleChange}
                   placeholder='your Serato&copy; display name'
-                  bsSize='sm'                  
+                  bsSize='sm'
                 />
               </FormGroup>
-              <div className='info-icon font-face-gm3'>?
-              </div>
+              <div className='info-icon font-face-gm3'>?</div>
             </div>
 
             <button className='ui-button font-face-gm5' type='submit'>

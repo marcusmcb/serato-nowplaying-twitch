@@ -26,7 +26,7 @@ const client = new tmi.Client({
   channels: [process.env.TWITCH_CHANNEL_NAME],
 })
 
-client.connect()
+client.connect().catch(console.error)
 
 // chat command listener
 client.on('message', (channel, tags, message, self) => {
