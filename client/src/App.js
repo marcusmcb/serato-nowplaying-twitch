@@ -51,6 +51,7 @@ const App = () => {
       } else {
         let { pid } = response.data
         id = pid
+        console.log(id)
         let dataReturn = document.querySelector('.server-response')
         dataReturn.innerHTML = 'Bot script started'
       }

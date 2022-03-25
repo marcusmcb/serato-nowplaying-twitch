@@ -42,22 +42,20 @@ app.post('/saveCreds', async (req, res) => {
 })
 
 // api endpoint to start serato bot script
-app.get('/startBot', (req, res) => {
-  let pid = spawn(`node`, [__dirname + '\\index.js'])
-  pid.on('error', (err) => {
-    // add error checking from stderr here
+app.get('/startBot', async (req, res) => {
+  // try {} catch (err) {}
+  let pid = await spawn(`node`, [__dirname + '\\index.js'])  
+  pid.on('error', (err) => {    
     console.log(err)
   })
   pid.stdout.on('data', (data) => {
     console.log(`stdout: ${data}`)
   })
-  // the issue is to send the error if error, otherwise send the pid on script start  
-  if (pid.stderr) {
-    pid.stderr.on('data', (data) => {
-      console.log(`stderr: ${data}`)
-      // res.send({ error: `${data}`})
-    })
-  } 
+  pid.stderr.on('data', (data) => {
+    console.log(pid.pid)
+    console.log(`stderr: ${data}`)
+    // res.send({ error: `${data}`})
+  })
   res.send({ pid: pid.pid })
 })
 
