@@ -51,14 +51,14 @@ app.get('/startBot', (req, res) => {
   pid.stdout.on('data', (data) => {
     console.log(`stdout: ${data}`)
   })
+  // the issue is to send the error if error, otherwise send the pid on script start  
   if (pid.stderr) {
     pid.stderr.on('data', (data) => {
       console.log(`stderr: ${data}`)
-      res.send({ error: `${data}`})
+      // res.send({ error: `${data}`})
     })
-  } else {
-    res.send({ pid: pid.pid })
-  }
+  } 
+  res.send({ pid: pid.pid })
 })
 
 // api endpoint to kill serato bot script
