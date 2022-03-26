@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import axios from 'axios'
 import { Form, FormGroup, Input } from 'reactstrap'
 import Titlebar from './components/Titlebar'
@@ -6,14 +6,14 @@ import './App.css'
 
 const App = () => {
   // var to store pid from spawned node process
-  let id 
-
+  let id
+    
   const [userCreds, setUserCreds] = useState({
     TWITCH_OAUTH_TOKEN: '',
     TWITCH_CHANNEL_NAME: '',
     TWITCH_BOT_USERNAME: '',
     SERATO_DISPLAY_NAME: '',
-  }) 
+  })
 
   const handleChange = (e) => {
     setUserCreds({
@@ -153,7 +153,7 @@ const App = () => {
           </div>
         </div>
       </div>
-      <div className='app-footer'>{/* <p>MCB Engineering, 2022</p> */}</div>
+      <div className='app-footer'>{}</div>
     </div>
   )
 }
