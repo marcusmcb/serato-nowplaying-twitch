@@ -33,7 +33,7 @@ const App = () => {
     await axios
       .post('http://localhost:5000/saveCreds', userCreds)
       .then((response) => {
-        console.log(response)
+        console.log(response.data)
         let dataReturn = document.querySelector('.server-response')
         dataReturn.innerHTML = response.data
       })

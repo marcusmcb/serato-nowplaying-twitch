@@ -14,6 +14,10 @@ app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
+const redirectError = (data) => {
+  console.log("RD: ", data)  
+}
+
 // api endpoint to save user creds as .env file
 app.post('/saveCreds', async (req, res) => {
   let userValues =
@@ -29,6 +33,13 @@ app.post('/saveCreds', async (req, res) => {
     'SERATO_DISPLAY_NAME=' +
     `"${req.body.SERATO_DISPLAY_NAME}"` +
     '\n'
+  let userPrefs = {
+    oauth_token: req.body.TWITCH_OAUTH_TOKEN,
+    twitch_channel_name: req.body.TWITCH_CHANNEL_NAME,
+    twitch_bot_name: req.body.TWITCH_BOT_USERNAME,
+    serato_display_name: req.body.SERATO_DISPLAY_NAME
+  }
+  let userPrefsFile = JSON.stringify(userPrefs)
   // add try/catch block to snag any writefile errors
   await fs.writeFile('.env', userValues, (err) => {
     if (err) {
@@ -36,6 +47,14 @@ app.post('/saveCreds', async (req, res) => {
     } else {
       console.log('File created successfully.')
       console.log(fs.readFileSync('.env', 'utf8'))
+    }
+  })
+  await fs.writeFile('preferences.json', userPrefsFile, 'utf8', (err) => {
+    if (err) {
+      console.log(err)
+    } else {
+      console.log('File created successfully.')
+      console.log(fs.readFileSync('preferences.json', 'utf8'))
     }
   })
   res.send('Credentials saved.')
@@ -51,11 +70,10 @@ app.get('/startBot', async (req, res) => {
   pid.stdout.on('data', (data) => {
     console.log(`stdout: ${data}`)
   })
-  pid.stderr.on('data', (data) => {
-    console.log(pid.pid)
+  pid.stderr.on('data', (data) => {      
     console.log(`stderr: ${data}`)
-    // res.send({ error: `${data}`})
-  })
+    redirectError(data.toString())
+  })  
   res.send({ pid: pid.pid })
 })
 

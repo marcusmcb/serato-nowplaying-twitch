@@ -116,6 +116,7 @@ client.on('message', (channel, tags, message, self) => {
                 }
               }, 500)
             } catch (err) {
+              console.log("HERE * * * * * * * * * * * * * * * * * * *")
               console.log(err)
               client.say(channel, "That doesn't seem to be working right now.")
             }
@@ -124,11 +125,44 @@ client.on('message', (channel, tags, message, self) => {
         }
         break
 
+      case 'foo':
+        const fooScrape = async () => {
+          try {
+            await axios.get(url)
+            .then(() => {
+
+            })
+            .catch((error) => {
+              if (error.response.status === 404) {
+                process.stderr.write("Your Serato URL is incorrect.")
+              }              
+            })
+            .then(() => {
+              // always executed
+            })
+          } catch (err) {
+            console.log(err)
+          }
+        }
+        fooScrape()
+        break;
+
       // now playing
       case 'np':
         const scrapeData = async () => {          
           try {
-            const { data } = await axios.get(url)
+            const { data } = await axios.get(url).catch((error) => {              
+              if (error.response.status === 404) {
+                console.log("ERROR.RESPONSE")                
+                console.log(error.response.status)               
+              } else if (error.request) {
+                console.log("ERROR.REQUEST")
+                // console.log(error.request)
+              } else {
+                console.log("ERROR.CONFIG")
+                // console.log(error.config)
+              }
+            })
             const $ = cheerio.load(data)
             const results = $('div.playlist-trackname')
             const timestamp = $('div.playlist-tracktime')
@@ -234,7 +268,7 @@ client.on('message', (channel, tags, message, self) => {
 
   // master list of current commands in this script for our client connection to listen for
   // any commands added/updated above need to be added/updated here
-  const commandList = ['test', 'np', 'dyp']
+  const commandList = ['test', 'np', 'dyp', 'foo']
 
   // check if command is in list
   if (commandList.includes(command)) {
