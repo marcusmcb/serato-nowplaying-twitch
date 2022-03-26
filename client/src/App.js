@@ -1,25 +1,19 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import axios from 'axios'
-import { Button, Form, FormGroup, Input, Label } from 'reactstrap'
+import { Form, FormGroup, Input } from 'reactstrap'
 import Titlebar from './components/Titlebar'
 import './App.css'
 
 const App = () => {
   // var to store pid from spawned node process
-  let id
+  let id 
 
   const [userCreds, setUserCreds] = useState({
     TWITCH_OAUTH_TOKEN: '',
     TWITCH_CHANNEL_NAME: '',
     TWITCH_BOT_USERNAME: '',
     SERATO_DISPLAY_NAME: '',
-  })
-
-  const styles = {
-    input: {
-      height: 50,
-    },
-  }
+  }) 
 
   const handleChange = (e) => {
     setUserCreds({

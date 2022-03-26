@@ -14,8 +14,12 @@ app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
-const redirectError = (data) => {
-  console.log("RD: ", data)  
+const redirectError = (data) => {  
+  // front end listener for data from this express endpoint
+  // node event emitter with corresponding react listener?  
+  app.get('/sendError', (req, res) => {
+    res.send(data)
+  })  
 }
 
 // api endpoint to save user creds as .env file
