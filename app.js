@@ -3,9 +3,33 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 const fs = require('fs')
 const { spawn } = require('child_process')
+const http = require('http')
+const socketIO = require('socket.io')
 
 const PORT = 5000 || process.env.PORT
 const app = express()
+const server = http.createServer(app)
+
+const io = socketIO(server, {
+  cors: {
+    cors: {
+      origin: 'http://localhost:3000'
+    }
+  }
+})
+
+app.io = io
+
+io.on('connection', (socket) => {
+  socket.emit('startup', 'socket connected to Express')
+  socket.on('message', (message) => {
+    console.log("-------------------------------------")
+    console.log(`Message from ${socket.id}: ${message}`)
+  })
+  socket.on('disconnect', () => {
+    console.log(`socket ${socket.id} is disconnected.`)
+  })
+})
 
 // global var to carry pid value
 let child
@@ -13,14 +37,6 @@ let child
 app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
-
-const redirectError = (data) => {  
-  // front end listener for data from this express endpoint
-  // node event emitter with corresponding react listener?  
-  app.get('/sendError', (req, res) => {
-    res.send(data)
-  })  
-}
 
 // api endpoint to save user creds as .env file
 app.post('/saveCreds', async (req, res) => {
@@ -76,7 +92,12 @@ app.get('/startBot', async (req, res) => {
   })
   pid.stderr.on('data', (data) => {      
     console.log(`stderr: ${data}`)
-    redirectError(data.toString())
+    app.io.on('connection', (socket) => {      
+      socket.emit("scriptError", data.toString())
+      socket.on('disconnect', () => {
+        console.log(`socket ${socket.id} is disconnected.`)
+      })
+    })    
   })  
   res.send({ pid: pid.pid })
 })
@@ -97,6 +118,6 @@ app.get('/endBot/:pid', (req, res) => {
 })
 
 // main app port listener
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is listening on port: ${PORT}`)
 })

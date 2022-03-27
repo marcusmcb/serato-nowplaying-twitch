@@ -1,12 +1,46 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { Form, FormGroup, Input } from 'reactstrap'
 import Titlebar from './components/Titlebar'
+import { io } from 'socket.io-client'
 import './App.css'
 
 const App = () => {
   // var to store pid from spawned node process
   let id
+
+  const socket = io('ws://localhost:5000', { transports: ["websocket"]})
+  
+  socket.emit('message', 'socket connected to React')
+
+  socket.on('startup', (message) => {
+    console.log("-------------------------------------")
+    console.log(message)
+  })
+
+  socket.addEventListener('scriptError', (message) => {
+    console.log("-------------------------------------")
+    console.log(message)
+  })
+
+  socket.on('disconnect', () => {
+    console.log("Client socket disconnected.")
+  })
+  
+  // useEffect(() => {    
+  //   socket.on('connection', () => {
+  //     console.log('connected to express.')
+  //   })
+  //   socket.on('startup', (message) => {
+  //     console.log(message)
+  //   })
+  //   socket.on('scriptError', (message) => {
+  //     console.log(message)
+  //   })
+  //   socket.on('disconnect', () => {
+  //     console.log('socket disconnecting')
+  //   })
+  // })
     
   const [userCreds, setUserCreds] = useState({
     TWITCH_OAUTH_TOKEN: '',
@@ -29,7 +63,7 @@ const App = () => {
       .then((response) => {
         console.log(response.data)
         let dataReturn = document.querySelector('.server-response')
-        dataReturn.innerHTML = response.data
+        dataReturn.innerHTML = response.data        
       })
       .catch((err) => console.log(err))
   }
