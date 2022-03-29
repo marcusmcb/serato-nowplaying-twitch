@@ -154,7 +154,8 @@ client.on('message', (channel, tags, message, self) => {
             const { data } = await axios.get(url).catch((error) => {              
               if (error.response.status === 404) {
                 console.log("ERROR.RESPONSE")                
-                console.log(error.response.status)               
+                console.log(error.response.status)
+                process.stderr.write("Either your Serato URL is incorrect or playlist isn't live.")
               } else if (error.request) {
                 console.log("ERROR.REQUEST")
                 // console.log(error.request)

@@ -13,9 +13,9 @@ const server = http.createServer(app)
 const io = socketIO(server, {
   cors: {
     cors: {
-      origin: 'http://localhost:3000'
-    }
-  }
+      origin: 'http://localhost:3000',
+    },
+  },
 })
 
 app.io = io
@@ -31,12 +31,12 @@ app.io.on('connection', (socket) => {
   mainSocket = socket
   socket.emit('startup', `Socket ID ${socket.id} connected to Express.`)
   socket.on('message', (message) => {
-    console.log("-------------------------------------")
+    console.log('-------------------------------------')
     console.log(`Message from ${socket.id}: ${message}`)
   })
   socket.on('disconnect', () => {
     console.log(`Express socket ID ${socket.id} is disconnected.`)
-  })  
+  })
 })
 
 // express middleware
@@ -63,7 +63,7 @@ app.post('/saveCreds', async (req, res) => {
     oauth_token: req.body.TWITCH_OAUTH_TOKEN,
     twitch_channel_name: req.body.TWITCH_CHANNEL_NAME,
     twitch_bot_name: req.body.TWITCH_BOT_USERNAME,
-    serato_display_name: req.body.SERATO_DISPLAY_NAME
+    serato_display_name: req.body.SERATO_DISPLAY_NAME,
   }
   let userPrefsFile = JSON.stringify(userPrefs)
   // add try/catch block to snag any writefile errors
@@ -89,18 +89,18 @@ app.post('/saveCreds', async (req, res) => {
 // api endpoint to start serato bot script
 app.get('/startBot', async (req, res) => {
   // try {} catch (err) {}
-  let pid = await spawn(`node`, [__dirname + '\\index.js'])  
-  pid.on('error', (err) => {    
+  let pid = await spawn(`node`, [__dirname + '\\index.js'])
+  pid.on('error', (err) => {
     console.log(err)
   })
   pid.stdout.on('data', (data) => {
     console.log(`stdout: ${data}`)
   })
   // error listener for Serato typos in user creds (WORKING)
-  pid.stderr.on('data', (data) => {      
+  pid.stderr.on('data', (data) => {
     console.log(`stderr: ${data}`)
-    mainSocket.emit('foo', data.toString())        
-  })  
+    mainSocket.emit('foo', data.toString())
+  })
   res.send({ pid: pid.pid })
 })
 
