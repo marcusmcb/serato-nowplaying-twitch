@@ -20,20 +20,26 @@ const io = socketIO(server, {
 
 app.io = io
 
-io.on('connection', (socket) => {
-  socket.emit('startup', 'socket connected to Express')
+// global var to carry child/spawn process pid value
+let child
+
+// global var for socket emitter
+let mainSocket
+
+// socket.io connection
+app.io.on('connection', (socket) => {
+  mainSocket = socket
+  socket.emit('startup', `Socket ID ${socket.id} connected to Express.`)
   socket.on('message', (message) => {
     console.log("-------------------------------------")
     console.log(`Message from ${socket.id}: ${message}`)
   })
   socket.on('disconnect', () => {
-    console.log(`socket ${socket.id} is disconnected.`)
-  })
+    console.log(`Express socket ID ${socket.id} is disconnected.`)
+  })  
 })
 
-// global var to carry pid value
-let child
-
+// express middleware
 app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -90,14 +96,10 @@ app.get('/startBot', async (req, res) => {
   pid.stdout.on('data', (data) => {
     console.log(`stdout: ${data}`)
   })
+  // error listener for Serato typos in user creds (WORKING)
   pid.stderr.on('data', (data) => {      
     console.log(`stderr: ${data}`)
-    app.io.on('connection', (socket) => {      
-      socket.emit("scriptError", data.toString())
-      socket.on('disconnect', () => {
-        console.log(`socket ${socket.id} is disconnected.`)
-      })
-    })    
+    mainSocket.emit('foo', data.toString())        
   })  
   res.send({ pid: pid.pid })
 })

@@ -9,39 +9,29 @@ const App = () => {
   // var to store pid from spawned node process
   let id
 
-  const socket = io('ws://localhost:5000', { transports: ["websocket"]})
-  
-  socket.emit('message', 'socket connected to React')
+  useEffect(() => {
+    const socket = io('ws://localhost:5000', { transports: ['websocket'] })
 
-  socket.on('startup', (message) => {
-    console.log("-------------------------------------")
-    console.log(message)
-  })
+    socket.on('connect', () => {
+      socket.emit('message', `Socket ID ${socket.id} connected to React.`)
+      socket.on('startup', (message) => {
+        console.log('-------------------------------------')
+        console.log('STARTUP MESSAGE: ', message)
+      })
+    })
 
-  socket.addEventListener('scriptError', (message) => {
-    console.log("-------------------------------------")
-    console.log(message)
-  })
+    socket.on('foo', (message) => {
+      console.log('-------------------------------------')
+      console.log('SCRIPT ERROR: ', message)
+      let dataReturn = document.querySelector('.server-response')
+      dataReturn.innerHTML = message
+    })
 
-  socket.on('disconnect', () => {
-    console.log("Client socket disconnected.")
-  })
-  
-  // useEffect(() => {    
-  //   socket.on('connection', () => {
-  //     console.log('connected to express.')
-  //   })
-  //   socket.on('startup', (message) => {
-  //     console.log(message)
-  //   })
-  //   socket.on('scriptError', (message) => {
-  //     console.log(message)
-  //   })
-  //   socket.on('disconnect', () => {
-  //     console.log('socket disconnecting')
-  //   })
-  // })
-    
+    socket.on('disconnect', () => {
+      console.log('Client socket disconnected.')
+    })
+  }, [])
+
   const [userCreds, setUserCreds] = useState({
     TWITCH_OAUTH_TOKEN: '',
     TWITCH_CHANNEL_NAME: '',
@@ -63,7 +53,7 @@ const App = () => {
       .then((response) => {
         console.log(response.data)
         let dataReturn = document.querySelector('.server-response')
-        dataReturn.innerHTML = response.data        
+        dataReturn.innerHTML = response.data
       })
       .catch((err) => console.log(err))
   }
@@ -94,6 +84,10 @@ const App = () => {
       dataReturn.innerHTML = 'Bot script ended'
     })
   }
+
+
+  // set separate div for real time errors as they occur (serato user incorrect, etc)
+  // add ping to check for serato live page based on display name entered
 
   return (
     <div className='App font-face-gm3'>
@@ -193,5 +187,3 @@ const App = () => {
 }
 
 export default App
-
-// tons of UI updates now that we have all of our I/O sorted
