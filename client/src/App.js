@@ -85,10 +85,9 @@ const App = () => {
     })
   }
 
-  // set separate div for real time errors as they occur (serato user incorrect, etc)
-  // add ping to check for serato live page based on display name entered
+  // set separate div for real time errors as they occur (serato user incorrect, etc)  
   // add counters to display how many times each command is used per session
-  // generate analysis reports post stream?
+  // generate analysis reports post stream by scraping live playlist with separate script
 
   return (
     <div className='App font-face-gm3'>

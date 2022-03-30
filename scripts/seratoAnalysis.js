@@ -13,7 +13,7 @@ const createSeratoReport = async () => {
       .then(({ data }) => {
         const $ = cheerio.load(data)
         const results = $('div.playlist-trackname')
-        // const timestamp = $('div.playlist-tracktime')
+        const timestamp = $('div.playlist-tracktime')
 
         let tracksPlayed = []
 

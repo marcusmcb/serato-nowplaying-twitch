@@ -109,6 +109,7 @@ app.get('/endBot/:pid', (req, res) => {
   let pid = req.params.pid
   console.log('PID: ', pid)
   let killPid = spawn('taskkill', ['/PID', pid, '/F'])
+  // add logic to trigger final scrape for user analysis here
   // add error checking from taskkill here
   killPid.on('error', (err) => {
     console.log(err)
@@ -123,3 +124,9 @@ app.get('/endBot/:pid', (req, res) => {
 server.listen(PORT, () => {
   console.log(`Server is listening on port: ${PORT}`)
 })
+
+// BACK-END DEV NOTES
+
+// rename index.js to bot.js and move into scripts folder (quick TEST to check)
+// add error logging/messaging for app-related issues (send errs as feedback/email)
+// finish seratoAnalysis.js w/necessary data calcs and send to user as report
