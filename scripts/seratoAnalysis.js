@@ -1,5 +1,6 @@
 const axios = require('axios')
 const cheerio = require('cheerio')
+const moment = require('moment')
 const dotenv = require('dotenv')
 
 dotenv.config({ path: `../.env` })
@@ -35,8 +36,23 @@ const createSeratoReport = async () => {
         })
         console.log("* * * * * * * * * * * * * * * * *")        
         console.log(trackLog)
-        console.log("* * * * * * * * * * * * * * * * *")
-      })
+        console.log("* * * * * * * * * * * * * * * * *")        
+        let str1 = moment(trackLog[1].timestamp, "HH:MM:SS")
+        let str2 = moment(trackLog[2].timestamp, "HH:MM:SS")
+        let str3 = moment(str2.diff(str1)).format("HH:MM:SS")
+        console.log(str1)
+        console.log(str2)
+        console.log(str3)
+        // let str1 = trackLog[1].timestamp
+        // let str2 = trackLog[2].timestamp
+        // console.log(str1)
+        // console.log(str2)
+        // str1 = str1.split(':')
+        // str2 = str2.split(':')
+        // secs1 = parseInt(str1[0] * 3600 + str1[1] * 60 + str1[0])
+        // secs2 = parseInt(str2[0] * 3600 + str2[1] * 60 + str2[0])
+        // console.log(secs2 - secs1)
+      })      
       .catch((error) => {        
         if (error.response.status === 404) {
           process.stderr.write('Your Serato URL is incorrect.')          
