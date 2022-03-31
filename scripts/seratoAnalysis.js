@@ -4,9 +4,8 @@ const dotenv = require('dotenv')
 
 dotenv.config({ path: `../.env` })
 
+// url for testing
 const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/3-17-2022_1`
-// test url
-// const url = "https://serato.com/playlists/DJ_Marcus_McBride/3-17-2022_1"
 
 const createSeratoReport = async () => {
   try {
@@ -15,20 +14,30 @@ const createSeratoReport = async () => {
       .then(({ data }) => {
         const $ = cheerio.load(data)
         const results = $('div.playlist-trackname')
-        const timestamp = $('div.playlist-tracktime')
+        const timestamps = $('div.playlist-tracktime')
 
         let tracksPlayed = []
-
-        // push tracks played so far to array
+        let trackTimestamps = []
+        
+        // loop through tracks played and clean data from scrape
         for (let i = 0; i < results.length; i++) {
           let trackId = results[i].children[0].data.trim()
           tracksPlayed.push(trackId)
         }
-        console.log("* * * * * * * * * * * * * * * * *")
-        console.log(tracksPlayed)
+        // loop through track timestamps and clean data from scrape
+        for (let j = 0; j < results.length; j++) {
+          let timestamp = timestamps[j].children[0].data.trim()
+          trackTimestamps.push(timestamp)
+        }
+        // combine cleaned data into array of objects
+        let trackLog = tracksPlayed.map((result, index) => {
+          return { trackId: result, timestamp: trackTimestamps[index]}
+        })
+        console.log("* * * * * * * * * * * * * * * * *")        
+        console.log(trackLog)
         console.log("* * * * * * * * * * * * * * * * *")
       })
-      .catch((error) => {
+      .catch((error) => {        
         if (error.response.status === 404) {
           process.stderr.write('Your Serato URL is incorrect.')          
         }
