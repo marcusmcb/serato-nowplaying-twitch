@@ -49,3 +49,12 @@ const createSeratoReport = async () => {
 
 createSeratoReport()
 // call func to send email report w/stats & data
+
+// FUTURE DEV NOTES
+//
+// Rewrite this whole script as a standalone webpage
+// All the user has to do is copy/paste the link to
+// their Serato playlist page and hit analayze
+//
+// User option to download summary
+// User option to aggregate summary (requires data storage $$)

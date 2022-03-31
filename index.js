@@ -226,6 +226,7 @@ client.on('message', (channel, tags, message, self) => {
                 }
               })
               .catch((error) => {
+                // expand error checking here as needed (currently working for Serato errors)
                 if (error.response.status === 404) {
                   process.stderr.write('Your Serato URL is incorrect.')
                   client.say(
