@@ -36,22 +36,13 @@ const createSeratoReport = async () => {
         })
         console.log("* * * * * * * * * * * * * * * * *")        
         console.log(trackLog)
-        console.log("* * * * * * * * * * * * * * * * *")        
-        let str1 = moment(trackLog[1].timestamp, "HH:MM:SS")
-        let str2 = moment(trackLog[2].timestamp, "HH:MM:SS")
-        let str3 = moment(str2.diff(str1)).format("HH:MM:SS")
-        console.log(str1)
-        console.log(str2)
-        console.log(str3)
-        // let str1 = trackLog[1].timestamp
-        // let str2 = trackLog[2].timestamp
-        // console.log(str1)
-        // console.log(str2)
-        // str1 = str1.split(':')
-        // str2 = str2.split(':')
-        // secs1 = parseInt(str1[0] * 3600 + str1[1] * 60 + str1[0])
-        // secs2 = parseInt(str2[0] * 3600 + str2[1] * 60 + str2[0])
-        // console.log(secs2 - secs1)
+        console.log("* * * * * * * * * * * * * * * * *")     
+        
+        let x = new Date("01/01/2020 " + trackLog[2].timestamp)
+        let y = new Date("01/01/2020 " + trackLog[3].timestamp)
+        console.log(x.getMinutes(), x.getSeconds())
+        console.log(y.getMinutes(), y.getSeconds())
+        console.log((y.getMinutes() - x.getMinutes()) + ":" + (y.getSeconds() - x.getSeconds()))        
       })      
       .catch((error) => {        
         if (error.response.status === 404) {
