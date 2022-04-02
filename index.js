@@ -300,3 +300,10 @@ client.on('message', (channel, tags, message, self) => {
 // pass user settings from .env to params in script (rate limiting, feature availability, etc)
 
 // add length check on !np commands (see if bot is on or off) to return customized response
+
+// COMMANDS
+
+// !np count - check to see how many times the command has been used since stream start
+// (increment global counter on command use)
+// !np total - see how many tracks total you've played in the stream so far when called
+// (return length of scrape)
