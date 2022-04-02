@@ -1,15 +1,19 @@
-import React from 'react'
-import Titlebar from './Titlebar'
+import axios from 'axios'
+import { useEffect } from 'react'
 import './cratestats.css'
 
-const crateStats = () => {
+const CrateStats = () => {
+  useEffect(() => {
+    axios
+      .get('http://localhost:5000/getStats')
+      .then((response) => console.log('SERATO DATA: ', response.data))
+  })
+
   return (
     <div className='cratestats'>
-      <div>
-        <Titlebar />
-      </div>
+      <div>Crate Stats</div>
     </div>
   )
 }
 
-export default crateStats
+export default CrateStats

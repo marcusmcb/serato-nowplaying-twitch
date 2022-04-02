@@ -4,10 +4,11 @@ const convertTimestamp = require('./convertTimestamp')
 
 dotenv.config({ path: `../.env` })
 
-// url for testing
-const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/3-17-2022_1`
-
 const createSeratoReport = async () => {
+
+  // url for testing
+  const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/3-12-2022`
+  
   try {
     // function to scrape data for report
     let response = await scrapeData(url)
@@ -31,13 +32,12 @@ const createSeratoReport = async () => {
 
     // combine cleaned data into array of objects
     let trackLog = tracksPlayed.map((result, index) => {
-      return { trackId: result, timestamp: trackTimestamps[index] }
-    })
-    console.log('* * * * * * * * * * * * * * * * *')
-    console.log(trackLog)
-    console.log('* * * * * * * * * * * * * * * * *')
-
-    console.log('Total tracks played: ', trackLog.length)
+      return {
+        trackId: result,
+        timestamp: trackTimestamps[index],
+        timePlayed: timestamps[index].children[0].data.trim(),
+      }
+    })    
 
     // determine lengths of each track played
     let timeDiffs = []
@@ -47,12 +47,11 @@ const createSeratoReport = async () => {
       } else {
         timeDiffs.push(x)
       }
-    }    
+    }
 
     // longest track played
     let max = Math.max(...timeDiffs)
     let maxIndex = timeDiffs.indexOf(max)
-    console.log('Longest track played: ', trackLog[maxIndex].trackId)
     let longestTrack = Math.abs(
       (trackTimestamps[maxIndex] - trackTimestamps[maxIndex + 1]) / 1000
     )
@@ -60,15 +59,11 @@ const createSeratoReport = async () => {
     let longestSeconds = longestTrack % 60
     if (longestSeconds < 10) {
       longestSeconds = '0' + longestSeconds
-      console.log(longestMinutes + ':' + longestSeconds)
-    } else {
-      console.log(longestMinutes + ':' + longestSeconds)
     }
 
     // shortest track played
     let min = Math.min(...timeDiffs)
     let minIndex = timeDiffs.indexOf(min)
-    console.log('Shortest Track Played: ', trackLog[minIndex].trackId)
     let shortestTrack = Math.abs(
       (trackTimestamps[minIndex] - trackTimestamps[minIndex + 1]) / 1000
     )
@@ -76,9 +71,6 @@ const createSeratoReport = async () => {
     let shortestSeconds = shortestTrack % 60
     if (shortestSeconds < 10) {
       shortestSeconds = '0' + shortestSeconds
-      console.log(shortestMinutes + ':' + shortestSeconds)
-    } else {
-      console.log(shortestMinutes + ':' + shortestSeconds)
     }
 
     // average track length played
@@ -92,18 +84,29 @@ const createSeratoReport = async () => {
     let seconds = w % 60
     if (seconds < 10) {
       seconds = '0' + seconds
-      console.log('Average Track Length Played: ', minutes + ':' + seconds)
-    } else {
-      console.log('Average Track Length Played: ', minutes + ':' + seconds)
     }
+
+    let seratoReport = {
+      trackLengthArray: timeDiffs,
+      setLength: timestamps.last().text().trim(),
+      totalTracksPlayed: trackLog.length,
+      longestTrack: {
+        name: trackLog[maxIndex].trackId,
+        length: longestMinutes + ':' + longestSeconds,
+      },
+      shortestTrack: {
+        name: trackLog[minIndex].trackId,
+        length: shortestMinutes + ':' + shortestSeconds,
+      },
+      avgTrackLength: minutes + ':' + seconds,
+      trackLog: trackLog,
+    }
+    // console.log(seratoReport)
+    return seratoReport    
   } catch (err) {
     console.log(err)
   }
 }
-
-createSeratoReport()
-// call func to send email report w/stats & data
-
 // FUTURE DEV NOTES
 //
 // Rewrite this whole script as a standalone webpage
@@ -112,3 +115,5 @@ createSeratoReport()
 //
 // User option to download summary
 // User option to aggregate summary (requires data storage $$)
+
+module.exports = createSeratoReport

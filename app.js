@@ -4,7 +4,12 @@ const bodyParser = require('body-parser')
 const fs = require('fs')
 const { spawn } = require('child_process')
 const http = require('http')
+const dotenv = require('dotenv')
 const socketIO = require('socket.io')
+
+const createSeratoReport = require('./scripts/createSeratoReport')
+
+dotenv.config()
 
 const PORT = 5000 || process.env.PORT
 const app = express()
@@ -123,6 +128,10 @@ app.get('/endBot/:pid', (req, res) => {
 // main app port listener
 server.listen(PORT, () => {
   console.log(`Server is listening on port: ${PORT}`)
+})
+
+app.get('/getStats', async (req, res) => {  
+  await createSeratoReport().then(data => res.send(data))  
 })
 
 // BACK-END DEV NOTES
