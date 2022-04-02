@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { Form, FormGroup, Input } from 'reactstrap'
-import Titlebar from './components/Titlebar'
+import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom'
 import { io } from 'socket.io-client'
+
+import Titlebar from './components/Titlebar'
+import CrateStats from './components/crateStats'
 import './App.css'
 
 const App = () => {
@@ -85,104 +88,120 @@ const App = () => {
     })
   }
 
-  // set separate div for real time errors as they occur (serato user incorrect, etc)  
+  const getStats = async (e) => {
+    e.preventDefault()
+  }
+
+  // move app into MainApp component (to remove '/' router error)
+
+  // set separate div for real time errors as they occur (serato user incorrect, etc)
   // add counters to display how many times each command is used per session
   // generate analysis reports post stream by scraping live playlist with separate script
 
   return (
-    <div className='App font-face-gm3'>
-      <div className='app-title'>
-        <Titlebar />
-      </div>
-      <div className='row'>
-        <div className='column-left'>
-          <div>
-            <h5 className='font-face-gm3'>User Credentials:</h5>
+    <Router>
+      <Routes>
+        <Route path='/cratestats' element={<CrateStats />} />
+      </Routes>
+      <div className='App font-face-gm3'>
+        <div className='app-title'>
+          <Titlebar />
+        </div>
+        <div className='row'>
+          <div className='column-left'>
+            <div>
+              <h5 className='font-face-gm3'>User Credentials:</h5>
+            </div>
+            <Form className='form' onSubmit={saveUserCreds}>
+              <div className='field-row'>
+                <FormGroup>
+                  {/* <Label for='exampleEmail'>Username</Label> */}
+                  <Input
+                    type='text'
+                    name='TWITCH_OAUTH_TOKEN'
+                    value={userCreds.TWITCH_OAUTH_TOKEN}
+                    onChange={handleChange}
+                    placeholder='your Twitch&copy; OAuth key'
+                    bsSize='sm'
+                  />
+                </FormGroup>
+                <div className='info-icon font-face-gm3'>?</div>
+              </div>
+              <div className='field-row'>
+                <FormGroup>
+                  {/* <Label for='examplePassword'>Password</Label> */}
+                  <Input
+                    type='text'
+                    name='TWITCH_CHANNEL_NAME'
+                    value={userCreds.TWITCH_CHANNEL_NAME}
+                    onChange={handleChange}
+                    placeholder='your Twitch&copy; channel name'
+                    bsSize='sm'
+                  />
+                </FormGroup>
+                <div className='info-icon font-face-gm3'>?</div>
+              </div>
+              <div className='field-row'>
+                <FormGroup>
+                  {/* <Label for='examplePassword'>Password</Label> */}
+                  <Input
+                    type='text'
+                    name='TWITCH_BOT_USERNAME'
+                    value={userCreds.TWITCH_BOT_USERNAME}
+                    onChange={handleChange}
+                    placeholder='your Twitch&copy; chatbot name'
+                    bsSize='sm'
+                  />
+                </FormGroup>
+                <div className='info-icon font-face-gm3'>?</div>
+              </div>
+              <div className='field-row'>
+                <FormGroup>
+                  {/* <Label for='examplePassword'>Password</Label> */}
+                  <Input
+                    type='text'
+                    name='SERATO_DISPLAY_NAME'
+                    value={userCreds.SERATO_DISPLAY_NAME}
+                    onChange={handleChange}
+                    placeholder='your Serato&copy; display name'
+                    bsSize='sm'
+                  />
+                </FormGroup>
+                <div className='info-icon font-face-gm3'>?</div>
+              </div>
+
+              <button className='ui-button font-face-gm5' type='submit'>
+                Save
+              </button>
+            </Form>
+
+            <div className='server-response font-face-gm3'>
+              Enter your credentials above.
+            </div>
           </div>
-          <Form className='form' onSubmit={saveUserCreds}>
-            <div className='field-row'>
-              <FormGroup>
-                {/* <Label for='exampleEmail'>Username</Label> */}
-                <Input
-                  type='text'
-                  name='TWITCH_OAUTH_TOKEN'
-                  value={userCreds.TWITCH_OAUTH_TOKEN}
-                  onChange={handleChange}
-                  placeholder='your Twitch&copy; OAuth key'
-                  bsSize='sm'
-                />
-              </FormGroup>
-              <div className='info-icon font-face-gm3'>?</div>
+          <div className='column-right'>
+            <div className='script-button-row'>
+              <form onSubmit={startBot}>
+                <button className='ui-button font-face-gm5' type='submit'>
+                  Start
+                </button>
+              </form>
+              <form onSubmit={endBot}>
+                <button className='ui-button font-face-gm5' type='submit'>
+                  Kill
+                </button>
+              </form>
+              <Link to='/cratestats' target='_blank'>
+                <button className='ui-button font-face-gm5' type='button'>
+                  Get Stats
+                </button>
+              </Link>
             </div>
-            <div className='field-row'>
-              <FormGroup>
-                {/* <Label for='examplePassword'>Password</Label> */}
-                <Input
-                  type='text'
-                  name='TWITCH_CHANNEL_NAME'
-                  value={userCreds.TWITCH_CHANNEL_NAME}
-                  onChange={handleChange}
-                  placeholder='your Twitch&copy; channel name'
-                  bsSize='sm'
-                />
-              </FormGroup>
-              <div className='info-icon font-face-gm3'>?</div>
-            </div>
-            <div className='field-row'>
-              <FormGroup>
-                {/* <Label for='examplePassword'>Password</Label> */}
-                <Input
-                  type='text'
-                  name='TWITCH_BOT_USERNAME'
-                  value={userCreds.TWITCH_BOT_USERNAME}
-                  onChange={handleChange}
-                  placeholder='your Twitch&copy; chatbot name'
-                  bsSize='sm'
-                />
-              </FormGroup>
-              <div className='info-icon font-face-gm3'>?</div>
-            </div>
-            <div className='field-row'>
-              <FormGroup>
-                {/* <Label for='examplePassword'>Password</Label> */}
-                <Input
-                  type='text'
-                  name='SERATO_DISPLAY_NAME'
-                  value={userCreds.SERATO_DISPLAY_NAME}
-                  onChange={handleChange}
-                  placeholder='your Serato&copy; display name'
-                  bsSize='sm'
-                />
-              </FormGroup>
-              <div className='info-icon font-face-gm3'>?</div>
-            </div>
-
-            <button className='ui-button font-face-gm5' type='submit'>
-              Save
-            </button>
-          </Form>
-
-          <div className='server-response font-face-gm3'>
-            Enter your credentials above.
           </div>
         </div>
-        <div className='column-right'>
-          <div className='script-button-row'>
-            <form onSubmit={startBot}>
-              <button className='ui-button font-face-gm5' type='submit'>
-                Start
-              </button>
-            </form>
-            <form onSubmit={endBot}>
-              <button className='ui-button font-face-gm5' type='submit'>
-                Kill
-              </button>
-            </form>
-          </div>
-        </div>
+        <div className='app-footer'>{}</div>
       </div>
-      <div className='app-footer'>{}</div>
-    </div>
+    </Router>
   )
 }
 
