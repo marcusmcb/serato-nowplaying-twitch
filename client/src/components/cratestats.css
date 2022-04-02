@@ -1,0 +1,35 @@
+.cratestats {
+  text-align: center;
+  background-color: darkslategrey;
+  color: white;
+  height: 100vh;
+}
+
+.cratestats-title {
+  padding-top: 10px;
+}
+
+.font-face-gm {
+  font-family: "Roboto";
+}
+
+.font-face-gm1 {
+  font-family: "Rubik";
+}
+
+.font-face-gm2 {
+  font-family: "Josefin";
+}
+
+.font-face-gm3 {
+  font-family: "Fira-Sans";
+}
+
+.font-face-gm4 {
+  font-family: "Signika";
+}
+
+.font-face-gm5 {
+  font-family: "Source-Sans";
+}
+
