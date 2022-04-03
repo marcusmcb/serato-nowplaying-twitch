@@ -11,6 +11,7 @@ The index.js file in this repo runs as a message listener for your Twitch channe
 * !np previous - scrapes the 2nd most recent entry...
 * !np start - scrapes the data from the track you began your live playlist with
 * !np vibecheck - scrapes a random entry from your live playlist and returns it & how long ago you played it, a way for your listeners to gauge the "vibe" of your set so far
+* !np total - returns the total number of tracks played so far during the stream
 * !dyp (artist name) - queries the page scrape for the artist's name; if valid, the response displays how many times the artist has been played in your stream so far
 
 <hr>
@@ -24,6 +25,7 @@ The index.js file in this repo runs as a message listener for your Twitch channe
 * 03/11/2022 - added "dyp" command (did you play) to let viewers query your Serato live playlist through your Twitch channel
 * 03/13/2022 - began front-end/desktop app development for script
 * 03/21/2022 - front-end/desktop app both tested & working
+* 04/03/2022 - added !np total command to display the DJ's total # of tracks played so far
 
 <hr>
 
