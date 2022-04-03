@@ -169,6 +169,13 @@ client.on('message', (channel, tags, message, self) => {
                     channel,
                     `${channelName} kicked off this stream with ${firstTrack.trim()}`
                   )
+                  
+                  // !np total
+                } else if (args == 'total') {
+                  client.say(
+                    channel,
+                    `${channelName} has played ${results.length} tracks so far in this stream.`
+                  )
 
                   // !np vibecheck
                 } else if (args == 'vibecheck') {
