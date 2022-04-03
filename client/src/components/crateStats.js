@@ -5,8 +5,11 @@ import Plot from 'react-plotly.js'
 import './cratestats.css'
 
 const CrateStats = () => {
-  const [seratoData, setSeratoData] = useState({})
+  const [seratoData, setSeratoData] = useState({})    
   const [isBusy, setIsBusy] = useState(true)
+  const [tracks, setTracks] = useState([])
+
+  let trackList = []
 
   useEffect(() => {
     const getStats = async () => {
@@ -14,19 +17,23 @@ const CrateStats = () => {
       await axios
         .get('http://localhost:5000/getStats')
         .then((response) => {
-          seratoStats = response.data
+          seratoStats = response.data          
         })
         .catch((error) => {
           console.log(error)
         })
-      console.log(seratoStats)
       return seratoStats
     }
     getStats().then((data) => {
-      setSeratoData(data)
+      for (let i = 0; i < data.trackLog.length; i++) {
+        trackList.push(data.trackLog[i].trackId)
+      }      
+      console.log(data)
+      setTracks(trackList)
+      setSeratoData(data)       
       setIsBusy(false)
     })
-  }, [])
+  }, [])  
 
   return (
     <div className='cratestats'>
@@ -69,31 +76,36 @@ const CrateStats = () => {
                   x: seratoData.trackLengthArray,
                   y: seratoData.trackLengthArray,
                   marker: {
-                    color: 'orange'
-                  }
+                    color: 'orange',
+                  },
+                  text: tracks                 
                 },
               ]}
               layout={{
                 width: 900,
                 height: 400,
-                title: 'Serato Stats',                
+                title: 'Track Stats:',
                 paper_bgcolor: 'darkslategrey',
-                plot_bgcolor: 'lightslategrey',
+                plot_bgcolor: 'darkslategrey',
                 font: {
-                  color: 'white'
-                },                
+                  color: 'white',
+                },
                 xaxis: {
                   type: 'category',
                   title: {
-                    text: 'tracks played'
-                  }
+                    text: 'tracks played',
+                  },
+                  showgrid: false,
+                  showticklabels: false
                 },
                 yaxis: {
                   range: [0, Math.max(seratoData.trackLengthArray)],
                   type: 'log',
                   title: {
-                    text: 'duration'
-                  }
+                    text: 'duration',
+                  },
+                  showgrid: false,
+                  showticklabels: false
                 },
               }}
             />
