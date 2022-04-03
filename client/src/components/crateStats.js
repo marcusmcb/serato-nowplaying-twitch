@@ -1,5 +1,7 @@
 import axios from 'axios'
+import { getParent } from 'domutils'
 import { useEffect, useState, Fragment } from 'react'
+import Plot from 'react-plotly.js'
 import './cratestats.css'
 
 const CrateStats = () => {
@@ -56,8 +58,45 @@ const CrateStats = () => {
               {seratoData.longestTrack.name} ({seratoData.longestTrack.length})
             </p>
           </div>
-          <div className='font-face-gm5'> 
+          <div className='font-face-gm5'>
             <p>Average Track Length: {seratoData.avgTrackLength}</p>
+          </div>
+          <div>
+            <Plot
+              data={[
+                {
+                  type: 'bar',
+                  x: seratoData.trackLengthArray,
+                  y: seratoData.trackLengthArray,
+                  marker: {
+                    color: 'orange'
+                  }
+                },
+              ]}
+              layout={{
+                width: 900,
+                height: 400,
+                title: 'Serato Stats',                
+                paper_bgcolor: 'darkslategrey',
+                plot_bgcolor: 'lightslategrey',
+                font: {
+                  color: 'white'
+                },                
+                xaxis: {
+                  type: 'category',
+                  title: {
+                    text: 'tracks played'
+                  }
+                },
+                yaxis: {
+                  range: [0, Math.max(seratoData.trackLengthArray)],
+                  type: 'log',
+                  title: {
+                    text: 'duration'
+                  }
+                },
+              }}
+            />
           </div>
         </Fragment>
       )}
