@@ -7,7 +7,7 @@ dotenv.config({ path: `../.env` })
 const createSeratoReport = async () => {
 
   // url for testing
-  const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/3-12-2022`
+  const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/3-16-2022`
   
   try {
     // function to scrape data for report
@@ -30,15 +30,6 @@ const createSeratoReport = async () => {
       trackTimestamps.push(timestamp)
     }
 
-    // combine cleaned data into array of objects
-    let trackLog = tracksPlayed.map((result, index) => {
-      return {
-        trackId: result,
-        timestamp: trackTimestamps[index],
-        timePlayed: timestamps[index].children[0].data.trim(),
-      }
-    })    
-
     // determine lengths of each track played
     let timeDiffs = []
     for (let k = 0; k < trackTimestamps.length; k++) {
@@ -48,6 +39,18 @@ const createSeratoReport = async () => {
         timeDiffs.push(x)
       }
     }
+
+    // combine cleaned data into array of objects 
+    // convert length value to timestamp and as length_time property
+    // use in front end for easier data viz   
+    let trackLog = tracksPlayed.map((result, index) => {
+      return {
+        trackId: result,
+        timestamp: trackTimestamps[index],
+        timePlayed: timestamps[index].children[0].data.trim(),
+        length: timeDiffs[index]
+      }
+    })           
 
     // longest track played
     let max = Math.max(...timeDiffs)
@@ -85,7 +88,7 @@ const createSeratoReport = async () => {
     if (seconds < 10) {
       seconds = '0' + seconds
     }
-
+    
     let seratoReport = {
       trackLengthArray: timeDiffs,
       setLength: timestamps.last().text().trim(),
