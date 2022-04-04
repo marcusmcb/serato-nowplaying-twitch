@@ -312,5 +312,4 @@ client.on('message', (channel, tags, message, self) => {
 
 // !np count - check to see how many times the command has been used since stream start
 // (increment global counter on command use)
-// !np total - see how many tracks total you've played in the stream so far when called
-// (return length of scrape)
+// !np options - returning error w/o live playlist; move logic to start of switch case
