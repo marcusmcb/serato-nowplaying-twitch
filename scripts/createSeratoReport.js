@@ -7,7 +7,7 @@ dotenv.config({ path: `../.env` })
 const createSeratoReport = async () => {
 
   // url for testing
-  const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/3-16-2022`
+  const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/4-3-2022`
   
   try {
     // function to scrape data for report
@@ -39,6 +39,12 @@ const createSeratoReport = async () => {
         timeDiffs.push(x)
       }
     }
+
+    // DATA PREP NOTE
+    //
+    // account for "doubles" (user playing same track on both decks) in data prep
+    // search tracksPlayed for duplicates
+    // if so, combine track length values and recast in array
 
     // combine cleaned data into array of objects 
     // convert length value to timestamp and as length_time property

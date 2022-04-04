@@ -141,6 +141,7 @@ client.on('message', (channel, tags, message, self) => {
       // np command
       case 'np':
         const scrapeSeratoData = async () => {
+          // check for !np options here BEFORE executing data scrape
           try {
             await axios
               .get(url)

@@ -84,7 +84,7 @@ const CrateStats = () => {
                   },
                 ]}
                 layout={{
-                  width: 900,
+                  width: 800,
                   height: 400,
                   title: 'Track Stats:',
                   paper_bgcolor: 'darkslategrey',
@@ -128,4 +128,9 @@ export default CrateStats
 
 // calculate how far into each set the shortest/longest track was played
 // convert date values on bar graph to track lengths (append to createSeratoReport object?)
+
+// PLOT ISSUE
+//
+// adjust scale on x axis to accommodate and display all values
+// currently not wide enough and the ui is stacking the "extras"
 
