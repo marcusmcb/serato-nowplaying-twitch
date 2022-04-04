@@ -43,8 +43,8 @@ const createSeratoReport = async () => {
     // DATA PREP NOTE
     //
     // account for "doubles" (user playing same track on both decks) in data prep
-    // search tracksPlayed for duplicates
-    // if so, combine track length values and recast in array
+    // create method to check for consecutive duplicate entries in tracksPlayed
+    // if so, combine track lengths and consolidate as one entry, reinsert into array
 
     // combine cleaned data into array of objects 
     // convert length value to timestamp and as length_time property

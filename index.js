@@ -12,6 +12,11 @@ let lastCommand
 let lastUser
 let commandCount = 0
 
+// global vars to track command usage and songs IDed
+let npCommandCount = 0
+let tracksIdentified = []
+let userList = []
+
 // create tmi instance
 const client = new tmi.Client({
   options: { debug: true },
@@ -40,6 +45,7 @@ client.on('message', (channel, tags, message, self) => {
   const args = message.slice(1).split(' ')
   const command = args.shift().toLowerCase()
   const channelName = channel.slice(1).split('#')
+  const currentUser = tags.username
 
   // url to scrape for user's Serato live playlist page
   const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/live`
@@ -140,6 +146,8 @@ client.on('message', (channel, tags, message, self) => {
 
       // np command
       case 'np':
+        npCommandCount++
+        userList.push(currentUser)
         const scrapeSeratoData = async () => {
           // check for !np options here BEFORE executing data scrape
           try {
@@ -153,11 +161,13 @@ client.on('message', (channel, tags, message, self) => {
                 // !np (default w/no options)
                 if (args.length === 0) {
                   let nowplaying = results.last().text()
+                  tracksPlayed.push(nowPlaying)
                   client.say(channel, `Now playing: ${nowplaying.trim()}`)
 
                   // !np previous
                 } else if (args == 'previous') {
                   let previousTrack = results[results.length - 2]
+                  tracksPlayed.push(previousTrack)
                   client.say(
                     channel,
                     `Previous track: ${previousTrack.children[0].data.trim()}`
@@ -166,6 +176,7 @@ client.on('message', (channel, tags, message, self) => {
                   // !np start
                 } else if (args == 'start') {
                   let firstTrack = results.first().text()
+                  tracksPlayed.push(firstTrack)
                   client.say(
                     channel,
                     `${channelName} kicked off this stream with ${firstTrack.trim()}`
@@ -268,7 +279,7 @@ client.on('message', (channel, tags, message, self) => {
 
   // master list of current commands in this script for our client connection to listen for
   // any commands added/updated above need to be added/updated here
-  const commandList = ['test', 'np', 'dyp', 'foo']
+  const commandList = ['test', 'np', 'dyp']
 
   // check if command is in list
   if (commandList.includes(command)) {
