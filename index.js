@@ -48,7 +48,7 @@ client.on('message', (channel, tags, message, self) => {
   const currentUser = tags.username
 
   // url to scrape for user's Serato live playlist page
-  const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/4-3-2022`
+  const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/live`
   // url for script testing
 
   // function to execute chat command
@@ -317,13 +317,4 @@ client.on('message', (channel, tags, message, self) => {
 
 // add ignorelist for args passed to !dyp that aren't proper artist names (pronouns, letters, etc)
 // return custom response if matched
-// apply .env process to save user settings via json file (further dev later on)
 // pass user settings from .env to params in script (rate limiting, feature availability, etc)
-
-// add length check on !np commands (see if bot is on or off) to return customized response
-
-// COMMANDS
-
-// !np count - check to see how many times the command has been used since stream start
-// (increment global counter on command use)
-// !np options - returning error w/o live playlist; move logic to start of switch case
