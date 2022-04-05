@@ -48,14 +48,12 @@ client.on('message', (channel, tags, message, self) => {
   const currentUser = tags.username
 
   // url to scrape for user's Serato live playlist page
-  const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/live`
+  const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/4-3-2022`
   // url for script testing
-  // const url = 'https://serato.com/playlists/DJ_Marcus_McBride/3-17-2022_1'
 
   // function to execute chat command
   const runCommand = (command) => {
     switch (command) {
-      
       // test command to verify client connection to twitch chat
       case 'test':
         client.say(
@@ -141,13 +139,14 @@ client.on('message', (channel, tags, message, self) => {
             }
           }
           searchSeratoData()
-          break          
+          break
         }
 
       // np command
       case 'np':
         npCommandCount++
         userList.push(currentUser)
+        console.log('USERLIST: ', userList)
         const scrapeSeratoData = async () => {
           // check for !np options here BEFORE executing data scrape
           try {
@@ -161,13 +160,13 @@ client.on('message', (channel, tags, message, self) => {
                 // !np (default w/no options)
                 if (args.length === 0) {
                   let nowplaying = results.last().text()
-                  tracksPlayed.push(nowPlaying)
+                  tracksIdentified.push(nowplaying.trim())
                   client.say(channel, `Now playing: ${nowplaying.trim()}`)
 
                   // !np previous
                 } else if (args == 'previous') {
                   let previousTrack = results[results.length - 2]
-                  tracksPlayed.push(previousTrack)
+                  tracksIdentified.push(previousTrack.children[0].data.trim())
                   client.say(
                     channel,
                     `Previous track: ${previousTrack.children[0].data.trim()}`
@@ -176,12 +175,12 @@ client.on('message', (channel, tags, message, self) => {
                   // !np start
                 } else if (args == 'start') {
                   let firstTrack = results.first().text()
-                  tracksPlayed.push(firstTrack)
+                  tracksIdentified.push(firstTrack.trim())
                   client.say(
                     channel,
                     `${channelName} kicked off this stream with ${firstTrack.trim()}`
                   )
-                  
+
                   // !np total
                 } else if (args == 'total') {
                   client.say(
@@ -243,8 +242,11 @@ client.on('message', (channel, tags, message, self) => {
                     'Command Options: !np (current song), !np start (first song), !np previous (previous song), !np vibecheck (random song we already played)'
                   )
                 }
+                console.log(npCommandCount)
+                console.log(tracksIdentified)
               })
               .catch((error) => {
+                console.log(error)
                 // expand error checking here as needed (currently working for Serato errors)
                 if (error.response.status === 404) {
                   process.stderr.write('Your Serato URL is incorrect.')
