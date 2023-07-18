@@ -1,68 +1,71 @@
-const axios = require('axios')
-const cheerio = require('cheerio')
-const dotenv = require('dotenv')
+const createLiveReport = require("./createLiveReport");
+const clearOBSResponse = require("../../obs/obsHelpers/obsHelpers");
+const dotenv = require("dotenv");
 
-const {
-	parseDateAndTime,
-	convertMilliseconds,
-	parseTrackTimestamps,
-	calculateTimeDifferences,
-	calculateAverageTrackLength,
-} = require('./helpers/statsHelpers')
+dotenv.config();
 
-dotenv.config()
+const displayOBSResponse = process.env.DISPLAY_OBS_MESSAGES;
 
-const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/live`
-// const url2 = 'https://serato.com/playlists/DJ_Marcus_McBride/3-12-2022'
+const sendChatMessage = (client, channel, username, reportData) => {
+  client.say(
+    channel,
+    `${username} has played ${reportData.total_tracks_played} songs so far in this set with an average length of ${reportData.average_track_length} per song.`
+  );
+};
 
-const statsCommand = async (channel, tags, args, client, obs) => {
-	try {
-		const { data } = await axios.get(url)
-		const $ = cheerio.load(data)
+const displayStatsMessage = (obs, tags, reportData, trendIndicator) => {
+  let differenceParsed = parseFloat(reportData.average_change.difference)
+    .toString()
+    .slice(0, -1);
+  const message = `${tags.username} has played ${
+    reportData.total_tracks_played
+  } songs so far\nin this stream at an average of ${
+    reportData.average_track_length
+  } per song ${trendIndicator}${
+    differenceParsed === "Na" ? 0 : differenceParsed
+  }%)`;
 
-		const playlistDate = $('span.playlist-start-time').first().text().trim()
-		const { timestampsParsed, trackTimestamps } = parseTrackTimestamps(
-			$,
-			playlistDate
-		)
-		const timeDiffs = calculateTimeDifferences(trackTimestamps)
-		const averageTrackLength = calculateAverageTrackLength(timeDiffs)
+  obs.call("SetInputSettings", {
+    inputName: "obs-chat-response",
+    inputSettings: {
+      text: message,
+    },
+  });
+  clearOBSResponse(obs);
+};
 
-		if (timeDiffs.length === 0) {
-			client.say(
-				channel,
-				'Sorry, no playlist stats for this stream at the moment.'
-			)
-		} else {
-			client.say(
-				channel,
-				`${channel.slice(1)} has played ${
-					timeDiffs.length + 1
-				} songs so far in this stream with an average length of ${averageTrackLength} per song.`
-			)
-			obs.call('SetInputSettings', {
-				inputName: 'hello-command',
-				inputSettings: {
-					text: `${tags.username} has played ${
-						timeDiffs.length + 1
-					} songs so far\nin this stream at an average of ${averageTrackLength} per song`,
-				},
-			})
-			setTimeout(() => {
-				obs.call('SetInputSettings', {
-					inputName: 'hello-command',
-					inputSettings: {
-						text: '',
-					},
-				})
-			}, 8000)
-		}
-	} catch (err) {
-		console.log(err)
-		client.say(channel, "That doesn't appear to be working right now.")
-	}
-}
+const statsCommand = async (channel, tags, args, client, obs, url) => {
+  try {
+    const reportData = await createLiveReport(url);
+
+    if (reportData.total_tracks_played === 0) {
+      client.say(
+        channel,
+        "Sorry, no playlist stats for this stream at the moment."
+      );
+      return;
+    }
+
+    sendChatMessage(client, channel, tags.username, reportData);
+
+    if (displayOBSResponse === "true") {
+      if (reportData.average_change.isLarger) {
+        displayStatsMessage(obs, tags, reportData, "(↑");
+      } else if (
+        !reportData.average_change.isLarger &&
+        reportData.average_change.difference !== null
+      ) {
+        displayStatsMessage(obs, tags, reportData, "(↓");
+      } else {
+        displayStatsMessage(obs, tags, reportData, "(-");
+      }
+    }
+  } catch (err) {
+    console.error(err);
+    client.say(channel, "That doesn't appear to be working right now.");
+  }
+};
 
 module.exports = {
-	statsCommand: statsCommand,
-}
+  statsCommand: statsCommand,
+};
