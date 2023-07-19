@@ -21,18 +21,14 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.26.1",
-    "body-parser": "^1.19.2",
     "cheerio": "^1.0.0-rc.10",
-    "concurrently": "^7.0.0",
-    "cors": "^2.8.5",
     "dotenv": "^16.0.0",
-    "express": "^4.17.3",
     "nodemon": "^2.0.15",
     "obs-websocket-js": "^5.0.3",
-    "socket.io": "^4.4.1",
     "tmi.js": "^1.8.5"
   },
   "engines": {
-    "node": "14.x"
+    "node": "14.x",
+    "npm": "9.x"
   }
 }
