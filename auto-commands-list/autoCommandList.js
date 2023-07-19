@@ -1,12 +1,3 @@
-const autoCommandList = [
-  "links",
-  "cratestats",
-  "mixes",
-  "dypInfo",
-  "sc",
-  "lightsInfo",
-  "statsInfo",
-  "npInfo",
-];
+const autoCommandList = ['npInfo', 'dypInfo', 'statsInfo']
 
-module.exports = [autoCommandList];
+module.exports = [autoCommandList]

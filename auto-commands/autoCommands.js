@@ -19,16 +19,8 @@ const statsInfo = (channel, tags, args, client) => {
   );
 };
 
-const lightsInfo = (channel, tags, args, client) => {
-  client.say(
-    channel,
-    "You can control my smart lighting by entering !lights and any of the following options: on, off, random, morph, green, blue, red, purple, pink, teal, gold, peach "
-  );
-};
-
 module.exports = {
   dypInfo: dypInfo,
   npInfo: npInfo,
-  statsInfo: statsInfo,
-  lightsInfo: lightsInfo,
+  statsInfo: statsInfo,  
 };
