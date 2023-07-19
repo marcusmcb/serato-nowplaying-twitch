@@ -49,9 +49,11 @@ Copy and paste this value into a <a href='https://www.npmjs.com/package/dotenv'>
 
 We'll use this to secure our environment variables for both our Twitch account and our Serato profile display name as follows:
 
-* `TWITCH_OAUTH_TOKEN='your_oauth_token_value'`
-* `TWITCH_BOT_USERNAME='the_name_of_the_bot_account'`
-* `TWITCH_CHANNEL_NAME='your_main_channel's_name'`
+`TWITCH_OAUTH_TOKEN='your_oauth_token_value'`
+
+`TWITCH_BOT_USERNAME='the_name_of_the_bot_account'`
+
+`TWITCH_CHANNEL_NAME='your_main_channel's_name'`
 
 <hr>
 
@@ -67,7 +69,7 @@ Example:
 
 Copy your profile display name and store it in your .env file as follows (include any underscores in your profile display name):
 
-* `SERATO_DISPLAY_NAME="your_serato_profile_display_name"`
+`SERATO_DISPLAY_NAME="your_serato_profile_display_name"`
 
 <hr>
 
@@ -77,8 +79,9 @@ To display command responses on-screen via OBS during your livestream, you'll ne
 
 Once done, store your OBS web socket address and password as environment variables as follows: 
 
-* `OBS_WEBSOCKET_ADDRESS='ws://192.168.86.40:4455'`
-* `OBS_WEBSOCKET_PASSWORD='Q4f0ZTLerOb7dgru'`
+`OBS_WEBSOCKET_ADDRESS='ws://192.168.86.40:4455'`
+
+`OBS_WEBSOCKET_PASSWORD='Q4f0ZTLerOb7dgru'`
 
 The OBS responses are configured within the chatbot script to return its responses to a common TextGDI+ element named `'obs-chat-response'``. You can easily create this element and set its name and add it to any scene in your OBS collection.  
 
@@ -90,8 +93,9 @@ Font size/color, element sizing, and placement are <b>not</b> programmatically s
 
 This chatbot script has the option to display automated 'helper' messages during your livestream that show viewers what options are available and how to use them in the chat.  Set the following options in your .env file to enable them and their interval (in MS) or disable them.
 
-* `DISPLAY_INTERVAL_MESSAGES=true`
-* `AUTO_COMMAND_INTERVAL='300000'`
+`DISPLAY_INTERVAL_MESSAGES=true`
+
+`AUTO_COMMAND_INTERVAL='300000'`
 
 <hr>
 
@@ -100,6 +104,7 @@ This chatbot script has the option to display automated 'helper' messages during
 If you'd like to display the responses from these commands on-screen in OBS during your livestream, you have the option to display how long each response will be displayed on-screen before cleared.  Set the following values in your .env file to enable/disable them and their on-screen duration (in MS).
 
 `DISPLAY_OBS_MESSAGES=true`
+
 `OBS_DISPLAY_DURATION='5000'`
 
 <hr>
