@@ -37,7 +37,9 @@ Each command's response will be returned to the streamer's Twitch chat as text w
 
 #### Config: Enabling/Starting a Serato Live Playlist
 
-In order for this script to work properly, you'll need to be familiar with how to start a <a href='https://support.serato.com/hc/en-us/articles/228019568-Live-Playlists'>Live Playlist</a> session in Serato DJ Pro.  To ensure the accuracy of the analysis in several commands' responses, the Live Playlist should be started roughly the same time that your live stream does.
+In order for this script to work properly, you'll need to be familiar with how to start a <a href='https://support.serato.com/hc/en-us/articles/228019568-Live-Playlists'>Live Playlist</a> session in Serato DJ Pro.  Specific details are provided in the "in use" section in this documentation.
+
+To ensure the accuracy of the analysis in several commands' responses, the Live Playlist should be started roughly the same time that your live stream does.
 
 <hr>
 
@@ -89,16 +91,6 @@ Font size/color, element sizing, and placement are <b>not</b> programmatically s
 
 <hr>
 
-#### Config: Automated/Interval Messages
-
-This chatbot script has the option to display automated 'helper' messages during your livestream that show viewers what options are available and how to use them in the chat.  Set the following options in your .env file to enable them and their interval (in MS) or disable them.
-
-`DISPLAY_INTERVAL_MESSAGES=true`
-
-`AUTO_COMMAND_INTERVAL='300000'`
-
-<hr>
-
 #### Config: Display OBS Messages
 
 If you'd like to display the responses from these commands on-screen in OBS during your livestream, you have the option to display how long each response will be displayed on-screen before cleared.  Set the following values in your .env file to enable/disable them and their on-screen duration (in MS).
@@ -106,6 +98,18 @@ If you'd like to display the responses from these commands on-screen in OBS duri
 `DISPLAY_OBS_MESSAGES=true`
 
 `OBS_DISPLAY_DURATION='5000'`
+
+<hr>
+
+#### Config: Automated/Interval Messages
+
+This chatbot script has the option to display automated 'helper' messages during your livestream that show viewers what options are available and how to use them in the chat (text only, no OBS display for these messages).
+
+Set the following options in your .env file to enable them and their interval (in MS) or disable them.
+
+`DISPLAY_INTERVAL_MESSAGES=true`
+
+`AUTO_COMMAND_INTERVAL='300000'`
 
 <hr>
 
