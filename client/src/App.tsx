@@ -37,7 +37,10 @@ function App() {
 								name='serato-display-name'
 							/>
 						</div>
-						<button type='submit'>Submit</button>
+						<div className='button-row'>
+							<button type='submit'>Submit</button>
+							<button type='submit'>Update</button>
+						</div>
 					</form>
 				</div>
 				<div className='app-container-column'>
@@ -48,11 +51,13 @@ function App() {
 					</div>
 					<div className='toggle-field'>
 						<input type='checkbox' id='toggleSwitch2' />
-						<label htmlFor='toggleSwitch2'>Enable On-Screen OBS Responses</label>
+						<label htmlFor='toggleSwitch2'>
+							Enable On-Screen OBS Responses
+						</label>
 					</div>
-          <div className='app-form-title start-chatbot'>Start Chatbot:</div>
+					<div className='app-form-title start-chatbot'>Start Chatbot:</div>
 					<button type='submit'>Start</button>
-				</div>				
+				</div>
 			</div>
 		</div>
 	)

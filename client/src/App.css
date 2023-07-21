@@ -2,7 +2,7 @@
   margin: 15px 0px 15px 0;
   padding: 15px;
   background-color: rgb(49, 49, 49);
-  max-width: 50vw;
+  width: 80vw;
 }
 
 .app-container {
@@ -44,18 +44,28 @@
 }
 
 .start-chatbot {
-  margin-top: 30px;
+  margin-top: 20px;
+}
+
+.button-row {
+  display: flex;
+  justify-content: space-between;    
 }
 
 label {
   font-family: "Fira Sans", sans-serif;
   color: white;
   font-size: 16px;
-  min-width: 200px; /* Set a minimum width for the labels */
+  min-width: 200px;
 }
 
-input {
-  
+.button-row button {
+  flex: 1;
+  margin: 0 5px;
+  margin-top: 20px;
+}
+
+input {  
   padding: 5px;
   border-radius: 5px;
   border: 1px solid white;
@@ -88,19 +98,28 @@ button:hover {
   cursor: pointer;
 }
 
+.toggle-field {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
 .toggle-field label {
   margin-left: 10px;
+  flex: 1; /* Let the label expand and fill the remaining space */
 }
 
 input[type='checkbox'] {
   -webkit-appearance: none; /* Remove default styling */
-  width: 30px;
+  width: 35px;
   height: 18px;
   border-radius: 9px;
   background-color: #2b2b2b;
   position: relative;
   outline: none;
   cursor: pointer;
+  flex-shrink: 0; /* Prevent the input from shrinking and maintain its size */
 }
 
 input[type='checkbox']:before {
