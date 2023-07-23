@@ -30,5 +30,8 @@
   "engines": {
     "node": "14.x",
     "npm": "9.x"
+  },
+  "devDependencies": {
+    "electron": "^25.3.1"
   }
 }
