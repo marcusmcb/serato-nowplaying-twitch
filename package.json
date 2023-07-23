@@ -2,12 +2,14 @@
   "name": "serato-nowplaying-twitch",
   "version": "1.0.0",
   "description": "!np (now playing) Twitch Chat Bot and command built with TMI.js",
-  "main": "index.js",
+  "main": "electron-main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon app.js",
     "client": "npm start --prefix client",
-    "dev": "concurrently \"npm start\" \"npm run client\""
+    "dev": "concurrently \"npm start\" \"npm run client\"",
+    "build": "react-scripts build",
+    "electron": "electron ."
   },
   "keywords": [
     "twitch",
@@ -32,6 +34,7 @@
     "npm": "9.x"
   },
   "devDependencies": {
-    "electron": "^25.3.1"
+    "electron": "^25.3.1",
+    "electron-is-dev": "^2.0.0"
   }
 }
