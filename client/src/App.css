@@ -109,6 +109,31 @@ button:hover {
   flex: 1; /* Let the label expand and fill the remaining space */
 }
 
+.disabled-label {
+  color: #888; /* Or any other grey color */
+  pointer-events: none; /* Prevent interactions with the label when disabled */
+}
+
+.message-panel {
+  height: 30px;
+}
+
+.success-message {
+  color: rgb(87, 255, 104);
+  font-family: "DM Sans", sans-serif;
+  font-size: 20px;
+}
+
+.error-message {
+  color: rgb(255, 136, 136);
+  font-family: "DM Sans", sans-serif;
+  font-size: 20px;
+}
+
+input {
+  font-family: "DM Sans", sans-serif;
+}
+
 input[type='checkbox'] {
   -webkit-appearance: none; /* Remove default styling */
   width: 35px;
