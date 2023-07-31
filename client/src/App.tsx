@@ -234,44 +234,46 @@ const App = (): JSX.Element => {
 					<div className='app-form-title start-chatbot'>Start Chatbot:</div>
 					<button type='submit'>Start</button>
 				</div>
+
 				<div className='app-container-column'>
 					<div className='app-form-title'>Information:</div>
-					{showTooltip === 'twitchChannelName' && (
-						<div className='info-tooltip'>
-							More info about Twitch Channel Name
-						</div>
-					)}
-
-					{showTooltip === 'twitchChatbotName' && (
-						<div className='info-tooltip'>
-							More info about Twitch Chatbot Name
-						</div>
-					)}
-					{showTooltip === 'oauthKey' && (
-						<div className='info-tooltip'>More info about Twitch oAuth Key</div>
-					)}
-					{showTooltip === 'seratoDisplayName' && (
-						<div className='info-tooltip'>
-							More info about Serato Display Name
-						</div>
-					)}
-					{showTooltip === 'obsIntervalDuration' && (
-						<div className='info-tooltip'>
-							More info about OBS interval duration
-						</div>
-					)}
-					{showTooltip === 'obsWebsocketAddress' && (
-						<div className='info-tooltip'>
-							More info about OBS web socket address
-						</div>
-					)}
-					{showTooltip === 'obsWebsocketPassword' && (
-						<div className='info-tooltip'>
-							More info about OBS web socket password
-						</div>
-					)}
 					<div className='app-info-panel'>
-						Display information about the chatbot stream here
+						{/* Display information about the chatbot stream here */}
+						{showTooltip === 'twitchChannelName' && (
+							<div className='info-tooltip'>
+								Enter your primary Twitch channel's name here
+							</div>
+						)}
+						{showTooltip === 'twitchChatbotName' && (
+							<div className='info-tooltip'>
+								Enter the your Twitch channel's chatbot name here
+							</div>
+						)}
+						{showTooltip === 'oauthKey' && (
+							<div className='info-tooltip'>
+								Enter the OAuth key that you previously generated for your Twitch channel here
+							</div>
+						)}
+						{showTooltip === 'seratoDisplayName' && (
+							<div className='info-tooltip'>
+								Enter the display name from your Serato playlist page here
+							</div>
+						)}
+						{showTooltip === 'obsIntervalDuration' && (
+							<div className='info-tooltip'>
+								Enter the duration (in minutes) for your interval messages to appear
+							</div>
+						)}
+						{showTooltip === 'obsWebsocketAddress' && (
+							<div className='info-tooltip'>
+								Enter your local OBS web socket address here
+							</div>
+						)}
+						{showTooltip === 'obsWebsocketPassword' && (
+							<div className='info-tooltip'>
+								If your web socket connection is secured within OBS, please enter the password here (optional)
+							</div>
+						)}
 					</div>
 				</div>
 			</div>

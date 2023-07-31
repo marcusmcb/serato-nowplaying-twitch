@@ -1,212 +1,206 @@
 .App {
-  margin: 15px 0px 15px 0;
-  padding: 15px;
-  background-color: rgb(49, 49, 49);  
+	margin: 15px 0px 15px 0;
+	padding: 15px;
+	background-color: rgb(49, 49, 49);
 }
 
 .app-container {
-  display: flex;
-  flex-direction: row;  
-  color: white;
+	display: flex;
+	flex-direction: row;
+	color: white;
 }
 
 .app-container-column {
-  margin-right: 55px;
+	margin-right: 55px;
 }
 
 .app-title {
-  font-family: "Fira Sans", sans-serif;
-  font-weight: 600;
-  font-size: 40px;
-  color: white;
-  padding-bottom: 20px;
+	font-family: 'Fira Sans', sans-serif;
+	font-weight: 600;
+	font-size: 40px;
+	color: white;
+	padding-bottom: 20px;
 }
 
 .app-form-title {
-  font-family: "Fira Sans", sans-serif;
-  color: rgb(74, 242, 228);
-  font-size: 20px;
-  padding: 15px 0 20px 0;
+	font-family: 'Fira Sans', sans-serif;
+	color: rgb(74, 242, 228);
+	font-size: 20px;
+	padding: 15px 0 20px 0;
 }
 
 .app-form {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 20px 0px 20px 0px;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	padding: 20px 0px 20px 0px;
 }
 
 .form-field {
-  display: flex;
-  align-items: center; /* Align items vertically (labels and inputs) */
-  margin-bottom: 10px;
+	display: flex;
+	align-items: center; /* Align items vertically (labels and inputs) */
+	margin-bottom: 10px;
 }
 
 .start-chatbot {
-  margin-top: 20px;
+	margin-top: 20px;
 }
 
 .button-row {
-  display: flex;
-  justify-content: space-between;    
+	display: flex;
+	justify-content: space-between;
 }
 
 label {
-  font-family: "Fira Sans", sans-serif;
-  color: white;
-  font-size: 16px;
-  min-width: 200px;
+	font-family: 'Fira Sans', sans-serif;
+	color: white;
+	font-size: 16px;
+	min-width: 200px;
 }
 
 .button-row button {
-  flex: 1;
-  margin: 0 5px;
-  margin-top: 20px;
-}
-
-input {  
-  padding: 5px;
-  border-radius: 5px;
-  border: 1px solid white;
-  background-color: rgb(49, 49, 49);
-  color: white;
-  font-size: 14px;
-}
-
-button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  border-radius: 5px;
-  border: none;
-  background-color: rgb(49, 49, 49);  
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-  border: 2px solid rgb(74, 242, 228);
-}
-
-button:hover {
-  background-color: rgb(74, 242, 228);
-  color: black;
-}
-
-.toggle-field {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-  cursor: pointer;
-  
-}
-
-/* App.css */
-.disabled-label {
-  color: #aaa; /* Adjust to desired grey color */
-}
-
-
-.interval-prefs-element {
-  margin-top: 15px;
-}
-
-.obs-prefs-element {
-  margin-top: 30px;
-}
-
-/* App.css */
-
-.question-icon {
-  display: inline-block;
-  border: 1px solid #000; /* adjust to match your color scheme */
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  text-align: center;
-  line-height: 20px;
-  cursor: pointer;
-  margin-left: 10px;
-  font-family: "Kira Sans", sans-serif;
-}
-
-.info-tooltip {
-  /* display: none; */
-  position: absolute;
-  top: 20px;  /* Adjust as needed */
-  right: 20px;  /* Adjust as needed */
-  padding: 10px;
-  border: 1px solid #000; /* adjust to match your color scheme */
-  background-color: #fff;
-  z-index: 10;
-  color: white;
-  background-color: rgb(49, 49, 49);
-  font-family: "Fira Sans", sans-serif;
-}
-
-
-.toggle-field {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-  cursor: pointer;
-}
-
-.toggle-field label {
-  margin-left: 10px;
-  flex: 1; /* Let the label expand and fill the remaining space */
-}
-
-.disabled-label {
-  color: #888; /* Or any other grey color */
-  pointer-events: none; /* Prevent interactions with the label when disabled */
-}
-
-.message-panel {
-  height: 30px;
-}
-
-.success-message {
-  color: rgb(87, 255, 104);
-  font-family: "DM Sans", sans-serif;
-  font-size: 20px;
-}
-
-.error-message {
-  color: rgb(255, 136, 136);
-  font-family: "DM Sans", sans-serif;
-  font-size: 20px;
-}
-
-.app-info-panel {
-  font-family: "Fira Sans", sans-serif;
+	flex: 1;
+	margin: 0 5px;
+	margin-top: 20px;
 }
 
 input {
-  font-family: "DM Sans", sans-serif;
+	padding: 5px;
+	border-radius: 5px;
+	border: 1px solid white;
+	background-color: rgb(49, 49, 49);
+	color: white;
+	font-size: 14px;
+}
+
+button {
+	margin-top: 20px;
+	padding: 10px 20px;
+	border-radius: 5px;
+	border: none;
+	background-color: rgb(49, 49, 49);
+	color: white;
+	font-size: 16px;
+	cursor: pointer;
+	border: 2px solid rgb(74, 242, 228);
+}
+
+button:hover {
+	background-color: rgb(74, 242, 228);
+	color: black;
+}
+
+.toggle-field {
+	display: flex;
+	align-items: center;
+	margin-bottom: 10px;
+	cursor: pointer;
+}
+
+/* App.css */
+.disabled-label {
+	color: #aaa; /* Adjust to desired grey color */
+}
+
+.interval-prefs-element {
+	margin-top: 15px;
+}
+
+.obs-prefs-element {
+	margin-top: 30px;
+}
+
+.question-icon {
+	display: inline-block;
+	border: 1px solid #000; /* adjust to match your color scheme */
+	border-radius: 50%;
+	width: 20px;
+	height: 20px;
+	text-align: center;
+	line-height: 20px;
+	cursor: pointer;
+	margin-left: 10px;
+	font-family: 'Kira Sans', sans-serif;
+}
+
+.info-tooltip {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	margin-top: 30px;
+	color: white;
+	background-color: rgb(49, 49, 49);
+	font-family: 'Fira Sans', sans-serif;	
+  width: 30vw;
+}
+
+.toggle-field {
+	display: flex;
+	align-items: center;
+	margin-bottom: 10px;
+	cursor: pointer;
+}
+
+.toggle-field label {
+	margin-left: 10px;
+	flex: 1; /* Let the label expand and fill the remaining space */
+}
+
+.disabled-label {
+	color: #888; /* Or any other grey color */
+	pointer-events: none; /* Prevent interactions with the label when disabled */
+}
+
+.message-panel {
+	height: 30px;
+}
+
+.success-message {
+	color: rgb(87, 255, 104);
+	font-family: 'DM Sans', sans-serif;
+	font-size: 20px;
+}
+
+.error-message {
+	color: rgb(255, 136, 136);
+	font-family: 'DM Sans', sans-serif;
+	font-size: 20px;
+}
+
+.app-info-panel {
+	font-family: 'Fira Sans', sans-serif;
+	position: relative;
+  margin-top: 15px;
+}
+
+input {
+	font-family: 'DM Sans', sans-serif;
 }
 
 input[type='checkbox'] {
-  -webkit-appearance: none; /* Remove default styling */
-  width: 35px;
-  height: 18px;
-  border-radius: 9px;
-  background-color: #2b2b2b;
-  position: relative;
-  outline: none;
-  cursor: pointer;
-  flex-shrink: 0; /* Prevent the input from shrinking and maintain its size */
+	-webkit-appearance: none; /* Remove default styling */
+	width: 35px;
+	height: 18px;
+	border-radius: 9px;
+	background-color: #2b2b2b;
+	position: relative;
+	outline: none;
+	cursor: pointer;
+	flex-shrink: 0; /* Prevent the input from shrinking and maintain its size */
 }
 
 input[type='checkbox']:before {
-  content: '';
-  position: absolute;
-  width: 18px;
-  height: 18px;
-  border-radius: 9px;
-  top: 0;
-  left: 0;
-  background-color: #fff;
-  transition: 0.3s;
+	content: '';
+	position: absolute;
+	width: 18px;
+	height: 18px;
+	border-radius: 9px;
+	top: 0;
+	left: 0;
+	background-color: #fff;
+	transition: 0.3s;
 }
 
 input[type='checkbox']:checked:before {
-  left: 12px;
+	left: 12px;
 }
