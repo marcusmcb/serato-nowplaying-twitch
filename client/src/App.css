@@ -95,7 +95,52 @@ button:hover {
   align-items: center;
   margin-bottom: 10px;
   cursor: pointer;
+  
 }
+
+/* App.css */
+.disabled-label {
+  color: #aaa; /* Adjust to desired grey color */
+}
+
+
+.interval-prefs-element {
+  margin-top: 15px;
+}
+
+.obs-prefs-element {
+  margin-top: 30px;
+}
+
+/* App.css */
+
+.question-icon {
+  display: inline-block;
+  border: 1px solid #000; /* adjust to match your color scheme */
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  line-height: 20px;
+  cursor: pointer;
+  margin-left: 10px;
+  font-family: "Kira Sans", sans-serif;
+}
+
+.info-tooltip {
+  /* display: none; */
+  position: absolute;
+  top: 20px;  /* Adjust as needed */
+  right: 20px;  /* Adjust as needed */
+  padding: 10px;
+  border: 1px solid #000; /* adjust to match your color scheme */
+  background-color: #fff;
+  z-index: 10;
+  color: white;
+  background-color: rgb(49, 49, 49);
+  font-family: "Fira Sans", sans-serif;
+}
+
 
 .toggle-field {
   display: flex;
@@ -128,6 +173,10 @@ button:hover {
   color: rgb(255, 136, 136);
   font-family: "DM Sans", sans-serif;
   font-size: 20px;
+}
+
+.app-info-panel {
+  font-family: "Fira Sans", sans-serif;
 }
 
 input {
