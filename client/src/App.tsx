@@ -10,6 +10,7 @@ const App = (): JSX.Element => {
 		obsWebsocketAddress: '',
 		obsWebsocketPassword: '',
 		obsIntervalDuration: '',
+		reportEmailAddress: ''
 	})
 
 	const [error, setError] = useState('')
@@ -44,6 +45,7 @@ const App = (): JSX.Element => {
 	// Manage the state to enable/disable obsResponseToggle
 	const [isObsResponseEnabled, setIsObsResponseEnabled] = useState(false)
 	const [isIntervalEnabled, setIsIntervalEnabled] = useState(false)
+	const [isReportEnabled, setIsReportEnabled] = useState(false)
 	const [showTooltip, setShowTooltip] = useState<string | null>(null)
 
 	useEffect(() => {
@@ -86,7 +88,9 @@ const App = (): JSX.Element => {
 								onChange={handleInputChange}
 							/>
 							<span
-								className='question-icon'
+								className={`question-icon ${
+									showTooltip === 'twitchChannelName' ? 'active-icon' : ''
+								}`}
 								onClick={() =>
 									setShowTooltip(
 										showTooltip === 'twitchChannelName'
@@ -108,7 +112,9 @@ const App = (): JSX.Element => {
 								onChange={handleInputChange}
 							/>
 							<span
-								className='question-icon'
+								className={`question-icon ${
+									showTooltip === 'twitchChatbotName' ? 'active-icon' : ''
+								}`}
 								onClick={() =>
 									setShowTooltip(
 										showTooltip === 'twitchChatbotName'
@@ -130,13 +136,11 @@ const App = (): JSX.Element => {
 								onChange={handleInputChange}
 							/>
 							<span
-								className='question-icon'
+								className={`question-icon ${
+									showTooltip === 'oauthKey' ? 'active-icon' : ''
+								}`}
 								onClick={() =>
-									setShowTooltip(
-										showTooltip === 'oauthKey'
-											? null
-											: 'oauthKey'
-									)
+									setShowTooltip(showTooltip === 'oauthKey' ? null : 'oauthKey')
 								}
 							>
 								?
@@ -152,7 +156,9 @@ const App = (): JSX.Element => {
 								onChange={handleInputChange}
 							/>
 							<span
-								className='question-icon'
+								className={`question-icon ${
+									showTooltip === 'seratoDisplayName' ? 'active-icon' : ''
+								}`}
 								onClick={() =>
 									setShowTooltip(
 										showTooltip === 'seratoDisplayName'
@@ -164,7 +170,61 @@ const App = (): JSX.Element => {
 								?
 							</span>
 						</div>
-
+						
+						<div className='form-field'>
+							<label htmlFor='obs-websocket-address'>
+								OBS Websocket Address:
+							</label>
+							<input
+								type='text'
+								id='obs-websocket-address'
+								name='obsWebsocketAddress'
+								value={formData.obsWebsocketAddress}
+								onChange={handleInputChange}
+								placeholder='optional'
+							/>
+							<span
+								className={`question-icon ${
+									showTooltip === 'obsWebsocketAddress' ? 'active-icon' : ''
+								}`}
+								onClick={() =>
+									setShowTooltip(
+										showTooltip === 'obsWebsocketAddress'
+											? null
+											: 'obsWebsocketAddress'
+									)
+								}
+							>
+								?
+							</span>
+						</div>
+						<div className='form-field'>
+							<label htmlFor='obs-websocket-password'>
+								OBS Websocket Password:
+							</label>
+							<input
+								type='text'
+								id='obs-websocket-password'
+								name='obsWebsocketPassword'
+								value={formData.obsWebsocketPassword}
+								onChange={handleInputChange}
+								placeholder='optional'
+							/>
+							<span
+								className={`question-icon ${
+									showTooltip === 'obsWebsocketPassword' ? 'active-icon' : ''
+								}`}
+								onClick={() =>
+									setShowTooltip(
+										showTooltip === 'obsWebsocketPassword'
+											? null
+											: 'obsWebsocketPassword'
+									)
+								}
+							>
+								?
+							</span>
+						</div>
 						<div className='button-row'>
 							<button type='submit'>Submit</button>
 							<button type='submit'>Update</button>
@@ -173,6 +233,19 @@ const App = (): JSX.Element => {
 				</div>
 				<div className='app-container-column'>
 					<div className='app-form-title'>Preferences:</div>
+					<div className='toggle-field obs-prefs-element'>
+							<input
+								type='checkbox'
+								id='obsResponseToggle'
+								disabled={!isObsResponseEnabled}
+							/>
+							<label
+								htmlFor='obsResponseToggle'
+								className={!isObsResponseEnabled ? 'disabled-label' : ''}
+							>
+								Enable On-Screen OBS Responses
+							</label>
+						</div>
 					<div className='toggle-field interval-prefs-element'>
 						<input
 							type='checkbox'
@@ -206,7 +279,9 @@ const App = (): JSX.Element => {
 							disabled={!isIntervalEnabled}
 						/>
 						<span
-							className='question-icon'
+							className={`question-icon ${
+								showTooltip === 'obsIntervalDuration' ? 'active-icon' : ''
+							}`}
 							onClick={() =>
 								setShowTooltip(
 									showTooltip === 'obsIntervalDuration'
@@ -218,70 +293,54 @@ const App = (): JSX.Element => {
 							?
 						</span>
 					</div>
-
-					<div className='toggle-field obs-prefs-element'>
+					<div className='toggle-field report-prefs-element'>
 						<input
 							type='checkbox'
-							id='obsResponseToggle'
-							disabled={!isObsResponseEnabled}
+							id='sendReportToggle'
+							checked={isReportEnabled}
+							onChange={() => setIsReportEnabled(!isReportEnabled)}
 						/>
+
 						<label
-							htmlFor='obsResponseToggle'
-							className={!isObsResponseEnabled ? 'disabled-label' : ''}
+							htmlFor='sendReportToggle'
+							className={!isReportEnabled ? 'disabled-label' : ''}
 						>
-							Enable On-Screen OBS Responses
+							Send Post-Stream Report
 						</label>
 					</div>
 					<div className='form-field'>
-						<label htmlFor='obs-websocket-address'>
-							OBS Websocket Address:
+						<label
+							htmlFor='is-report-enabled'
+							className={!isReportEnabled ? 'disabled-label' : ''}
+						>
+							Email Address:
 						</label>
+
 						<input
 							type='text'
-							id='obs-websocket-address'
-							name='obsWebsocketAddress'
-							value={formData.obsWebsocketAddress}
+							id='is-report-enabled'
+							name='reportEmailAddress' // You might want to change this name to match its purpose, e.g., 'intervalDuration'
+							value={formData.reportEmailAddress} // Again, you might want to update this to formData.intervalDuration
 							onChange={handleInputChange}
-							placeholder='optional'
+							placeholder=''
+							disabled={!isReportEnabled}
 						/>
 						<span
-							className='question-icon'
+							className={`question-icon ${
+								showTooltip === 'reportEmailAddress' ? 'active-icon' : ''
+							}`}
 							onClick={() =>
 								setShowTooltip(
-									showTooltip === 'obsWebsocketAddress'
+									showTooltip === 'reportEmailAddress'
 										? null
-										: 'obsWebsocketAddress'
+										: 'reportEmailAddress'
 								)
 							}
 						>
 							?
 						</span>
 					</div>
-					<div className='form-field'>
-						<label htmlFor='obs-websocket-password'>
-							OBS Websocket Password:
-						</label>
-						<input
-							type='text'
-							id='obs-websocket-password'
-							name='obsWebsocketPassword'
-							value={formData.obsWebsocketPassword}
-							onChange={handleInputChange}
-							placeholder='optional'
-						/>
-						<span
-							className='question-icon'
-							onClick={() =>
-								setShowTooltip(
-									showTooltip === 'obsWebsocketPassword'
-										? null
-										: 'obsWebsocketPassword'
-								)
-							}
-						>
-							?
-						</span>
-					</div>
+
 					<div className='app-form-title start-chatbot'>Start Chatbot:</div>
 					<button type='submit'>Start</button>
 				</div>
@@ -298,7 +357,14 @@ const App = (): JSX.Element => {
 						{showTooltip === 'twitchChatbotName' && (
 							<div className='info-tooltip'>
 								Enter the your Twitch channel's chatbot name here. More details
-								can be found <a href='https://np-chatbot-site.web.app/'>here</a>
+								can be found{' '}
+								<a
+									href='https://np-chatbot-site.web.app/'
+									rel='noopener'
+									target='_blank'
+								>
+									here
+								</a>
 							</div>
 						)}
 						{showTooltip === 'oauthKey' && (
@@ -327,6 +393,11 @@ const App = (): JSX.Element => {
 							<div className='info-tooltip'>
 								If your web socket connection is secured within OBS, please
 								enter the password here (optional)
+							</div>
+						)}
+						{showTooltip === 'reportEmailAddress' && (
+							<div className='info-tooltip'>
+								Enter the email address that you'd like your post-stream report send to
 							</div>
 						)}
 					</div>

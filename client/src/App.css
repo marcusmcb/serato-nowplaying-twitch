@@ -102,25 +102,35 @@ button:hover {
 	color: #aaa; /* Adjust to desired grey color */
 }
 
+.obs-prefs-element,
+.report-prefs-element,
 .interval-prefs-element {
-	margin-top: 15px;
+	margin-top: 15px;		
 }
 
-.obs-prefs-element {
-	margin-top: 30px;
-}
-
-.question-icon {
+.question-icon,
+.active-icon {
 	display: inline-block;
 	border: 1px solid #000; /* adjust to match your color scheme */
 	border-radius: 50%;
-	width: 20px;
-	height: 20px;
+	width: 25px;
+	height: 25px;
 	text-align: center;
-	line-height: 20px;
+	line-height: 25px;
 	cursor: pointer;
 	margin-left: 10px;
 	font-family: 'Kira Sans', sans-serif;
+	cursor: pointer;
+}
+
+.question-icon {
+	background-color: rgb(49, 49, 49);
+	color: white;
+}
+
+.active-icon {
+	background-color: rgb(74, 242, 228);
+	color: rgb(49, 49, 49);
 }
 
 .info-tooltip {
@@ -132,6 +142,10 @@ button:hover {
 	background-color: rgb(49, 49, 49);
 	font-family: 'Fira Sans', sans-serif;	
   width: 30vw;
+}
+
+.info-tooltip a:visited {
+	color: rgb(74, 242, 228);
 }
 
 .toggle-field {
