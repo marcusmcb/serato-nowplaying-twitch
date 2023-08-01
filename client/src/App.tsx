@@ -10,7 +10,7 @@ const App = (): JSX.Element => {
 		obsWebsocketAddress: '',
 		obsWebsocketPassword: '',
 		obsIntervalDuration: '',
-		reportEmailAddress: ''
+		streamerEmailAddress: '',
 	})
 
 	const [error, setError] = useState('')
@@ -170,7 +170,7 @@ const App = (): JSX.Element => {
 								?
 							</span>
 						</div>
-						
+
 						<div className='form-field'>
 							<label htmlFor='obs-websocket-address'>
 								OBS Websocket Address:
@@ -234,18 +234,18 @@ const App = (): JSX.Element => {
 				<div className='app-container-column'>
 					<div className='app-form-title'>Preferences:</div>
 					<div className='toggle-field obs-prefs-element'>
-							<input
-								type='checkbox'
-								id='obsResponseToggle'
-								disabled={!isObsResponseEnabled}
-							/>
-							<label
-								htmlFor='obsResponseToggle'
-								className={!isObsResponseEnabled ? 'disabled-label' : ''}
-							>
-								Enable On-Screen OBS Responses
-							</label>
-						</div>
+						<input
+							type='checkbox'
+							id='obsResponseToggle'
+							disabled={!isObsResponseEnabled}
+						/>
+						<label
+							htmlFor='obsResponseToggle'
+							className={!isObsResponseEnabled ? 'disabled-label' : ''}
+						>
+							Enable On-Screen OBS Responses
+						</label>
+					</div>
 					<div className='toggle-field interval-prefs-element'>
 						<input
 							type='checkbox'
@@ -319,93 +319,104 @@ const App = (): JSX.Element => {
 						<input
 							type='text'
 							id='is-report-enabled'
-							name='reportEmailAddress' // You might want to change this name to match its purpose, e.g., 'intervalDuration'
-							value={formData.reportEmailAddress} // Again, you might want to update this to formData.intervalDuration
+							name='streamerEmailAddress' // You might want to change this name to match its purpose, e.g., 'intervalDuration'
+							value={formData.streamerEmailAddress} // Again, you might want to update this to formData.intervalDuration
 							onChange={handleInputChange}
 							placeholder=''
 							disabled={!isReportEnabled}
 						/>
 						<span
 							className={`question-icon ${
-								showTooltip === 'reportEmailAddress' ? 'active-icon' : ''
+								showTooltip === 'streamerEmailAddress' ? 'active-icon' : ''
 							}`}
 							onClick={() =>
 								setShowTooltip(
-									showTooltip === 'reportEmailAddress'
+									showTooltip === 'streamerEmailAddress'
 										? null
-										: 'reportEmailAddress'
+										: 'streamerEmailAddress'
 								)
 							}
 						>
 							?
 						</span>
 					</div>
-
-					<div className='app-form-title start-chatbot'>Start Chatbot:</div>
-					<button type='submit'>Start</button>
 				</div>
 
 				<div className='app-container-column'>
-					<div className='app-form-title'>Information:</div>
-					<div className='app-info-panel'>
-						{/* Display information about the chatbot stream here */}
-						{showTooltip === 'twitchChannelName' && (
-							<div className='info-tooltip'>
-								Enter your primary Twitch channel's name here
-							</div>
-						)}
-						{showTooltip === 'twitchChatbotName' && (
-							<div className='info-tooltip'>
-								Enter the your Twitch channel's chatbot name here. More details
-								can be found{' '}
-								<a
-									href='https://np-chatbot-site.web.app/'
-									rel='noopener'
-									target='_blank'
-								>
-									here
-								</a>
-							</div>
-						)}
-						{showTooltip === 'oauthKey' && (
-							<div className='info-tooltip'>
-								Enter the OAuth key that you previously generated for your
-								Twitch channel here
-							</div>
-						)}
-						{showTooltip === 'seratoDisplayName' && (
-							<div className='info-tooltip'>
-								Enter the display name from your Serato playlist page here
-							</div>
-						)}
-						{showTooltip === 'obsIntervalDuration' && (
-							<div className='info-tooltip'>
-								Enter the duration (in minutes) for your interval messages to
-								appear
-							</div>
-						)}
-						{showTooltip === 'obsWebsocketAddress' && (
-							<div className='info-tooltip'>
-								Enter your local OBS web socket address here
-							</div>
-						)}
-						{showTooltip === 'obsWebsocketPassword' && (
-							<div className='info-tooltip'>
-								If your web socket connection is secured within OBS, please
-								enter the password here (optional)
-							</div>
-						)}
-						{showTooltip === 'reportEmailAddress' && (
-							<div className='info-tooltip'>
-								Enter the email address that you'd like your post-stream report send to
-							</div>
-						)}
+					{/* <div className='app-form-title'>Information:</div> */}
+					<div className='app-form-title start-chatbot'>Chatbot Controls:</div>
+					<div>
+						<button className='bot-control-button' type='submit'>
+							Connect
+						</button>
+						<button className='bot-control-button' type='submit'>
+							End Session
+						</button>
+					</div>
+					<div className='app-form-title session-info'>Session Info:</div>
+					<div className='session-info-label'>
+						Status:<span className='session-info-status'>not connected</span>
+					</div>
+					<div className='session-info-label'>
+						Uptime:<span className='session-info-status'>x hours & x mins</span>
 					</div>
 				</div>
 			</div>
 			<div className='message-panel'>
+				<div className='app-form-title'>More Info:</div>
 				{message && <div className='success-message'>{message}</div>}
 				{error && <div className='error-message'>{error}</div>}
+				{showTooltip === 'twitchChannelName' && (
+					<div className='info-tooltip'>
+						Enter your primary Twitch channel's name here
+					</div>
+				)}
+				{showTooltip === 'twitchChatbotName' && (
+					<div className='info-tooltip'>
+						Enter the your Twitch channel's chatbot name here. More details can
+						be found{' '}
+						<a
+							href='https://np-chatbot-site.web.app/'
+							rel='noreferrer'
+							target='_blank'
+						>
+							here
+						</a>
+					</div>
+				)}
+				{showTooltip === 'oauthKey' && (
+					<div className='info-tooltip'>
+						Enter the OAuth key that you previously generated for your Twitch
+						channel here
+					</div>
+				)}
+				{showTooltip === 'seratoDisplayName' && (
+					<div className='info-tooltip'>
+						Enter the display name from your Serato playlist page here
+					</div>
+				)}
+				{showTooltip === 'obsIntervalDuration' && (
+					<div className='info-tooltip'>
+						Enter the duration (in minutes) for your interval messages to appear
+					</div>
+				)}
+				{showTooltip === 'obsWebsocketAddress' && (
+					<div className='info-tooltip'>
+						Enter your local OBS web socket address here
+					</div>
+				)}
+				{showTooltip === 'obsWebsocketPassword' && (
+					<div className='info-tooltip'>
+						If your web socket connection is secured within OBS, please enter
+						the password here (optional)
+					</div>
+				)}
+				{showTooltip === 'streamerEmailAddress' && (
+					<div className='info-tooltip'>
+						Enter the email address that you'd like your post-stream report send
+						to
+					</div>
+				)}
 			</div>
 		</div>
 	)

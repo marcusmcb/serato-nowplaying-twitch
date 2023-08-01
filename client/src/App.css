@@ -40,10 +40,7 @@
 	display: flex;
 	align-items: center; /* Align items vertically (labels and inputs) */
 	margin-bottom: 10px;
-}
-
-.start-chatbot {
-	margin-top: 20px;
+	margin-top: ;
 }
 
 .button-row {
@@ -102,10 +99,16 @@ button:hover {
 	color: #aaa; /* Adjust to desired grey color */
 }
 
-.obs-prefs-element,
-.report-prefs-element,
+.obs-prefs-element {
+	margin-top: 15px;
+}
+
+.report-prefs-element {
+	margin-top: 30px;
+}
+
 .interval-prefs-element {
-	margin-top: 15px;		
+	margin-top: 40px;
 }
 
 .question-icon,
@@ -134,14 +137,28 @@ button:hover {
 }
 
 .info-tooltip {
-	position: absolute;
-	top: 100%;
-	left: 0;
-	margin-top: 30px;
 	color: white;
 	background-color: rgb(49, 49, 49);
-	font-family: 'Fira Sans', sans-serif;	
-  width: 30vw;
+	font-family: 'Fira Sans', sans-serif;
+	margin-top: 5px;
+}
+
+.bot-control-button {
+	margin-right: 30px;
+}
+
+.session-info {
+	margin-top: 30px;
+}
+
+.session-info-status {
+	margin-left: 15px;
+	color: rgb(240, 253, 155);
+}
+
+.session-info-label {
+	font-family: 'Fira Sans', sans-serif;
+	margin: 15px 0px 15px 0px;
 }
 
 .info-tooltip a:visited {
@@ -166,7 +183,7 @@ button:hover {
 }
 
 .message-panel {
-	height: 30px;
+	height: 100px;
 }
 
 .success-message {
@@ -184,7 +201,7 @@ button:hover {
 .app-info-panel {
 	font-family: 'Fira Sans', sans-serif;
 	position: relative;
-  margin-top: 15px;
+	margin-top: 15px;
 }
 
 input {
