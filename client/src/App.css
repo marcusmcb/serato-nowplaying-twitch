@@ -1,7 +1,16 @@
+:root {
+	--main-bg-color: rgb(49, 49, 49);
+	--highlight-color: rgb(74, 242, 228);
+	--success-color: rgb(87, 255, 104);
+	--error-color: rgb(255, 136, 136);
+	--fira-sans: 'Fira Sans', sans-serif;
+	--dm-sans: 'DM Sans', sans-serif;
+}
+
 .App {
 	margin: 15px 0px 15px 0;
 	padding: 15px;
-	background-color: rgb(49, 49, 49);
+	background-color: var(--main-bg-color);
 }
 
 .app-container {
@@ -15,7 +24,7 @@
 }
 
 .app-title {
-	font-family: 'Fira Sans', sans-serif;
+	font-family: var(--fira-sans);
 	font-weight: 600;
 	font-size: 40px;
 	color: white;
@@ -23,8 +32,8 @@
 }
 
 .app-form-title {
-	font-family: 'Fira Sans', sans-serif;
-	color: rgb(74, 242, 228);
+	font-family: var(--fira-sans);
+	color: var(--highlight-color);
 	font-size: 20px;
 	padding: 15px 0 20px 0;
 }
@@ -38,9 +47,8 @@
 
 .form-field {
 	display: flex;
-	align-items: center; /* Align items vertically (labels and inputs) */
+	align-items: center;
 	margin-bottom: 10px;
-	margin-top: ;
 }
 
 .button-row {
@@ -49,7 +57,7 @@
 }
 
 label {
-	font-family: 'Fira Sans', sans-serif;
+	font-family: var(--fira-sans);
 	color: white;
 	font-size: 16px;
 	min-width: 200px;
@@ -83,7 +91,7 @@ button {
 }
 
 button:hover {
-	background-color: rgb(74, 242, 228);
+	background-color: var(--highlight-color);;
 	color: black;
 }
 
@@ -96,7 +104,7 @@ button:hover {
 
 /* App.css */
 .disabled-label {
-	color: #aaa; /* Adjust to desired grey color */
+	color: #aaa;
 }
 
 .obs-prefs-element {
@@ -114,7 +122,6 @@ button:hover {
 .question-icon,
 .active-icon {
 	display: inline-block;
-	
 	border-radius: 50%;
 	width: 25px;
 	height: 25px;
@@ -122,7 +129,7 @@ button:hover {
 	line-height: 25px;
 	cursor: pointer;
 	margin-left: 10px;
-	font-family: 'Kira Sans', sans-serif;
+	font-family: var(--fira-sans);
 	cursor: pointer;
 }
 
@@ -132,14 +139,14 @@ button:hover {
 }
 
 .active-icon {
-	background-color: rgb(74, 242, 228);
+	background-color: var(--highlight-color);;
 	color: rgb(49, 49, 49);
 }
 
 .info-tooltip {
 	color: white;
 	background-color: rgb(49, 49, 49);
-	font-family: 'Fira Sans', sans-serif;
+	font-family: var(--fira-sans);
 	margin-top: 5px;
 }
 
@@ -157,12 +164,12 @@ button:hover {
 }
 
 .session-info-label {
-	font-family: 'Fira Sans', sans-serif;
+	font-family: var(--fira-sans);
 	margin: 15px 0px 15px 0px;
 }
 
 .info-tooltip a:visited {
-	color: rgb(74, 242, 228);
+	color: var(--highlight-color);;
 }
 
 .toggle-field {
@@ -174,12 +181,12 @@ button:hover {
 
 .toggle-field label {
 	margin-left: 10px;
-	flex: 1; /* Let the label expand and fill the remaining space */
+	flex: 1;
 }
 
 .disabled-label {
-	color: #888; /* Or any other grey color */
-	pointer-events: none; /* Prevent interactions with the label when disabled */
+	color: #888;
+	pointer-events: none;
 }
 
 .message-panel {
@@ -187,29 +194,29 @@ button:hover {
 }
 
 .success-message {
-	color: rgb(87, 255, 104);
-	font-family: 'DM Sans', sans-serif;
+	color: var(--success-color);
+	font-family: var(--dm-sans);
 	font-size: 20px;
 }
 
 .error-message {
-	color: rgb(255, 136, 136);
-	font-family: 'DM Sans', sans-serif;
+	color: var(--error-color);
+	font-family: var(--dm-sans);
 	font-size: 20px;
 }
 
 .app-info-panel {
-	font-family: 'Fira Sans', sans-serif;
+	font-family: var(--fira-sans);
 	position: relative;
 	margin-top: 15px;
 }
 
 input {
-	font-family: 'DM Sans', sans-serif;
+	font-family: var(--dm-sans);
 }
 
 input[type='checkbox'] {
-	-webkit-appearance: none; /* Remove default styling */
+	-webkit-appearance: none;
 	width: 35px;
 	height: 18px;
 	border-radius: 9px;
@@ -217,7 +224,7 @@ input[type='checkbox'] {
 	position: relative;
 	outline: none;
 	cursor: pointer;
-	flex-shrink: 0; /* Prevent the input from shrinking and maintain its size */
+	flex-shrink: 0;
 }
 
 input[type='checkbox']:before {
