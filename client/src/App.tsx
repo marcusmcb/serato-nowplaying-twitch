@@ -46,12 +46,28 @@ const App = (): JSX.Element => {
 	const [isIntervalEnabled, setIsIntervalEnabled] = useState(false)
 	const [showTooltip, setShowTooltip] = useState<string | null>(null)
 
-	// useEffect to update isObsResponseEnabled when obsWebsocketAddress and obsWebsocketPassword are filled
 	useEffect(() => {
 		setIsObsResponseEnabled(
 			!!formData.obsWebsocketAddress && !!formData.obsWebsocketPassword
 		)
 	}, [formData.obsWebsocketAddress, formData.obsWebsocketPassword])
+
+	useEffect(() => {
+		const handleOutsideClick = (event: any) => {
+			if (
+				showTooltip &&
+				!event.target.closest('.question-icon') &&
+				!event.target.closest('.info-tooltip')
+			) {
+				setShowTooltip(null)
+			}
+		}
+
+		window.addEventListener('click', handleOutsideClick)
+		return () => {
+			window.removeEventListener('click', handleOutsideClick)
+		}
+	}, [showTooltip])
 
 	return (
 		<div className='App'>
@@ -71,8 +87,13 @@ const App = (): JSX.Element => {
 							/>
 							<span
 								className='question-icon'
-								onMouseEnter={() => setShowTooltip('twitchChannelName')}
-								onMouseLeave={() => setShowTooltip(null)}
+								onClick={() =>
+									setShowTooltip(
+										showTooltip === 'twitchChannelName'
+											? null
+											: 'twitchChannelName'
+									)
+								}
 							>
 								?
 							</span>
@@ -88,8 +109,13 @@ const App = (): JSX.Element => {
 							/>
 							<span
 								className='question-icon'
-								onMouseEnter={() => setShowTooltip('twitchChatbotName')}
-								onMouseLeave={() => setShowTooltip(null)}
+								onClick={() =>
+									setShowTooltip(
+										showTooltip === 'twitchChatbotName'
+											? null
+											: 'twitchChatbotName'
+									)
+								}
 							>
 								?
 							</span>
@@ -105,8 +131,13 @@ const App = (): JSX.Element => {
 							/>
 							<span
 								className='question-icon'
-								onMouseEnter={() => setShowTooltip('oauthKey')}
-								onMouseLeave={() => setShowTooltip(null)}
+								onClick={() =>
+									setShowTooltip(
+										showTooltip === 'oauthKey'
+											? null
+											: 'oauthKey'
+									)
+								}
 							>
 								?
 							</span>
@@ -122,8 +153,13 @@ const App = (): JSX.Element => {
 							/>
 							<span
 								className='question-icon'
-								onMouseEnter={() => setShowTooltip('seratoDisplayName')}
-								onMouseLeave={() => setShowTooltip(null)}
+								onClick={() =>
+									setShowTooltip(
+										showTooltip === 'seratoDisplayName'
+											? null
+											: 'seratoDisplayName'
+									)
+								}
 							>
 								?
 							</span>
@@ -171,8 +207,13 @@ const App = (): JSX.Element => {
 						/>
 						<span
 							className='question-icon'
-							onMouseEnter={() => setShowTooltip('obsIntervalDuration')}
-							onMouseLeave={() => setShowTooltip(null)}
+							onClick={() =>
+								setShowTooltip(
+									showTooltip === 'obsIntervalDuration'
+										? null
+										: 'obsIntervalDuration'
+								)
+							}
 						>
 							?
 						</span>
@@ -205,8 +246,13 @@ const App = (): JSX.Element => {
 						/>
 						<span
 							className='question-icon'
-							onMouseEnter={() => setShowTooltip('obsWebsocketAddress')}
-							onMouseLeave={() => setShowTooltip(null)}
+							onClick={() =>
+								setShowTooltip(
+									showTooltip === 'obsWebsocketAddress'
+										? null
+										: 'obsWebsocketAddress'
+								)
+							}
 						>
 							?
 						</span>
@@ -225,8 +271,13 @@ const App = (): JSX.Element => {
 						/>
 						<span
 							className='question-icon'
-							onMouseEnter={() => setShowTooltip('obsWebsocketPassword')}
-							onMouseLeave={() => setShowTooltip(null)}
+							onClick={() =>
+								setShowTooltip(
+									showTooltip === 'obsWebsocketPassword'
+										? null
+										: 'obsWebsocketPassword'
+								)
+							}
 						>
 							?
 						</span>
@@ -246,12 +297,14 @@ const App = (): JSX.Element => {
 						)}
 						{showTooltip === 'twitchChatbotName' && (
 							<div className='info-tooltip'>
-								Enter the your Twitch channel's chatbot name here
+								Enter the your Twitch channel's chatbot name here. More details
+								can be found <a href='https://np-chatbot-site.web.app/'>here</a>
 							</div>
 						)}
 						{showTooltip === 'oauthKey' && (
 							<div className='info-tooltip'>
-								Enter the OAuth key that you previously generated for your Twitch channel here
+								Enter the OAuth key that you previously generated for your
+								Twitch channel here
 							</div>
 						)}
 						{showTooltip === 'seratoDisplayName' && (
@@ -261,7 +314,8 @@ const App = (): JSX.Element => {
 						)}
 						{showTooltip === 'obsIntervalDuration' && (
 							<div className='info-tooltip'>
-								Enter the duration (in minutes) for your interval messages to appear
+								Enter the duration (in minutes) for your interval messages to
+								appear
 							</div>
 						)}
 						{showTooltip === 'obsWebsocketAddress' && (
@@ -271,7 +325,8 @@ const App = (): JSX.Element => {
 						)}
 						{showTooltip === 'obsWebsocketPassword' && (
 							<div className='info-tooltip'>
-								If your web socket connection is secured within OBS, please enter the password here (optional)
+								If your web socket connection is secured within OBS, please
+								enter the password here (optional)
 							</div>
 						)}
 					</div>
