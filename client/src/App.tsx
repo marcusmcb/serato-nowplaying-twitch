@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import TitleBar from './components/TitleBar'
 import './App.css'
 
 const App = (): JSX.Element => {
@@ -72,8 +73,8 @@ const App = (): JSX.Element => {
 	}, [showTooltip])
 
 	return (
-		<div className='App'>
-			<div className='app-title'>npChatbot App</div>
+		<div className='App'>			
+			<TitleBar/>
 			<div className='app-container'>
 				<div className='app-container-column'>
 					<div className='app-form-title'>Enter your credentials below:</div>
