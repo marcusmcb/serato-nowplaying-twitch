@@ -14,6 +14,24 @@ const {
 } = require('./LiveReportHelpers/liveReportHelpers')
 // const compareTimes = require("./LiveReportHelpers/liveReportHelpers");
 
+const removeLargestNumber = (arr) => {
+	const indexOfLargest = arr.indexOf(Math.max(...arr))
+	if (indexOfLargest !== -1) {
+		arr.splice(indexOfLargest, 1)
+	}
+	return arr
+}
+
+const isDoubleOrMore = (longestTrack, secondLongestTrack) => {
+	let percentageDifference =
+		((longestTrack - secondLongestTrack) / secondLongestTrack) * 100
+
+	return {
+		isDoubleOrMore: longestTrack > 2 * secondLongestTrack,
+		percentageDifference: percentageDifference.toFixed(),
+	}
+}
+
 const createLiveReport = async (url) => {
 	const playlistArtistName = extractPlaylistName(url)
 
@@ -85,24 +103,6 @@ const createLiveReport = async (url) => {
 			}
 		})
 
-		const removeLargestNumber = (arr) => {
-			const indexOfLargest = arr.indexOf(Math.max(...arr))
-			if (indexOfLargest !== -1) {
-				arr.splice(indexOfLargest, 1)
-			}
-			return arr
-		}
-
-		const isDoubleOrMore = (longestTrack, secondLongestTrack) => {
-			let percentageDifference =
-				((longestTrack - secondLongestTrack) / secondLongestTrack) * 100
-
-			return {
-				isDoubleOrMore: longestTrack > 2 * secondLongestTrack,
-				percentageDifference: percentageDifference,
-			}
-		}
-
 		// create an array of track lengths in MS and send to
 		// calculateAverageTime to convert and return average
 		let msArray = []
@@ -118,14 +118,21 @@ const createLiveReport = async (url) => {
 		console.log(longestTrackValue)
 		console.log(secondLongestTrackValue)
 		console.log(remainingArray)
+    
+    // add method to calculate average time as MS for remainingArray
+    
+    // pass average time in MS from remaining array to
+    // isDoubleOrMore and update method to  check if 
+    // longestTrackValue is more than double average time
 
+    console.log(calculateAverageTime(remainingArray))
 		console.log(isDoubleOrMore(longestTrackValue, secondLongestTrackValue))
 
 		let lastMSArray = msArray.slice(0, -1)
 		let averageTrackLength = calculateAverageTime(msArray)
 		let previousAverageTrackLength = calculateAverageTime(lastMSArray)
-		console.log(averageTrackLength)
-		console.log(previousAverageTrackLength)
+		// console.log(averageTrackLength)
+		// console.log(previousAverageTrackLength)
 		let averageDifference = compareTimes(
 			averageTrackLength,
 			previousAverageTrackLength
