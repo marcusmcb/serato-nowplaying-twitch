@@ -17,7 +17,8 @@ const displayOBSMessage =
 
 // const url = `https://serato.com/playlists/${process.env.SERATO_DISPLAY_NAME}/live`;
 // const url = 'https://serato.com/playlists/DJ_Marcus_McBride/npchatbot-test_2'
-const url = 'https://serato.com/playlists/DJ_Marcus_McBride/sunday-twitch-set'
+// const url = 'https://serato.com/playlists/DJ_Marcus_McBride/sunday-twitch-set'
+const url = 'https://serato.com/playlists/DJ_Marcus_McBride/8-1-2023'
 
 // create tmi instance
 const client = new tmi.Client({
