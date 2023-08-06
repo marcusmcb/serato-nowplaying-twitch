@@ -8,7 +8,7 @@ app.use(bodyParser.json())
 app.use(cors())
 
 app.get('/', (req, res) => {
-  res.send('Hello world')
+  res.send('Hello world, I am here YO!')
 })
 
 const PORT = 3001
