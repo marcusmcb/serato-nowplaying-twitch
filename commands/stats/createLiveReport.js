@@ -14,22 +14,36 @@ const {
 } = require('./LiveReportHelpers/liveReportHelpers')
 // const compareTimes = require("./LiveReportHelpers/liveReportHelpers");
 
+// move into helper module
 const removeLargestNumber = (arr) => {
-	const indexOfLargest = arr.indexOf(Math.max(...arr))
+	const newArr = [...arr] // Make a copy of the original array
+	const indexOfLargest = newArr.indexOf(Math.max(...newArr))
+
 	if (indexOfLargest !== -1) {
-		arr.splice(indexOfLargest, 1)
+		newArr.splice(indexOfLargest, 1)
 	}
-	return arr
+
+	return newArr
 }
 
+// move into helper module
 const isDoubleOrMore = (longestTrack, secondLongestTrack) => {
 	let percentageDifference =
 		((longestTrack - secondLongestTrack) / secondLongestTrack) * 100
-
 	return {
-		isDoubleOrMore: longestTrack > 2 * secondLongestTrack,
+		isDoubleOrMore: longestTrack > 3 * secondLongestTrack,
 		percentageDifference: percentageDifference.toFixed(),
 	}
+}
+
+const calculateAverageMilliseconds = (times) => {
+	const getAverage = (numbers) => {
+		return Math.round(
+			numbers.reduce((acc, number) => acc + number, 0) / numbers.length
+		)
+	}
+
+	return getAverage(times)
 }
 
 const createLiveReport = async (url) => {
@@ -105,6 +119,7 @@ const createLiveReport = async (url) => {
 
 		// create an array of track lengths in MS and send to
 		// calculateAverageTime to convert and return average
+
 		let msArray = []
 
 		for (let i = 0; i < trackLog.length - 1; i++) {
@@ -114,19 +129,27 @@ const createLiveReport = async (url) => {
 		const longestTrackValue = Math.max(...msArray)
 		const remainingArray = removeLargestNumber(msArray)
 		const secondLongestTrackValue = Math.max(...remainingArray)
+    const actualAverage = calculateAverageMilliseconds(msArray)
+    const adjustedAverage = calculateAverageMilliseconds(remainingArray)
+
 
 		console.log(longestTrackValue)
 		console.log(secondLongestTrackValue)
-		console.log(remainingArray)
-    
-    // add method to calculate average time as MS for remainingArray
-    
-    // pass average time in MS from remaining array to
-    // isDoubleOrMore and update method to  check if 
-    // longestTrackValue is more than double average time
 
-    console.log(calculateAverageTime(remainingArray))
+		console.log(msArray)
+		console.log(remainingArray)
+
+    console.log(actualAverage)
+    console.log(adjustedAverage)
+
+		// add method to calculate average time as MS for remainingArray
+		
+		// pass average time in MS from remaining array to
+		// isDoubleOrMore and update method to  check if
+		// longestTrackValue is more than double average time
+
 		console.log(isDoubleOrMore(longestTrackValue, secondLongestTrackValue))
+		console.log(isDoubleOrMore(actualAverage, adjustedAverage))
 
 		let lastMSArray = msArray.slice(0, -1)
 		let averageTrackLength = calculateAverageTime(msArray)
