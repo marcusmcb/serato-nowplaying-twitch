@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 import TitleBar from './components/TitleBar'
 import './App.css'
 
@@ -22,7 +23,7 @@ const App = (): JSX.Element => {
 		setFormData((prevFormData) => ({ ...prevFormData, [name]: value }))
 	}
 
-	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
 
 		// Validate the form fields
@@ -38,6 +39,12 @@ const App = (): JSX.Element => {
 		setError('')
 		console.log(formData)
 		setMessage('Credentials successfully entered')
+		try {
+			const response = await axios.post(`http://localhost:5000/test`, formData)
+			console.log(response.data)
+		} catch (error) {
+			console.error('There was an error: ', error)
+		}
 		setTimeout(() => {
 			setMessage('')
 		}, 3000)
