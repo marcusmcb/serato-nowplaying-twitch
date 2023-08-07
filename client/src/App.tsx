@@ -12,7 +12,8 @@ const App = (): JSX.Element => {
 		obsWebsocketAddress: '',
 		obsWebsocketPassword: '',
 		obsIntervalDuration: '',
-		streamerEmailAddress: '',
+		obsClearDisplayTime: '',
+		userEmailAddress: '',
 	})
 
 	const [error, setError] = useState('')
@@ -41,6 +42,7 @@ const App = (): JSX.Element => {
 		setMessage('Credentials successfully entered')
 		try {
 			const response = await axios.post(`http://localhost:5000/test`, formData)
+			console.log('EXPRESS RESPONSE: ')
 			console.log(response.data)
 		} catch (error) {
 			console.error('There was an error: ', error)
@@ -57,9 +59,22 @@ const App = (): JSX.Element => {
 	const [showTooltip, setShowTooltip] = useState<string | null>(null)
 
 	useEffect(() => {
-		setIsObsResponseEnabled(
-			!!formData.obsWebsocketAddress && !!formData.obsWebsocketPassword
-		)
+		const getData = async () => {
+			try {
+				const response = await axios.get('http://localhost:5000/userInfo')
+				console.log('STORED USER DATA:')
+				console.log(response.data)
+			} catch (error) {
+				console.error('An error has occurred: ', error)
+			}
+		}
+		getData()
+	}, [])
+
+	// ... rest of your imports and useState initializations ...
+
+	useEffect(() => {
+		setIsObsResponseEnabled(false) // Always reset to false whenever address or password changes
 	}, [formData.obsWebsocketAddress, formData.obsWebsocketPassword])
 
 	useEffect(() => {
@@ -80,8 +95,8 @@ const App = (): JSX.Element => {
 	}, [showTooltip])
 
 	return (
-		<div className='App'>			
-			<TitleBar/>
+		<div className='App'>
+			<TitleBar />
 			<div className='app-container'>
 				<div className='app-container-column'>
 					<div className='app-form-title'>Enter your credentials below:</div>
@@ -241,11 +256,16 @@ const App = (): JSX.Element => {
 				</div>
 				<div className='app-container-column'>
 					<div className='app-form-title'>Preferences:</div>
+
 					<div className='toggle-field obs-prefs-element'>
 						<input
 							type='checkbox'
 							id='obsResponseToggle'
-							disabled={!isObsResponseEnabled}
+							checked={isObsResponseEnabled}
+							disabled={
+								!(formData.obsWebsocketAddress && formData.obsWebsocketPassword)
+							}
+							onChange={() => setIsObsResponseEnabled(!isObsResponseEnabled)}
 						/>
 						<label
 							htmlFor='obsResponseToggle'
@@ -254,6 +274,40 @@ const App = (): JSX.Element => {
 							Enable On-Screen OBS Responses
 						</label>
 					</div>
+
+					<div className='form-field'>
+						<label
+							htmlFor='obs-clear-display-time'
+							className={!isObsResponseEnabled ? 'disabled-label' : ''}
+						>
+							On-screen display time:
+						</label>
+
+						<input
+							type='text'
+							id='obs-clear-display-time'
+							name='obsClearDisplayTime' // You might want to change this name to match its purpose, e.g., 'intervalDuration'
+							value={formData.obsClearDisplayTime} // Again, you might want to update this to formData.intervalDuration
+							onChange={handleInputChange}
+							placeholder='enter time in seconds'
+							disabled={!isObsResponseEnabled}
+						/>
+						<span
+							className={`question-icon ${
+								showTooltip === 'obsClearDisplayTime' ? 'active-icon' : ''
+							}`}
+							onClick={() =>
+								setShowTooltip(
+									showTooltip === 'obsClearDisplayTime'
+										? null
+										: 'obsClearDisplayTime'
+								)
+							}
+						>
+							?
+						</span>
+					</div>
+
 					<div className='toggle-field interval-prefs-element'>
 						<input
 							type='checkbox'
@@ -327,21 +381,19 @@ const App = (): JSX.Element => {
 						<input
 							type='text'
 							id='is-report-enabled'
-							name='streamerEmailAddress' // You might want to change this name to match its purpose, e.g., 'intervalDuration'
-							value={formData.streamerEmailAddress} // Again, you might want to update this to formData.intervalDuration
+							name='userEmailAddress' // You might want to change this name to match its purpose, e.g., 'intervalDuration'
+							value={formData.userEmailAddress} // Again, you might want to update this to formData.intervalDuration
 							onChange={handleInputChange}
 							placeholder=''
 							disabled={!isReportEnabled}
 						/>
 						<span
 							className={`question-icon ${
-								showTooltip === 'streamerEmailAddress' ? 'active-icon' : ''
+								showTooltip === 'userEmailAddress' ? 'active-icon' : ''
 							}`}
 							onClick={() =>
 								setShowTooltip(
-									showTooltip === 'streamerEmailAddress'
-										? null
-										: 'streamerEmailAddress'
+									showTooltip === 'userEmailAddress' ? null : 'userEmailAddress'
 								)
 							}
 						>
@@ -419,7 +471,7 @@ const App = (): JSX.Element => {
 						the password here (optional)
 					</div>
 				)}
-				{showTooltip === 'streamerEmailAddress' && (
+				{showTooltip === 'userEmailAddress' && (
 					<div className='info-tooltip'>
 						Enter the email address that you'd like your post-stream report send
 						to
