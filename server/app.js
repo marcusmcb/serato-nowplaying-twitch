@@ -50,11 +50,11 @@ app.post('/test', async (req, res) => {
 	const user = {
 		twitchChannelName: req.body.twitchChannelName,
 		twitchChatbotName: req.body.twitchChatbotName,
-		twitchOAuthKey: req.body.oauthKey,
+		twitchOAuthKey: req.body.twitchOAuthKey,
 		seratoDisplayName: req.body.seratoDisplayName,
 		obsWebsocketAddress: req.body.obsWebsocketAddress,
 		obsWebsocketPassword: req.body.obsWebsocketPassword,
-		obsIntervalDuration: Number(req.body.obsIntervalDuration),
+		intervalMessageDuration: Number(req.body.intervalMessageDuration),
     obsClearDisplayTime: Number(req.body.obsClearDisplayTime),
 		userEmailAddress: req.body.userEmailAddress,
 	}

@@ -4,12 +4,12 @@ type PreferencesPanelProps = {
   formData: {
     twitchChannelName: string
 		twitchChatbotName: string
-		oauthKey: string
+		twitchOAuthKey: string
 		seratoDisplayName: string
-		obsWebsocketAddress?: string // optional
-		obsWebsocketPassword?: string // optional
+		obsWebsocketAddress?: string
+		obsWebsocketPassword?: string
     obsClearDisplayTime: string
-    obsIntervalDuration: string
+    intervalMessageDuration: string
     userEmailAddress: string
   };
   isObsResponseEnabled: boolean;
@@ -105,21 +105,21 @@ const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
 				<input
 					type='text'
 					id='obs-interval-duration'
-					name='obsIntervalDuration' // You might want to change this name to match its purpose, e.g., 'intervalDuration'
-					value={props.formData.obsIntervalDuration} // Again, you might want to update this to props.formData.intervalDuration
+					name='intervalMessageDuration' // You might want to change this name to match its purpose, e.g., 'intervalDuration'
+					value={props.formData.intervalMessageDuration} // Again, you might want to update this to props.formData.intervalDuration
 					onChange={props.handleInputChange}
 					placeholder='enter time in minutes'
 					disabled={!props.isIntervalEnabled}
 				/>
 				<span
 					className={`question-icon ${
-						props.showTooltip === 'obsIntervalDuration' ? 'active-icon' : ''
+						props.showTooltip === 'intervalMessageDuration' ? 'active-icon' : ''
 					}`}
 					onClick={() =>
 						props.setShowTooltip(
-							props.showTooltip === 'obsIntervalDuration'
+							props.showTooltip === 'intervalMessageDuration'
 								? null
-								: 'obsIntervalDuration'
+								: 'intervalMessageDuration'
 						)
 					}
 				>

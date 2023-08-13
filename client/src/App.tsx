@@ -11,13 +11,16 @@ const App = (): JSX.Element => {
 	const [formData, setFormData] = useState({
 		twitchChannelName: '',
 		twitchChatbotName: '',
-		oauthKey: '',
+		twitchOAuthKey: '',
 		seratoDisplayName: '',
 		obsWebsocketAddress: '',
 		obsWebsocketPassword: '',
-		obsIntervalDuration: '',
+		intervalMessageDuration: '',
 		obsClearDisplayTime: '',
 		userEmailAddress: '',
+		isObsResponseEnabled: false,
+		isIntervalEnabled: false,
+		isReportEnabled: false
 	})
 
 	const [error, setError] = useState('')
@@ -35,7 +38,7 @@ const App = (): JSX.Element => {
 		if (
 			!formData.twitchChannelName ||
 			!formData.twitchChatbotName ||
-			!formData.oauthKey ||
+			!formData.twitchOAuthKey ||
 			!formData.seratoDisplayName
 		) {
 			setError('Please fill in all fields.')
@@ -68,6 +71,9 @@ const App = (): JSX.Element => {
 				const response = await axios.get('http://localhost:5000/userInfo')
 				console.log('STORED USER DATA:')
 				console.log(response.data)
+				if (response.data && Object.keys(response.data).length > 0) {
+					setFormData(response.data)
+				}
 			} catch (error) {
 				console.error('An error has occurred: ', error)
 			}

@@ -5,7 +5,7 @@ type CredentialsPanelProps = {
 	formData: {
 		twitchChannelName: string
 		twitchChatbotName: string
-		oauthKey: string
+		twitchOAuthKey: string
 		seratoDisplayName: string
 		obsWebsocketAddress?: string
 		obsWebsocketPassword?: string
@@ -37,7 +37,7 @@ const fieldsConfig: FieldConfig[] = [
 	{
 		id: 'oauth-key',
 		label: 'Twitch OAuth Key:',
-		name: 'oauthKey'
+		name: 'twitchOAuthKey'
 	},
 	{
 		id: 'serato-display-name',

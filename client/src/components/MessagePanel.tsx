@@ -34,7 +34,7 @@ const MessagePanel: React.FC<MessagePanelProps> = ({
 					</a>
 				</div>
 			)}
-			{showTooltip === 'oauthKey' && (
+			{showTooltip === 'twitchOAuthKey' && (
 				<div className='info-tooltip'>
 					Enter the OAuth key that you previously generated for your Twitch
 					channel here
@@ -45,7 +45,7 @@ const MessagePanel: React.FC<MessagePanelProps> = ({
 					Enter the display name from your Serato playlist page here
 				</div>
 			)}
-			{showTooltip === 'obsIntervalDuration' && (
+			{showTooltip === 'intervalMessageDuration' && (
 				<div className='info-tooltip'>
 					Enter the duration (in minutes) for your interval messages to appear
 				</div>
