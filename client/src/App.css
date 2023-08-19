@@ -23,6 +23,12 @@
 	margin-right: 55px;
 }
 
+@media (max-width: 1200px) {
+	.app-container {
+		flex-direction: column;
+	}
+}
+
 .app-title {
 	font-family: var(--fira-sans);
 	font-weight: 600;
