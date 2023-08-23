@@ -1,27 +1,27 @@
 import '../App.css'
 
 type PreferencesPanelProps = {
-  formData: {
-    twitchChannelName: string
+	formData: {
+		twitchChannelName: string
 		twitchChatbotName: string
 		twitchOAuthKey: string
 		seratoDisplayName: string
 		obsWebsocketAddress?: string
 		obsWebsocketPassword?: string
-    obsClearDisplayTime: string
-    intervalMessageDuration: string
-    userEmailAddress: string
-  };
-  isObsResponseEnabled: boolean;
-  setIsObsResponseEnabled: (value: boolean) => void;
-  isIntervalEnabled: boolean;
-  setIsIntervalEnabled: (value: boolean) => void;
-  isReportEnabled: boolean;
-  setIsReportEnabled: (value: boolean) => void;
-  handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  showTooltip: string | null;
-  setShowTooltip: (value: string | null) => void;
-};
+		obsClearDisplayTime: string
+		intervalMessageDuration: string
+		userEmailAddress: string
+	}
+	isObsResponseEnabled: boolean
+	setIsObsResponseEnabled: (value: boolean) => void
+	isIntervalEnabled: boolean
+	setIsIntervalEnabled: (value: boolean) => void
+	isReportEnabled: boolean
+	setIsReportEnabled: (value: boolean) => void
+	handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void
+	showTooltip: string | null
+	setShowTooltip: (value: string | null) => void
+}
 
 const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
 	return (
@@ -34,9 +34,14 @@ const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
 					id='obsResponseToggle'
 					checked={props.isObsResponseEnabled}
 					disabled={
-						!(props.formData.obsWebsocketAddress && props.formData.obsWebsocketPassword)
+						!(
+							props.formData.obsWebsocketAddress &&
+							props.formData.obsWebsocketPassword
+						)
 					}
-					onChange={() => props.setIsObsResponseEnabled(!props.isObsResponseEnabled)}
+					onChange={() =>
+						props.setIsObsResponseEnabled(!props.isObsResponseEnabled)
+					}
 				/>
 				<label
 					htmlFor='obsResponseToggle'
@@ -164,12 +169,17 @@ const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
 					}`}
 					onClick={() =>
 						props.setShowTooltip(
-							props.showTooltip === 'userEmailAddress' ? null : 'userEmailAddress'
+							props.showTooltip === 'userEmailAddress'
+								? null
+								: 'userEmailAddress'
 						)
 					}
 				>
 					?
 				</span>
+			</div>
+			<div className='button-row update-prefs-button'>
+				<button type='submit'>Update</button>
 			</div>
 		</div>
 	)

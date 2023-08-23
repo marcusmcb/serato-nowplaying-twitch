@@ -51,6 +51,13 @@
 	padding: 20px 0px 20px 0px;
 }
 
+.update-prefs-button {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	padding-top: 6px;
+}
+
 .form-field {
 	display: flex;
 	align-items: center;
@@ -118,11 +125,11 @@ button:hover {
 }
 
 .report-prefs-element {
-	margin-top: 30px;
+	margin-top: 15px;
 }
 
 .interval-prefs-element {
-	margin-top: 40px;
+	margin-top: 20px;
 }
 
 .question-icon,

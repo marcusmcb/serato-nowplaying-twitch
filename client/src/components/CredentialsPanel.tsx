@@ -1,5 +1,5 @@
 import '../App.css'
-import React from 'react';
+import React from 'react'
 
 type CredentialsPanelProps = {
 	formData: {
@@ -27,34 +27,34 @@ const fieldsConfig: FieldConfig[] = [
 	{
 		id: 'twitch-channel-name',
 		label: 'Twitch Channel Name:',
-		name: 'twitchChannelName'
+		name: 'twitchChannelName',
 	},
 	{
 		id: 'twitch-chatbot-name',
 		label: 'Twitch Chatbot Name:',
-		name: 'twitchChatbotName'
+		name: 'twitchChatbotName',
 	},
 	{
 		id: 'oauth-key',
 		label: 'Twitch OAuth Key:',
-		name: 'twitchOAuthKey'
+		name: 'twitchOAuthKey',
 	},
 	{
 		id: 'serato-display-name',
 		label: 'Serato Display Name:',
-		name: 'seratoDisplayName'
+		name: 'seratoDisplayName',
 	},
 	{
 		id: 'obs-websocket-address',
 		label: 'OBS Websocket Address:',
 		name: 'obsWebsocketAddress',
-		placeholder: 'optional'
+		placeholder: 'optional',
 	},
 	{
 		id: 'obs-websocket-password',
 		label: 'OBS Websocket Password:',
 		name: 'obsWebsocketPassword',
-		placeholder: 'optional'
+		placeholder: 'optional',
 	},
 ]
 
@@ -64,7 +64,13 @@ const InputField: React.FC<{
 	handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void
 	showTooltip: string | null
 	setShowTooltip: (value: string | null) => void
-}> = ({ fieldConfig, value, handleInputChange, showTooltip, setShowTooltip }) => (
+}> = ({
+	fieldConfig,
+	value,
+	handleInputChange,
+	showTooltip,
+	setShowTooltip,
+}) => (
 	<div className='form-field'>
 		<label htmlFor={fieldConfig.id}>{fieldConfig.label}</label>
 		<input
@@ -76,7 +82,9 @@ const InputField: React.FC<{
 			placeholder={fieldConfig.placeholder}
 		/>
 		<span
-			className={`question-icon ${showTooltip === fieldConfig.name ? 'active-icon' : ''}`}
+			className={`question-icon ${
+				showTooltip === fieldConfig.name ? 'active-icon' : ''
+			}`}
 			onClick={() =>
 				setShowTooltip(
 					showTooltip === fieldConfig.name ? null : fieldConfig.name
@@ -105,11 +113,10 @@ const CredentialsPanel: React.FC<CredentialsPanelProps> = (props) => {
 				))}
 				<div className='button-row'>
 					<button type='submit'>Submit</button>
-					<button type='submit'>Update</button>
 				</div>
 			</form>
 		</div>
 	)
 }
 
-export default CredentialsPanel;
+export default CredentialsPanel
