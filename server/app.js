@@ -45,6 +45,7 @@ app.get('/userInfo', (req, res) => {
 })
 
 app.post('/test', async (req, res) => {
+	console.log("REQUEST BODY: ")
 	console.log(req.body)
 
 	const user = {
@@ -54,9 +55,12 @@ app.post('/test', async (req, res) => {
 		seratoDisplayName: req.body.seratoDisplayName,
 		obsWebsocketAddress: req.body.obsWebsocketAddress,
 		obsWebsocketPassword: req.body.obsWebsocketPassword,
-		intervalMessageDuration: Number(req.body.intervalMessageDuration),
-		obsClearDisplayTime: Number(req.body.obsClearDisplayTime),
+		intervalMessageDuration: req.body.intervalMessageDuration,
+		obsClearDisplayTime: req.body.obsClearDisplayTime,
 		userEmailAddress: req.body.userEmailAddress,
+		isObsResponseEnabled: req.body.isObsResponseEnabled,
+		isIntervalEnabled: req.body.isIntervalEnabled,
+		isReportEnabled: req.body.isReportEnabled
 	}
 
 	await db.users.insert(user, (err, newUser) => {

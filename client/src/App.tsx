@@ -8,6 +8,8 @@ import './App.css'
 import MessagePanel from './components/MessagePanel'
 
 const App = (): JSX.Element => {
+	console.log("APP RENDERED")
+	console.log("------------")
 	const [formData, setFormData] = useState({
 		twitchChannelName: '',
 		twitchChatbotName: '',
@@ -47,8 +49,14 @@ const App = (): JSX.Element => {
 		setError('')
 		console.log(formData)
 		setMessage('Credentials successfully entered')
+		const submitData = {
+			...formData,
+			isObsResponseEnabled,
+			isIntervalEnabled,
+			isReportEnabled
+		}
 		try {
-			const response = await axios.post(`http://localhost:5000/test`, formData)
+			const response = await axios.post(`http://localhost:5000/test`, submitData)
 			console.log('EXPRESS RESPONSE: ')
 			console.log(response.data)
 		} catch (error) {
