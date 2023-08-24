@@ -8,8 +8,8 @@ import './App.css'
 import MessagePanel from './components/MessagePanel'
 
 const App = (): JSX.Element => {
-	console.log("APP RENDERED")
-	console.log("------------")
+	console.log('APP RENDERED')
+	console.log('------------')
 	const [formData, setFormData] = useState({
 		twitchChannelName: '',
 		twitchChatbotName: '',
@@ -22,7 +22,7 @@ const App = (): JSX.Element => {
 		userEmailAddress: '',
 		isObsResponseEnabled: false,
 		isIntervalEnabled: false,
-		isReportEnabled: false
+		isReportEnabled: false,
 	})
 
 	const [error, setError] = useState('')
@@ -48,22 +48,27 @@ const App = (): JSX.Element => {
 		}
 		setError('')
 		console.log(formData)
-		setMessage('Credentials successfully entered')
+
 		const submitData = {
 			...formData,
 			isObsResponseEnabled,
 			isIntervalEnabled,
-			isReportEnabled
+			isReportEnabled,
 		}
 		try {
-			const response = await axios.post(`http://localhost:5000/test`, submitData)
+			const response = await axios.post(
+				`http://localhost:5000/submitUserData`,
+				submitData
+			)
 			console.log('EXPRESS RESPONSE: ')
 			console.log(response.data)
 		} catch (error) {
 			console.error('There was an error: ', error)
 		}
+		setMessage('Credentials successfully entered')
 		setTimeout(() => {
 			setMessage('')
+			console.log('HERE')
 		}, 3000)
 	}
 
@@ -76,19 +81,25 @@ const App = (): JSX.Element => {
 	useEffect(() => {
 		const getData = async () => {
 			try {
-				const response = await axios.get('http://localhost:5000/userInfo')
+				const response = await axios.get('http://localhost:5000/getUserInfo')
 				console.log('STORED USER DATA:')
+				console.log(response)
 				console.log(response.data)
 				if (response.data && Object.keys(response.data).length > 0) {
 					setFormData(response.data)
 				}
-			} catch (error) {
-				console.error('An error has occurred: ', error)
+			} catch (error: any) {
+				if (error.response && error.response.status === 404) {
+					console.log('Database does not exist yet.')
+				} else {
+					console.error('An error has occurred: ', error)
+				}
 			}
 		}
 		getData()
 	}, [])
 	
+
 	useEffect(() => {
 		setIsObsResponseEnabled(false) // Always reset to false whenever address or password changes
 	}, [formData.obsWebsocketAddress, formData.obsWebsocketPassword])
@@ -103,7 +114,6 @@ const App = (): JSX.Element => {
 				setShowTooltip(null)
 			}
 		}
-
 		window.addEventListener('click', handleOutsideClick)
 		return () => {
 			window.removeEventListener('click', handleOutsideClick)
@@ -133,13 +143,9 @@ const App = (): JSX.Element => {
 					showTooltip={showTooltip}
 					setShowTooltip={setShowTooltip}
 				/>
-				<SessionPanel/>				
+				<SessionPanel />
 			</div>
-			<MessagePanel
-				message={message}
-				error={error}
-				showTooltip={showTooltip}				
-			/>
+			<MessagePanel message={message} error={error} showTooltip={showTooltip} />
 		</div>
 	)
 }

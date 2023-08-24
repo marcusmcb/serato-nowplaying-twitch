@@ -19,33 +19,28 @@ app.get('/', (req, res) => {
 	res.send('Hello world, I am here YO!')
 })
 
-app.get('/userInfo', (req, res) => {
+app.get('/getUserInfo', (req, res) => {
 	if (fs.existsSync('users.db')) {
-		console.log('users.db exists! Fetching the latest user information...')
+		console.log('users.db exists! Fetching the user information...')
 
-		// Fetch the latest user. Here, I'm assuming you have a timestamp or some way of determining "latest."
-		// If not, consider adding a timestamp field when inserting a user.
-		db.users
-			.find({})
-			.sort({ _id: -1 })
-			.limit(1)
-			.exec((err, users) => {
-				if (err) {
-					console.error('Error fetching the latest user:', err)
-				} else if (users && users.length) {
-					console.log('Latest user information:', users[0])
-					res.send(users[0])
-				} else {
-					console.log('No users found in the database.')
-				}
-			})
+		db.users.findOne({}, (err, user) => {
+			if (err) {
+				console.error('Error fetching the user:', err)
+			} else if (user) {
+				console.log('User information:', user)
+				res.send(user)
+			} else {
+				console.log('users.db does not exist yet')
+				res.status(404).send({ error: 'No user found.' })
+			}
+		})
 	} else {
 		console.log('users.db does not exist yet.')
 	}
 })
 
-app.post('/test', async (req, res) => {
-	console.log("REQUEST BODY: ")
+app.post('/submitUserData', async (req, res) => {
+	console.log('REQUEST BODY: ')
 	console.log(req.body)
 
 	const user = {
@@ -60,13 +55,17 @@ app.post('/test', async (req, res) => {
 		userEmailAddress: req.body.userEmailAddress,
 		isObsResponseEnabled: req.body.isObsResponseEnabled,
 		isIntervalEnabled: req.body.isIntervalEnabled,
-		isReportEnabled: req.body.isReportEnabled
+		isReportEnabled: req.body.isReportEnabled,
 	}
 
-	await db.users.insert(user, (err, newUser) => {
-		if (err) return res.status(500).send({ error: 'Database error.' })
-		console.log(newUser)
-		res.json(newUser)
+	db.users.remove({}, { multi: true }, (err, numRemoved) => {
+		if (err) return res.status(500).send({ error: 'DB error during deletion' })
+		db.users.insert(user, (err, newUser) => {
+			if (err)
+				return res.status(500).send({ error: 'DB error during creation' })
+			console.log(newUser)
+			res.json(newUser)
+		})
 	})
 })
 
