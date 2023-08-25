@@ -65,8 +65,7 @@ const App = (): JSX.Element => {
 		}
 		setMessage('Credentials successfully entered')
 		setTimeout(() => {
-			setMessage('')
-			console.log('HERE')
+			setMessage('')			
 		}, 3000)
 	}
 
@@ -81,9 +80,8 @@ const App = (): JSX.Element => {
 			console.log('APP RENDERED')
 			console.log('------------')
 			try {
-				const response = await axios.get('http://localhost:5000/getUserInfo')
-				console.log('STORED USER DATA:')
-				console.log(response)
+				const response = await axios.get('http://localhost:5000/getUserData')
+				console.log('STORED USER DATA:')				
 				console.log(response.data)
 				if (response.data && Object.keys(response.data).length > 0) {
 					setFormData(response.data)

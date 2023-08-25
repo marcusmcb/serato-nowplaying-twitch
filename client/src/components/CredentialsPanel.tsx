@@ -97,6 +97,13 @@ const InputField: React.FC<{
 )
 
 const CredentialsPanel: React.FC<CredentialsPanelProps> = (props) => {
+	console.log("Credentials Props ----")
+	console.log(props)
+	if (props.formData.twitchOAuthKey === '') {
+		console.log("no credentials stored yet")
+	} else {
+		console.log(props.formData.twitchOAuthKey)
+	}
 	return (
 		<div className='app-container-column'>
 			<div className='app-form-title'>Enter your credentials below:</div>
@@ -112,7 +119,9 @@ const CredentialsPanel: React.FC<CredentialsPanelProps> = (props) => {
 					/>
 				))}
 				<div className='button-row'>
-					<button type='submit'>Submit</button>
+					<button type='submit'>{
+						props.formData.twitchOAuthKey !== '' ? 'Update' : 'Submit'
+					}</button>
 				</div>
 			</form>
 		</div>

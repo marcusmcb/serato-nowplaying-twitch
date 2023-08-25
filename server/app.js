@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
 	res.send('Hello world, I am here YO!')
 })
 
-app.get('/getUserInfo', (req, res) => {
+app.get('/getUserData', (req, res) => {
 	if (fs.existsSync('users.db')) {
 		console.log('users.db exists! Fetching the user information...')
 
