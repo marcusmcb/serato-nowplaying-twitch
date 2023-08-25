@@ -24,6 +24,8 @@ type PreferencesPanelProps = {
 }
 
 const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
+	console.log("Props: ")
+	console.log(props)
 	return (
 		<div className='app-container-column'>
 			<div className='app-form-title'>Preferences:</div>

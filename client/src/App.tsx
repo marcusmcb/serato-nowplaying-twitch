@@ -8,8 +8,6 @@ import './App.css'
 import MessagePanel from './components/MessagePanel'
 
 const App = (): JSX.Element => {
-	console.log('APP RENDERED')
-	console.log('------------')
 	const [formData, setFormData] = useState({
 		twitchChannelName: '',
 		twitchChatbotName: '',
@@ -80,6 +78,8 @@ const App = (): JSX.Element => {
 
 	useEffect(() => {
 		const getData = async () => {
+			console.log('APP RENDERED')
+			console.log('------------')
 			try {
 				const response = await axios.get('http://localhost:5000/getUserInfo')
 				console.log('STORED USER DATA:')
@@ -87,6 +87,9 @@ const App = (): JSX.Element => {
 				console.log(response.data)
 				if (response.data && Object.keys(response.data).length > 0) {
 					setFormData(response.data)
+					setIsObsResponseEnabled(response.data.isObsResponseEnabled)
+					setIsIntervalEnabled(response.data.isIntervalEnabled)
+					setIsReportEnabled(response.data.isReportEnabled)
 				}
 			} catch (error: any) {
 				if (error.response && error.response.status === 404) {
@@ -98,7 +101,6 @@ const App = (): JSX.Element => {
 		}
 		getData()
 	}, [])
-	
 
 	useEffect(() => {
 		setIsObsResponseEnabled(false) // Always reset to false whenever address or password changes
