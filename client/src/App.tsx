@@ -7,15 +7,6 @@ import SessionPanel from './components/SessionPanel'
 import './App.css'
 import MessagePanel from './components/MessagePanel'
 
-const isValidEmail = (email: string) => {
-	// This is a simple regex for validating an email address
-	// Note: This regex does not account for every possible variation of valid email addresses
-	// but it should work for the most common forms of valid email addresses.
-	var pattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-
-	return pattern.test(email);
-}
-
 const App = (): JSX.Element => {
 	const [formData, setFormData] = useState({
 		twitchChannelName: '',
@@ -34,6 +25,15 @@ const App = (): JSX.Element => {
 
 	const [error, setError] = useState('')
 	const [message, setMessage] = useState('')
+	const [isObsResponseEnabled, setIsObsResponseEnabled] = useState(false)
+	const [isIntervalEnabled, setIsIntervalEnabled] = useState(false)
+	const [isReportEnabled, setIsReportEnabled] = useState(false)
+	const [showTooltip, setShowTooltip] = useState<string | null>(null)
+
+	const isValidEmail = (email: string) => {
+		var pattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
+		return pattern.test(email)
+	}
 
 	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = event.target
@@ -54,19 +54,19 @@ const App = (): JSX.Element => {
 			return
 		}
 		setError('')
-		console.log(formData)		
+		console.log(formData)
 
 		if (isReportEnabled && formData.userEmailAddress === '') {
 			setError('A valid email address is required for post-stream reporting.')
 			return
-		}				
+		}
 
 		if (isReportEnabled && !isValidEmail(formData.userEmailAddress)) {
 			setError('Please enter a valid email address to enable this feature.')
 			return
 		}
 
-		if (isIntervalEnabled && formData.intervalMessageDuration === '') {			
+		if (isIntervalEnabled && formData.intervalMessageDuration === '') {
 			formData.intervalMessageDuration = '15'
 		}
 
@@ -92,23 +92,16 @@ const App = (): JSX.Element => {
 		}
 		setMessage('Credentials successfully entered')
 		setTimeout(() => {
-			setMessage('')			
+			setMessage('')
 		}, 3000)
 	}
-
-	// Manage the state to enable/disable obsResponseToggle
-	const [isObsResponseEnabled, setIsObsResponseEnabled] = useState(false)
-	const [isIntervalEnabled, setIsIntervalEnabled] = useState(false)
-	const [isReportEnabled, setIsReportEnabled] = useState(false)
-	const [showTooltip, setShowTooltip] = useState<string | null>(null)
 
 	useEffect(() => {
 		const getData = async () => {
 			console.log('APP RENDERED')
-			console.log('------------')
 			try {
 				const response = await axios.get('http://localhost:5000/getUserData')
-				console.log('STORED USER DATA:')				
+				console.log('STORED USER DATA:')
 				console.log(response.data)
 				if (response.data && Object.keys(response.data).length > 0) {
 					setFormData(response.data)

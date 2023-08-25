@@ -61,11 +61,11 @@ const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
 				</label>
 
 				<input
-				className={!props.isObsResponseEnabled ? 'disabled-label' : ''}
+					className={!props.isObsResponseEnabled ? 'disabled-label' : ''}
 					type='text'
 					id='obs-clear-display-time'
-					name='obsClearDisplayTime' 
-					value={props.formData.obsClearDisplayTime} 
+					name='obsClearDisplayTime'
+					value={props.formData.obsClearDisplayTime}
 					onChange={props.handleInputChange}
 					placeholder='enter time in seconds'
 					disabled={!props.isObsResponseEnabled}
@@ -114,7 +114,7 @@ const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
 					type='text'
 					id='obs-interval-duration'
 					name='intervalMessageDuration'
-					value={props.formData.intervalMessageDuration} 
+					value={props.formData.intervalMessageDuration}
 					onChange={props.handleInputChange}
 					placeholder='enter time in minutes'
 					disabled={!props.isIntervalEnabled}
@@ -182,9 +182,6 @@ const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
 					?
 				</span>
 			</div>
-			{/* <div className='button-row update-prefs-button'>
-				<button type='submit'>Update</button>
-			</div> */}
 		</div>
 	)
 }
