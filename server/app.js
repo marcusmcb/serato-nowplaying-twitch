@@ -1,4 +1,6 @@
 const express = require('express')
+const { spawn } = require('child_process')
+const path = require('path')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const Datastore = require('nedb')
@@ -8,6 +10,7 @@ const db = {}
 
 const PORT = process.env.PORT || 5000
 const app = express()
+const scriptPath = path.join(__dirname, '../index.js')
 
 app.use(bodyParser.json())
 app.use(cors())
@@ -67,6 +70,24 @@ app.post('/submitUserData', async (req, res) => {
 			res.json(newUser)
 		})
 	})
+})
+
+app.post('/startBotScript', (req, res) => {
+	const child = spawn('node', [scriptPath])
+
+	child.stdout.on('data', (data) => {
+		console.log(`stdout: ${data}`)
+	})
+
+	child.stderr.on('data', (data) => {
+		console.error(`stderr: ${data}`)
+	})
+
+	child.on('close', (code) => {
+		console.log(`child process exited with code ${code}`)
+	})
+
+	res.send('Script started successfully')
 })
 
 app.listen(PORT, () => {

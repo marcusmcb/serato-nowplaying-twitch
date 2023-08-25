@@ -35,6 +35,17 @@ const App = (): JSX.Element => {
 		return pattern.test(email)
 	}
 
+	const handleConnect = async (event: React.MouseEvent<HTMLButtonElement>) => {
+		console.log(event)
+		console.log('Chatbot session connect clicked.')
+		try {
+			const response = await axios.post('http://localhost:5000/startBotScript')
+			console.log(response.data)
+		} catch (error) {
+			console.error('Error starting the bot script:', error)
+		}
+	}
+
 	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = event.target
 		setFormData((prevFormData) => ({ ...prevFormData, [name]: value }))
@@ -163,7 +174,7 @@ const App = (): JSX.Element => {
 					showTooltip={showTooltip}
 					setShowTooltip={setShowTooltip}
 				/>
-				<SessionPanel />
+				<SessionPanel handleConnect={handleConnect} />
 			</div>
 			<MessagePanel message={message} error={error} showTooltip={showTooltip} />
 		</div>

@@ -1,12 +1,16 @@
 import '../App.css'
 
-const SessionPanel = () => {
+interface SessionPanelProps {
+	handleConnect: (event: React.MouseEvent<HTMLButtonElement>) => void;
+}
+
+const SessionPanel: React.FC<SessionPanelProps> = (props) => {
 	return (
 		<div className='app-container-column'>
 			{/* <div className='app-form-title'>Information:</div> */}
 			<div className='app-form-title start-chatbot'>Chatbot Controls:</div>
 			<div>
-				<button className='bot-control-button' type='submit'>
+				<button className='bot-control-button' type='submit' onClick={props.handleConnect}>
 					Connect
 				</button>
 				<button className='bot-control-button' type='submit'>
