@@ -29,7 +29,6 @@ const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
 	return (
 		<div className='app-container-column'>
 			<div className='app-form-title'>Preferences:</div>
-
 			<div className='toggle-field obs-prefs-element'>
 				<input
 					type='checkbox'
@@ -110,6 +109,7 @@ const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
 				</label>
 
 				<input
+					className={!props.isIntervalEnabled ? 'disabled-label' : ''}
 					type='text'
 					id='obs-interval-duration'
 					name='intervalMessageDuration' // You might want to change this name to match its purpose, e.g., 'intervalDuration'
