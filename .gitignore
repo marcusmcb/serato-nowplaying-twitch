@@ -1,6 +1,10 @@
 # user preferences
 preferences.json
 
+# nedb files
+preferences.db
+users.db
+
 # Logs
 logs
 *.log
