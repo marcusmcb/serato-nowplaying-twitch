@@ -36,6 +36,7 @@ const dypCommand = async (channel, tags, args, client, obs, url) => {
           `${tags.username} has not played '${searchItem}' so far in this stream.`
         );
         if (displayOBSResponse === "true") {
+          clearOBSResponse(obs)
           obs.call("SetInputSettings", {
             inputName: "obs-chat-response",
             inputSettings: {
