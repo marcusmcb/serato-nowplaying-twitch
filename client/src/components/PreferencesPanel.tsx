@@ -24,7 +24,7 @@ type PreferencesPanelProps = {
 }
 
 const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
-	console.log("Props: ")
+	console.log('Props: ')
 	console.log(props)
 	return (
 		<div className='app-container-column'>
@@ -61,10 +61,11 @@ const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
 				</label>
 
 				<input
+				className={!props.isObsResponseEnabled ? 'disabled-label' : ''}
 					type='text'
 					id='obs-clear-display-time'
-					name='obsClearDisplayTime' // You might want to change this name to match its purpose, e.g., 'intervalDuration'
-					value={props.formData.obsClearDisplayTime} // Again, you might want to update this to props.formData.intervalDuration
+					name='obsClearDisplayTime' 
+					value={props.formData.obsClearDisplayTime} 
 					onChange={props.handleInputChange}
 					placeholder='enter time in seconds'
 					disabled={!props.isObsResponseEnabled}
@@ -112,8 +113,8 @@ const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
 					className={!props.isIntervalEnabled ? 'disabled-label' : ''}
 					type='text'
 					id='obs-interval-duration'
-					name='intervalMessageDuration' // You might want to change this name to match its purpose, e.g., 'intervalDuration'
-					value={props.formData.intervalMessageDuration} // Again, you might want to update this to props.formData.intervalDuration
+					name='intervalMessageDuration'
+					value={props.formData.intervalMessageDuration} 
 					onChange={props.handleInputChange}
 					placeholder='enter time in minutes'
 					disabled={!props.isIntervalEnabled}
@@ -157,10 +158,11 @@ const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
 				</label>
 
 				<input
+					className={!props.isReportEnabled ? 'disabled-label' : ''}
 					type='text'
 					id='is-report-enabled'
-					name='userEmailAddress' // You might want to change this name to match its purpose, e.g., 'intervalDuration'
-					value={props.formData.userEmailAddress} // Again, you might want to update this to props.formData.intervalDuration
+					name='userEmailAddress'
+					value={props.formData.userEmailAddress}
 					onChange={props.handleInputChange}
 					placeholder=''
 					disabled={!props.isReportEnabled}
@@ -180,9 +182,9 @@ const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
 					?
 				</span>
 			</div>
-			<div className='button-row update-prefs-button'>
+			{/* <div className='button-row update-prefs-button'>
 				<button type='submit'>Update</button>
-			</div>
+			</div> */}
 		</div>
 	)
 }
