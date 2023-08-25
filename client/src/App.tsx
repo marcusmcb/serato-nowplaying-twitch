@@ -7,6 +7,15 @@ import SessionPanel from './components/SessionPanel'
 import './App.css'
 import MessagePanel from './components/MessagePanel'
 
+const isValidEmail = (email: string) => {
+	// This is a simple regex for validating an email address
+	// Note: This regex does not account for every possible variation of valid email addresses
+	// but it should work for the most common forms of valid email addresses.
+	var pattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+
+	return pattern.test(email);
+}
+
 const App = (): JSX.Element => {
 	const [formData, setFormData] = useState({
 		twitchChannelName: '',
@@ -45,7 +54,25 @@ const App = (): JSX.Element => {
 			return
 		}
 		setError('')
-		console.log(formData)
+		console.log(formData)		
+
+		if (isReportEnabled && formData.userEmailAddress === '') {
+			setError('A valid email address is required for post-stream reporting.')
+			return
+		}				
+
+		if (isReportEnabled && !isValidEmail(formData.userEmailAddress)) {
+			setError('Please enter a valid email address to enable this feature.')
+			return
+		}
+
+		if (isIntervalEnabled && formData.intervalMessageDuration === '') {			
+			formData.intervalMessageDuration = '15'
+		}
+
+		if (isObsResponseEnabled && formData.obsClearDisplayTime === '') {
+			formData.obsClearDisplayTime = '5'
+		}
 
 		const submitData = {
 			...formData,
