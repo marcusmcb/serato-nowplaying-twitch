@@ -62,6 +62,7 @@ const App = (): JSX.Element => {
 			console.log(response.data)
 			setMessage('')
 			setMessage('npChatbot has been disconnected')
+			setIsBotConnected(false)
 		} catch (error) {
 			console.error('Error disconnecting the bot: ', error)
 		}
@@ -92,16 +93,13 @@ const App = (): JSX.Element => {
 			setError('A valid email address is required for post-stream reporting.')
 			return
 		}
-
 		if (isReportEnabled && !isValidEmail(formData.userEmailAddress)) {
 			setError('Please enter a valid email address to enable this feature.')
 			return
 		}
-
 		if (isIntervalEnabled && formData.intervalMessageDuration === '') {
 			formData.intervalMessageDuration = '15'
 		}
-
 		if (isObsResponseEnabled && formData.obsClearDisplayTime === '') {
 			formData.obsClearDisplayTime = '5'
 		}

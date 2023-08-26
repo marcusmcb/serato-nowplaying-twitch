@@ -9,7 +9,6 @@ interface SessionPanelProps {
 const SessionPanel: React.FC<SessionPanelProps> = (props) => {
 	return (
 		<div className='app-container-column'>
-			{/* <div className='app-form-title'>Information:</div> */}
 			<div className='app-form-title start-chatbot'>Chatbot Controls:</div>
 			<div>
 				<button
@@ -19,7 +18,11 @@ const SessionPanel: React.FC<SessionPanelProps> = (props) => {
 				>
 					{!props.isBotConnected ? 'Connect' : 'Connected'}
 				</button>
-				<button className='bot-control-button' type='submit' onClick={props.handleDisconnect}>
+				<button
+					className='bot-control-button'
+					type='submit'
+					onClick={props.handleDisconnect}
+				>
 					End Session
 				</button>
 			</div>
