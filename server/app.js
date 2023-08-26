@@ -10,7 +10,7 @@ const db = {}
 
 const PORT = process.env.PORT || 5000
 const app = express()
-const scriptPath = path.join(__dirname, '../index.js')
+const scriptPath = path.join(__dirname, '../boot.js')
 
 app.use(bodyParser.json())
 app.use(cors())
