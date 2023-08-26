@@ -3,7 +3,7 @@ const Datastore = require('nedb')
 const db = {}
 db.users = new Datastore({ filename: 'users.db', autoload: true })
 
-function loadConfigurations() {
+const loadConfigurations = () => {
 	return new Promise((resolve, reject) => {
 		db.users.findOne({}, (err, user) => {
 			if (err) {
@@ -17,4 +17,4 @@ function loadConfigurations() {
 	})
 }
 
-module.exports = loadConfigurations // Export the function
+module.exports = loadConfigurations

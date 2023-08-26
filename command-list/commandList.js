@@ -3,9 +3,9 @@ const { statsCommand } = require('../commands/stats/stats')
 const { testCommand } = require('../commands/test-command/testCommand')
 const { dypCommand } = require('../commands/stats/didYouPlay')
 const { doublesCommand } = require('../commands/stats/doublesPlayed')
-const { longestTrackCommand } = require("../commands/stats/longestTrack")
-const { shortestTrackCommand } = require("../commands/stats/shortestTrack")
-const { dypInfo, statsInfo, npInfo } = require("../auto-commands/autoCommands")
+const { longestTrackCommand } = require('../commands/stats/longestTrack')
+const { shortestTrackCommand } = require('../commands/stats/shortestTrack')
+const { dypInfo, statsInfo, npInfo } = require('../auto-commands/autoCommands')
 
 const commandList = {
 	test: testCommand,
@@ -17,7 +17,7 @@ const commandList = {
 	shortestsong: shortestTrackCommand,
 	dypInfo: dypInfo,
 	statsInfo: statsInfo,
-	npInfo: npInfo,	
+	npInfo: npInfo,
 }
 
 const urlCommandList = {
