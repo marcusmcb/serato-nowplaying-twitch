@@ -72,23 +72,41 @@ app.post('/submitUserData', async (req, res) => {
 	})
 })
 
-app.post('/startBotScript', (req, res) => {
-	const child = spawn('node', [scriptPath])
+let botProcess
 
-	child.stdout.on('data', (data) => {
+app.post('/startBotScript', (req, res) => {
+	if (botProcess) {
+		return res.send('npChatbot has already been started')
+	}
+	botProcess = spawn('node', [scriptPath])
+
+	botProcess.stdout.on('data', (data) => {
 		console.log(`stdout: ${data}`)
+		// add handler/listener for chatroom join confirmation
+		if (data.includes('info: Joined #djmarcusmcb')) {
+			res.send('--- npChatbot has joined the chat ---')
+		}
 	})
 
-	child.stderr.on('data', (data) => {
+	botProcess.stderr.on('data', (data) => {
 		console.error(`stderr: ${data}`)
 	})
 
-	child.on('close', (code) => {
-		console.log(`child process exited with code ${code}`)
+	botProcess.on('close', (code) => {
+		console.log(`botProcess process exited with code ${code}`)
 	})
 
-	res.send('Script started successfully')
+	// res.send('Script started successfully')
 })
+
+app.post('/stopBotScript', (req, res) => {
+	if (botProcess) {
+		botProcess.kill();  // Kill the child process
+		res.send('Bot process killed successfully.');
+	} else {
+		res.send('No bot process running.');
+	}
+});
 
 app.listen(PORT, () => {
 	console.log(`Server is running on port ${PORT}`)

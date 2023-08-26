@@ -1,7 +1,9 @@
 import '../App.css'
 
 interface SessionPanelProps {
-	handleConnect: (event: React.MouseEvent<HTMLButtonElement>) => void;
+	handleConnect: (event: React.MouseEvent<HTMLButtonElement>) => void
+	handleDisconnect: (event: React.MouseEvent<HTMLButtonElement>) => void
+	isBotConnected: boolean
 }
 
 const SessionPanel: React.FC<SessionPanelProps> = (props) => {
@@ -10,10 +12,14 @@ const SessionPanel: React.FC<SessionPanelProps> = (props) => {
 			{/* <div className='app-form-title'>Information:</div> */}
 			<div className='app-form-title start-chatbot'>Chatbot Controls:</div>
 			<div>
-				<button className='bot-control-button' type='submit' onClick={props.handleConnect}>
-					Connect
+				<button
+					className='bot-control-button'
+					type='submit'
+					onClick={props.handleConnect}
+				>
+					{!props.isBotConnected ? 'Connect' : 'Connected'}
 				</button>
-				<button className='bot-control-button' type='submit'>
+				<button className='bot-control-button' type='submit' onClick={props.handleDisconnect}>
 					End Session
 				</button>
 			</div>

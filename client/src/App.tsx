@@ -29,6 +29,7 @@ const App = (): JSX.Element => {
 	const [isIntervalEnabled, setIsIntervalEnabled] = useState(false)
 	const [isReportEnabled, setIsReportEnabled] = useState(false)
 	const [showTooltip, setShowTooltip] = useState<string | null>(null)
+	const [isBotConnected, setIsBotConnected] = useState(false)
 
 	const isValidEmail = (email: string) => {
 		var pattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
@@ -41,8 +42,28 @@ const App = (): JSX.Element => {
 		try {
 			const response = await axios.post('http://localhost:5000/startBotScript')
 			console.log(response.data)
+			setMessage('')
+			setMessage('npChatbot is connected to your Twitch chat')
+			setIsBotConnected(true)
+			setTimeout(() => {
+				setMessage('')
+			}, 3000)
 		} catch (error) {
 			console.error('Error starting the bot script:', error)
+		}
+	}
+
+	const handleDisconnect = async (
+		event: React.MouseEvent<HTMLButtonElement>
+	) => {
+		console.log('--- npChatbot disconnect event ---')
+		try {
+			const response = await axios.post('http://localhost:5000/stopBotScript')
+			console.log(response.data)
+			setMessage('')
+			setMessage('npChatbot has been disconnected')
+		} catch (error) {
+			console.error('Error disconnecting the bot: ', error)
 		}
 	}
 
@@ -174,7 +195,11 @@ const App = (): JSX.Element => {
 					showTooltip={showTooltip}
 					setShowTooltip={setShowTooltip}
 				/>
-				<SessionPanel handleConnect={handleConnect} />
+				<SessionPanel
+					handleConnect={handleConnect}
+					handleDisconnect={handleDisconnect}
+					isBotConnected={isBotConnected}
+				/>
 			</div>
 			<MessagePanel message={message} error={error} showTooltip={showTooltip} />
 		</div>
