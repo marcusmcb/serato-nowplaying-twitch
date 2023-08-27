@@ -9,8 +9,8 @@ app.on('ready', () => {
 
   // Create a new Electron browser window for the React app
   mainWindow = new BrowserWindow({
-    width: 1000,
-    height: 600,
+    width: 1280,
+    height: 680,
     webPreferences: {
       nodeIntegration: true,
     },
