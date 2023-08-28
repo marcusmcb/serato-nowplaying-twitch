@@ -1,13 +1,10 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
-const dotenv = require("dotenv");
 const clearOBSResponse = require("../../obs/obsHelpers/obsHelpers");
 
-dotenv.config();
-
-const displayOBSResponse = process.env.DISPLAY_OBS_MESSAGES;
-
-const npCommands = (channel, tags, args, client, obs, url) => {
+const npCommands = (channel, tags, args, client, obs, url, config) => {
+  console.log("NP COMMAND CONFIG: ")
+  console.log(config)
   const scrapeSeratoData = async () => {
     try {
       await axios
@@ -25,7 +22,7 @@ const npCommands = (channel, tags, args, client, obs, url) => {
           } else if (args.length === 0) {
             let nowplaying = results.last().text();
             client.say(channel, `Now playing: ${nowplaying.trim()}`);
-            if (displayOBSResponse === "true") {
+            if (config.isObsResponseEnabled === true) {
               obs.call("SetInputSettings", {
                 inputName: "obs-chat-response",
                 inputSettings: {
@@ -41,7 +38,7 @@ const npCommands = (channel, tags, args, client, obs, url) => {
               channel,
               `Previous track: ${previousTrack.children[0].data.trim()}`
             );
-            if (displayOBSResponse === "true") {
+            if (config.isObsResponseEnabled === true) {
               obs.call("SetInputSettings", {
                 inputName: "obs-chat-response",
                 inputSettings: {
@@ -59,7 +56,7 @@ const npCommands = (channel, tags, args, client, obs, url) => {
                 tags.username
               } kicked off this stream with ${firstTrack.trim()}`
             );
-            if (displayOBSResponse === "true") {
+            if (config.isObsResponseEnabled === true) {
               obs.call("SetInputSettings", {
                 inputName: "obs-chat-response",
                 inputSettings: {
@@ -119,7 +116,7 @@ const npCommands = (channel, tags, args, client, obs, url) => {
                     tags.username
                   } played "${randomTrack.children[0].data.trim()}" ${hours} hours & ${minutes} minutes ago in this stream.`
                 );
-                if (displayOBSResponse === "true") {
+                if (config.isObsResponseEnabled === true) {
                   obs.call("SetInputSettings", {
                     inputName: "obs-chat-response",
                     inputSettings: {
@@ -137,7 +134,7 @@ const npCommands = (channel, tags, args, client, obs, url) => {
                     tags.username
                   } played "${randomTrack.children[0].data.trim()}" ${hours} hour & ${minutes} minutes ago in this stream.`
                 );
-                if (displayOBSResponse === "true") {
+                if (config.isObsResponseEnabled === true) {
                   obs.call("SetInputSettings", {
                     inputName: "obs-chat-response",
                     inputSettings: {
@@ -156,7 +153,7 @@ const npCommands = (channel, tags, args, client, obs, url) => {
                   tags.username
                 } played "${randomTrack.children[0].data.trim()}" ${minutes} minutes ago in this stream.`
               );
-              if (displayOBSResponse === "true") {
+              if (config.isObsResponseEnabled === true) {
                 obs.call("SetInputSettings", {
                   inputName: "obs-chat-response",
                   inputSettings: {

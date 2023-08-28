@@ -1,10 +1,10 @@
 const tmi = require('tmi.js')
 const { commandList, urlCommandList } = require('./command-list/commandList')
 const autoCommandsConfig = require('./auto-commands/config/autoCommandsConfig')
-const obs = require('./obs/obsConnection')
+const { obs, connectToOBS } = require('./obs/obsConnection')
 const Datastore = require('nedb')
 
-function initializeBot(config) {
+const initializeBot = async(config) => {
 	console.log('CONFIG:')
 	console.log(config)
 	let userCommandHistory = {}
@@ -37,7 +37,17 @@ function initializeBot(config) {
 		console.log(error)
 	}
 
+	if (displayOBSMessage === true) {
+		console.log("call OBS connection")
+	} else {
+		console.log("no OBS messages")
+	}
+	
+	await connectToOBS(config)
 	autoCommandsConfig(client, obs)
+	setTimeout(() => {
+		console.log("OBS: ", obs)
+	}, 1000)
 
 	client.on('message', (channel, tags, message, self) => {
 		if (self || !message.startsWith('!')) {
@@ -63,7 +73,9 @@ function initializeBot(config) {
 					`@${tags.username}, try a different command before using that one again.`
 				)
 			} else {
-				console.log(displayOBSMessage)
+				console.log("OBS MSGS? ", displayOBSMessage)
+				console.log(displayOBSMessage === 'true' ? "YUP" : "NOPE")
+				
 				if (command in urlCommandList && displayOBSMessage) {
 					if (urlCommandCooldown) {
 						client.say(
@@ -73,13 +85,13 @@ function initializeBot(config) {
 						return
 					}
 					urlCommandCooldown = true
-					commandList[command](channel, tags, args, client, obs, url)
+					commandList[command](channel, tags, args, client, obs, url, config)
 					history.push(command)
 					setTimeout(() => {
 						urlCommandCooldown = false
 					}, COOLDOWN_DURATION)
 				} else {
-					commandList[command](channel, tags, args, client, obs, url)
+					commandList[command](channel, tags, args, client, obs, url, config)
 					history.push(command)
 				}
 

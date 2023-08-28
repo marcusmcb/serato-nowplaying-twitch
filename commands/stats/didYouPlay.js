@@ -1,12 +1,7 @@
 const createLiveReport = require("./createLiveReport");
 const clearOBSResponse = require("../../obs/obsHelpers/obsHelpers");
-const dotenv = require("dotenv");
 
-dotenv.config();
-
-const displayOBSResponse = process.env.DISPLAY_OBS_MESSAGES;
-
-const dypCommand = async (channel, tags, args, client, obs, url) => {
+const dypCommand = async (channel, tags, args, client, obs, url, config) => {
   let searchItem = args.join(" ");
   // check if user has entered a query value after the command
   if (args.length === 0) {
@@ -35,7 +30,7 @@ const dypCommand = async (channel, tags, args, client, obs, url) => {
           channel,
           `${tags.username} has not played '${searchItem}' so far in this stream.`
         );
-        if (displayOBSResponse === "true") {
+        if (config.isObsResponseEnabled === true) {
           clearOBSResponse(obs)
           obs.call("SetInputSettings", {
             inputName: "obs-chat-response",
@@ -55,7 +50,7 @@ const dypCommand = async (channel, tags, args, client, obs, url) => {
             channel,
             `${tags.username} has played '${searchItem}' ${searchResults.length} time so far in this stream. The last ${searchTerm} song played was :\n${lastSongPlayed}`
           );
-          if (displayOBSResponse === "true") {
+          if (config.isObsResponseEnabled === true) {
             obs.call("SetInputSettings", {
               inputName: "obs-chat-response",
               inputSettings: {
@@ -69,7 +64,7 @@ const dypCommand = async (channel, tags, args, client, obs, url) => {
             channel,
             `${tags.username} has played '${searchItem}' ${searchResults.length} times so far in this stream. The last ${searchTerm} song played was :\n${lastSongPlayed}`
           );
-          if (displayOBSResponse === "true") {
+          if (config.isObsResponseEnabled === true) {
             obs.call("SetInputSettings", {
               inputName: "obs-chat-response",
               inputSettings: {
