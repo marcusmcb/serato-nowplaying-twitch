@@ -28,7 +28,7 @@ const SessionPanel: React.FC<SessionPanelProps> = (props) => {
 			</div>
 			<div className='app-form-title session-info'>Session Info:</div>
 			<div className='session-info-label'>
-				Status:<span className='session-info-status'>not connected</span>
+				Status:<span className='session-info-status'>{props.isBotConnected ? 'connected' : 'not connected'}</span>
 			</div>
 			<div className='session-info-label'>
 				Uptime:<span className='session-info-status'>x hours & x mins</span>
