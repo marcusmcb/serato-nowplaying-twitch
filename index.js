@@ -44,7 +44,7 @@ const initializeBot = async(config) => {
 	}
 	
 	await connectToOBS(config)
-	autoCommandsConfig(client, obs)
+	autoCommandsConfig(client, obs, config)
 	setTimeout(() => {
 		console.log("OBS: ", obs)
 	}, 1000)

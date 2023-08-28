@@ -4,12 +4,14 @@ dotenv.config();
 const [autoCommandList] = require("../../auto-commands-list/autoCommandList");
 const { commandList } = require("../../command-list/commandList");
 
-const autoCommandsConfig = (client, obs) => {
-  const channel = `#${process.env.TWITCH_CHANNEL_NAME}`;
+const autoCommandsConfig = (client, obs, config) => {
+  console.log("AUTO COMMANDS CONFIG: ")
+  console.log(config)
+  const channel = `#${config.twitchChannelName}`;
   let tags, args;
   let commandIndex = 0;
 
-  if (process.env.DISPLAY_INTERVAL_MESSAGES === "true") {
+  if (config.isIntervalEnabled === true) {
     console.log("Interval messages will be displayed during this stream.");
     setInterval(() => {
       let command = autoCommandList[commandIndex];

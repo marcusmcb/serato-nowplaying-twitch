@@ -2,9 +2,7 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 const clearOBSResponse = require("../../obs/obsHelpers/obsHelpers");
 
-const npCommands = (channel, tags, args, client, obs, url, config) => {
-  console.log("NP COMMAND CONFIG: ")
-  console.log(config)
+const npCommands = (channel, tags, args, client, obs, url, config) => {  
   const scrapeSeratoData = async () => {
     try {
       await axios
