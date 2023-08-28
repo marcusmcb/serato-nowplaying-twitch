@@ -29,7 +29,7 @@ const doublesCommand = async (
 						text: `${tags.username} has not rocked doubles so far in this set.`,
 					},
 				})
-				clearOBSResponse(obs)
+				clearOBSResponse(obs, config.obsClearDisplayTime)
 			}
 		} else {
 			client.say(
@@ -50,7 +50,7 @@ const doublesCommand = async (
 						}`,
 					},
 				})
-				clearOBSResponse(obs)
+				clearOBSResponse(obs, config.obsClearDisplayTime)
 			}
 		}
 	} catch (error) {

@@ -1,7 +1,8 @@
 const createLiveReport = require("./createLiveReport");
 const clearOBSResponse = require("../../obs/obsHelpers/obsHelpers");
 
-const dypCommand = async (channel, tags, args, client, obs, url, config) => {
+const dypCommand = async (channel, tags, args, client, obs, url, config) => {  
+  const obsClearDisplayTime = config.obsClearDisplayTime
   let searchItem = args.join(" ");
   // check if user has entered a query value after the command
   if (args.length === 0) {
@@ -30,15 +31,14 @@ const dypCommand = async (channel, tags, args, client, obs, url, config) => {
           channel,
           `${tags.username} has not played '${searchItem}' so far in this stream.`
         );
-        if (config.isObsResponseEnabled === true) {
-          clearOBSResponse(obs)
+        if (config.isObsResponseEnabled === true) {          
           obs.call("SetInputSettings", {
             inputName: "obs-chat-response",
             inputSettings: {
               text: `${tags.username} has not played\n'${searchItem}' so far in this stream.`,
             },
           });
-          clearOBSResponse(obs);
+          clearOBSResponse(obs, obsClearDisplayTime);
         }
       } else {
         // find the last song played by the queried artist
@@ -57,7 +57,7 @@ const dypCommand = async (channel, tags, args, client, obs, url, config) => {
                 text: `${tags.username} has played\n'${searchItem}' ${searchResults.length} time so far in this stream.\n\nThe last song played by ${searchTerm} was :\n${lastSongPlayed}`,
               },
             });
-            clearOBSResponse(obs);
+            clearOBSResponse(obs, obsClearDisplayTime);
           }
         } else {
           client.say(
@@ -71,7 +71,7 @@ const dypCommand = async (channel, tags, args, client, obs, url, config) => {
                 text: `${tags.username} has played\n'${searchItem}' ${searchResults.length} times so far in this stream.\n\nThe last ${searchTerm} song played was :\n${lastSongPlayed}`,
               },
             });
-            clearOBSResponse(obs);
+            clearOBSResponse(obs, obsClearDisplayTime);
           }
         }
       }

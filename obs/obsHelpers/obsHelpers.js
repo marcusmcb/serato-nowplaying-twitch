@@ -1,7 +1,4 @@
-const dotenv = require("dotenv");
-dotenv.config();
-
-const clearOBSResponse = (obs) => {
+const clearOBSResponse = (obs, obsClearDisplayTime) => {  
   setTimeout(() => {
     obs.call("SetInputSettings", {
       inputName: "obs-chat-response",
@@ -9,7 +6,7 @@ const clearOBSResponse = (obs) => {
         text: "",
       },
     });
-  }, parseInt(process.env.OBS_DISPLAY_DURATION, 10));
+  }, parseInt(obsClearDisplayTime * 1000, 10));
 };
 
 module.exports = clearOBSResponse;

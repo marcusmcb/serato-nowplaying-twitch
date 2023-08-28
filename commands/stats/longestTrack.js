@@ -9,7 +9,7 @@ const displayLongestTrackMessage = (obs, tags, reportData) => {
 			text: message,
 		},
 	})
-	clearOBSResponse(obs)
+	clearOBSResponse(obs, config.obsClearDisplayTime)
 }
 
 const longestTrackCommand = async (

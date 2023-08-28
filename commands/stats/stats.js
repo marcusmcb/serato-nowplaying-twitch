@@ -8,7 +8,8 @@ const sendChatMessage = (client, channel, username, reportData) => {
 	)
 }
 
-const displayStatsMessage = (obs, tags, reportData, trendIndicator) => {
+const displayStatsMessage = (obs, tags, reportData, config, trendIndicator) => {
+	const obsClearDisplayTime = config.obsClearDisplayTime
 	let differenceParsed = parseFloat(reportData.average_change.difference)
 		.toString()
 		.slice(0, -1)
@@ -26,13 +27,12 @@ const displayStatsMessage = (obs, tags, reportData, trendIndicator) => {
 			text: message,
 		},
 	})
-	clearOBSResponse(obs)
+	clearOBSResponse(obs, obsClearDisplayTime)
 }
 
 const statsCommand = async (channel, tags, args, client, obs, url, config) => {
 	try {
 		const reportData = await createLiveReport(url)
-
 		if (reportData.total_tracks_played === 0) {
 			client.say(
 				channel,
@@ -45,14 +45,14 @@ const statsCommand = async (channel, tags, args, client, obs, url, config) => {
 
 		if (config.isObsResponseEnabled === true) {
 			if (reportData.average_change.isLarger) {
-				displayStatsMessage(obs, tags, reportData, '(↑')
+				displayStatsMessage(obs, tags, reportData, config, '(↑')
 			} else if (
 				!reportData.average_change.isLarger &&
 				reportData.average_change.difference !== null
 			) {
-				displayStatsMessage(obs, tags, reportData, '(↓')
+				displayStatsMessage(obs, tags, reportData, config, '(↓')
 			} else {
-				displayStatsMessage(obs, tags, reportData, '(-')
+				displayStatsMessage(obs, tags, reportData, config, '(-')
 			}
 		}
 	} catch (err) {

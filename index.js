@@ -4,7 +4,7 @@ const autoCommandsConfig = require('./auto-commands/config/autoCommandsConfig')
 const { obs, connectToOBS } = require('./obs/obsConnection')
 const Datastore = require('nedb')
 
-const initializeBot = async(config) => {
+const initializeBot = async (config) => {
 	console.log('CONFIG:')
 	console.log(config)
 	let userCommandHistory = {}
@@ -38,15 +38,15 @@ const initializeBot = async(config) => {
 	}
 
 	if (displayOBSMessage === true) {
-		console.log("call OBS connection")
+		console.log('call OBS connection')
 	} else {
-		console.log("no OBS messages")
+		console.log('no OBS messages')
 	}
-	
+
 	await connectToOBS(config)
 	autoCommandsConfig(client, obs, config)
 	setTimeout(() => {
-		console.log("OBS: ", obs)
+		console.log('OBS: ', obs.protocol)
 	}, 1000)
 
 	client.on('message', (channel, tags, message, self) => {
@@ -73,9 +73,9 @@ const initializeBot = async(config) => {
 					`@${tags.username}, try a different command before using that one again.`
 				)
 			} else {
-				console.log("OBS MSGS? ", displayOBSMessage)
-				console.log(displayOBSMessage === 'true' ? "YUP" : "NOPE")
-				
+				console.log('OBS MSGS? ', displayOBSMessage)
+				console.log(displayOBSMessage === true ? 'YUP' : 'NOPE')
+
 				if (command in urlCommandList && displayOBSMessage) {
 					if (urlCommandCooldown) {
 						client.say(
