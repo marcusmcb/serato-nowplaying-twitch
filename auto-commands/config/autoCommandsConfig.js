@@ -25,7 +25,7 @@ const autoCommandsConfig = (client, obs, config) => {
       if (commandIndex >= autoCommandList.length) {
         commandIndex = 0;
       }
-    }, parseInt(process.env.AUTO_COMMAND_INTERVAL, 10));
+    }, parseInt(config.intervalMessageDuration * 60000, 10));
   } else {
     console.log("No interval messages during this stream");
   }
