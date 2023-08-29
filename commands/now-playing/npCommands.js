@@ -1,8 +1,10 @@
 const axios = require('axios')
 const cheerio = require('cheerio')
 const clearOBSResponse = require('../../obs/obsHelpers/obsHelpers')
+const nowPlayingCommand = require('./nowPlaying')
 
 const npCommands = (channel, tags, args, client, obs, url, config) => {
+	nowPlayingCommand(channel, tags, args, client, obs, url, config)
 	const obsClearDisplayTime = config.obsClearDisplayTime
 	const scrapeSeratoData = async () => {
 		try {

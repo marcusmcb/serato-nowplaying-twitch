@@ -11,12 +11,12 @@ const initializeBot = async (config) => {
 	let urlCommandCooldown = false
 	const COOLDOWN_DURATION = 5000
 	const COMMAND_REPEAT_LIMIT = 5
-	const displayOBSMessage = config.isObsResponseEnabled
+	const displayOBSMessage = config.isObsResponseEnabled	
 
 	const db = {}
 	db.users = new Datastore({ filename: 'users.db', autoload: true })
 
-	const url = 'https://serato.com/playlists/DJ_Marcus_McBride/8-1-2023'
+	const url = `https://serato.com/playlists/${config.seratoDisplayName}/8-1-2023`
 
 	const client = new tmi.Client({
 		options: { debug: true },
