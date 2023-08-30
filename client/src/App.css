@@ -255,3 +255,14 @@ input[type='checkbox']:before {
 input[type='checkbox']:checked:before {
 	left: 12px;
 }
+
+.hide-sensitive-toggle {
+	margin-left: 50px;
+	margin-top: 30px;
+}
+
+.toggle-text-label-color {
+	color: var(--highlight-color);
+}
+
+

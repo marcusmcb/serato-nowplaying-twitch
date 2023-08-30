@@ -64,12 +64,14 @@ const InputField: React.FC<{
 	handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void
 	showTooltip: string | null
 	setShowTooltip: (value: string | null) => void
+	hideSensitiveFields: boolean
 }> = ({
 	fieldConfig,
 	value,
 	handleInputChange,
 	showTooltip,
 	setShowTooltip,
+	hideSensitiveFields,
 }) => (
 	<div className='form-field'>
 		<label htmlFor={fieldConfig.id}>{fieldConfig.label}</label>
@@ -77,7 +79,13 @@ const InputField: React.FC<{
 			type='text'
 			id={fieldConfig.id}
 			name={fieldConfig.name}
-			value={value || ''}
+			value={
+				hideSensitiveFields &&
+				(fieldConfig.name === 'twitchOAuthKey' ||
+					fieldConfig.name === 'obsWebsocketPassword' || fieldConfig.name === 'obsWebsocketAddress')
+					? '*'.repeat((value || '').length)
+					: value || ''
+			}
 			onChange={handleInputChange}
 			placeholder={fieldConfig.placeholder}
 		/>
@@ -97,13 +105,8 @@ const InputField: React.FC<{
 )
 
 const CredentialsPanel: React.FC<CredentialsPanelProps> = (props) => {
-	// console.log("Credentials Props ----")
-	// console.log(props)
-	// if (props.formData.twitchOAuthKey === '') {
-	// 	console.log("no credentials stored yet")
-	// } else {
-	// 	console.log(props.formData.twitchOAuthKey)
-	// }
+	const [hideSensitiveFields, setHideSensitiveFields] = React.useState(false)
+
 	return (
 		<div className='app-container-column'>
 			<div className='app-form-title'>Enter your credentials below:</div>
@@ -116,12 +119,23 @@ const CredentialsPanel: React.FC<CredentialsPanelProps> = (props) => {
 						handleInputChange={props.handleInputChange}
 						showTooltip={props.showTooltip}
 						setShowTooltip={props.setShowTooltip}
+						hideSensitiveFields={hideSensitiveFields} // <-- Add this
 					/>
 				))}
+
 				<div className='button-row'>
 					<button type='submit'>
 						{props.formData.twitchOAuthKey !== '' ? 'Update' : 'Submit'}
 					</button>
+					<div className='toggle-field hide-sensitive-toggle'>
+						<input
+							type='checkbox'
+							id='hideSensitiveFields'
+							checked={hideSensitiveFields}
+							onChange={(e) => setHideSensitiveFields(e.target.checked)}
+						/>
+						<label htmlFor='hideSensitiveFields' className='toggle-text-label-color'>Hide Sensitive Fields</label>
+					</div>
 				</div>
 			</form>
 		</div>
