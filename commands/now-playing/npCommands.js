@@ -1,205 +1,127 @@
-const axios = require('axios')
-const cheerio = require('cheerio')
+const createLiveReport = require('../stats/createLiveReport')
 const clearOBSResponse = require('../../obs/obsHelpers/obsHelpers')
-const nowPlayingCommand = require('./nowPlaying')
+const { parseTimeString, vibeCheckSelector } = require("../now-playing/npCommandHelpers/npCommandHelpers")
 
-const npCommands = (channel, tags, args, client, obs, url, config) => {
-	nowPlayingCommand(channel, tags, args, client, obs, url, config)
+const npCommands = async (channel, tags, args, client, obs, url, config) => {
 	const obsClearDisplayTime = config.obsClearDisplayTime
-	const scrapeSeratoData = async () => {
-		try {
-			await axios
-				.get(url)
-				.then(({ data }) => {
-					const $ = cheerio.load(data)
-					const results = $('div.playlist-trackname')
-					const timestamp = $('div.playlist-tracktime')
-					// check scrape results to see if they're empty
-					// this will occur if the user/streamer isn't sending a live playlist to serato
-					if (results.length === 0) {
-						client.say(channel, "That doesn't seem to be working right now.")
+	try {
+		const reportData = await createLiveReport(url)
+		const currentTrackPlaying =
+			reportData.track_log[reportData.track_log.length - 1]
+		const previousTrackPlayed =
+			reportData.track_log[reportData.track_log.length - 2]
+		const firstTrackPlayed = reportData.track_log[0]
+		const vibeCheckSelection = vibeCheckSelector(reportData.track_log)
 
-						// !np (default)
-					} else if (args.length === 0) {
-						let nowplaying = results.last().text()
-						client.say(channel, `Now playing: ${nowplaying.trim()}`)
-						if (config.isObsResponseEnabled === true) {
-							obs.call('SetInputSettings', {
-								inputName: 'obs-chat-response',
-								inputSettings: {
-									text: `Now playing:\n${nowplaying.trim()}`,
-								},
-							})
-							clearOBSResponse(obs, obsClearDisplayTime)
-						}
-						// !np previous
-					} else if (args == 'previous') {
-						let previousTrack = results[results.length - 2]
-						client.say(
-							channel,
-							`Previous track: ${previousTrack.children[0].data.trim()}`
-						)
-						if (config.isObsResponseEnabled === true) {
-							obs.call('SetInputSettings', {
-								inputName: 'obs-chat-response',
-								inputSettings: {
-									text: `Previous song:\n${previousTrack.children[0].data.trim()}`,
-								},
-							})
-							clearOBSResponse(obs, obsClearDisplayTime)
-						}
-						// !np start
-					} else if (args == 'start') {
-						let firstTrack = results.first().text()
-						client.say(
-							channel,
-							`${
-								tags.username
-							} kicked off this stream with ${firstTrack.trim()}`
-						)
-						if (config.isObsResponseEnabled === true) {
-							obs.call('SetInputSettings', {
-								inputName: 'obs-chat-response',
-								inputSettings: {
-									text: `${
-										tags.username
-									} kicked off this stream with :\n${firstTrack.trim()}`,
-								},
-							})
-							clearOBSResponse(obs, obsClearDisplayTime)
-						}
-						// !np total
-					} else if (args == 'total') {
-						// let currentTrack = results.last().text()
-						client.say(
-							channel,
-							`${tags.username} has played ${results.length} tracks so far in this stream.`
-						)
-						// axios.post('http://192.168.86.50:8000/display', {
-						//   total: new Number(results.length),
-						//   current_track: currentTrack.trim()
-						// })
-						//   .then((response) => {
-						//     console.log("Response from Pi: ", response.data)
-						//   })
-						//   .catch((error) => {
-						//     console.log("ERROR: ", error)
-						//   })
+		if (reportData.track_log.length === 0) {
+			client.say(
+				channel,
+				'No live playlist data for this stream at the moment.'
+			)
+		} else if (args[0] === undefined) {
+			client.say(channel, `Now playing: ${currentTrackPlaying.trackId}`)
+			if (config.isObsResponseEnabled === true) {
+				obs.call('SetInputSettings', {
+					inputName: 'obs-chat-response',
+					inputSettings: {
+						text: `Now playing:\n${currentTrackPlaying.trackId}`,
+					},
+				})
+				clearOBSResponse(obs, obsClearDisplayTime)
+			}
+		} else if (args[0] === 'previous') {
+			client.say(channel, `Now playing: ${previousTrackPlayed.trackId}`)
+			if (config.isObsResponseEnabled === true) {
+				obs.call('SetInputSettings', {
+					inputName: 'obs-chat-response',
+					inputSettings: {
+						text: `Now playing:\n${previousTrackPlayed.trackId}`,
+					},
+				})
+				clearOBSResponse(obs, obsClearDisplayTime)
+			}
+		} else if (args[0] === 'start') {
+			client.say(
+				channel,
+				`${tags.username} kicked off this stream with ${firstTrackPlayed.trackId}`
+			)
+			if (config.isObsResponseEnabled === true) {
+				obs.call('SetInputSettings', {
+					inputName: 'obs-chat-response',
+					inputSettings: {
+						text: `${tags.username} kicked off this stream with :\n${firstTrackPlayed.trackId}`,
+					},
+				})
+				clearOBSResponse(obs, obsClearDisplayTime)
+			}
+		} else if (args[0] === 'vibecheck') {
+			const { hours, minutes, seconds } = parseTimeString(
+				vibeCheckSelection.timeSincePlayed
+			)
 
-						// !np vibecheck
-					} else if (args == 'vibecheck') {
-						// Select random index
-						const randomIndex = Math.floor(Math.random() * results.length)
-						const randomTrack = results[randomIndex]
-						const randomTrackTimestamp =
-							timestamp[randomIndex].children[0].data.trim()
-
-						// Get current timestamp
-						const currentTrackTimestamp = timestamp.last().text().trim()
-
-						// Convert timestamps to Date objects
-						const x = new Date(`Jan 1, 2022 ${currentTrackTimestamp}`)
-						const y = new Date(`Jan 1, 2022 ${randomTrackTimestamp}`)
-
-						// Calculate time difference
-						const timeDifference = Math.abs(x - y) / 1000
-						const hours = Math.floor(timeDifference / 3600) % 24
-						const minutes = Math.floor(timeDifference / 60) % 60
-						const seconds = timeDifference % 60
-
-						// if random index timestamp has an hours value
-						if (hours > 0) {
-							// if that hours value is > 1
-							if (hours > 1) {
-								client.say(
-									channel,
-									`${
-										tags.username
-									} played "${randomTrack.children[0].data.trim()}" ${hours} hours & ${minutes} minutes ago in this stream.`
-								)
-								if (config.isObsResponseEnabled === true) {
-									obs.call('SetInputSettings', {
-										inputName: 'obs-chat-response',
-										inputSettings: {
-											text: `vibecheck:\n\n${
-												tags.username
-											} played\n"${randomTrack.children[0].data.trim()}"\n${hours} hours & ${minutes} minutes ago in this stream.`,
-										},
-									})
-									clearOBSResponse(obs, obsClearDisplayTime)
-								}
-							} else {
-								client.say(
-									channel,
-									`${
-										tags.username
-									} played "${randomTrack.children[0].data.trim()}" ${hours} hour & ${minutes} minutes ago in this stream.`
-								)
-								if (config.isObsResponseEnabled === true) {
-									obs.call('SetInputSettings', {
-										inputName: 'obs-chat-response',
-										inputSettings: {
-											text: `vibecheck:\n\n${
-												tags.username
-											} played\n"${randomTrack.children[0].data.trim()}"\n${hours} hour & ${minutes} minutes ago in this stream.`,
-										},
-									})
-									clearOBSResponse(obs, obsClearDisplayTime)
-								}
-							}
-						} else {
-							client.say(
-								channel,
-								`${
-									tags.username
-								} played "${randomTrack.children[0].data.trim()}" ${minutes} minutes ago in this stream.`
-							)
-							if (config.isObsResponseEnabled === true) {
-								obs.call('SetInputSettings', {
-									inputName: 'obs-chat-response',
-									inputSettings: {
-										text: `vibecheck:\n\n${
-											tags.username
-										} played\n"${randomTrack.children[0].data.trim()}"\n${minutes} minutes ago in this stream.`,
-									},
-								})
-								setTimeout(() => {
-									obs.call('SetInputSettings', {
-										inputName: 'obs-chat-response',
-										inputSettings: {
-											text: '',
-										},
-									})
-								}, 5000)
-							}
-						}
-
-						// !np options
-					} else if (args == 'options') {
-						client.say(
-							channel,
-							'Command Options: !np (current song), !np previous (previous song), !np start (first song), !np vibecheck (try it & find out), !stats, !doubles, !longestsong, !shortestsong'
-						)
-						// default catch-all for any args passed that are not defined
-					} else {
-						client.say(
-							channel,
-							'Command Options: !np (current song), !np start (first song), !np previous (previous song), !np vibecheck (random song we already played)'
-						)
+			if (hours > 0) {
+				// if that hours value is > 1
+				if (hours > 1) {
+					client.say(
+						channel,
+						`${tags.username} played "${vibeCheckSelection.trackId}" ${hours} hours & ${minutes} minutes ago in this stream.`
+					)
+					if (config.isObsResponseEnabled === true) {
+						obs.call('SetInputSettings', {
+							inputName: 'obs-chat-response',
+							inputSettings: {
+								text: `vibecheck:\n\n${tags.username} played\n"${vibeCheckSelection.trackId}"\n${hours} hours & ${minutes} minutes ago in this stream.`,
+							},
+						})
+						clearOBSResponse(obs, obsClearDisplayTime)
 					}
-				})
-				.catch((error) => {
-					// expand error checking here as needed (currently working for Serato errors)
-					console.log(error)
-					client.say(channel, "That doesn't appear to be working right now.")
-				})
-		} catch (err) {
-			console.log(err)
-			client.say(channel, "That doesn't appear to be working right now.")
-			// add process.stderr.write statement to handle possible errors
+				} else {
+					client.say(
+						channel,
+						`${tags.username} played "${vibeCheckSelection.trackId}" ${hours} hour & ${minutes} minutes ago in this stream.`
+					)
+					if (config.isObsResponseEnabled === true) {
+						obs.call('SetInputSettings', {
+							inputName: 'obs-chat-response',
+							inputSettings: {
+								text: `vibecheck:\n\n${tags.username} played\n"${vibeCheckSelection.trackId}"\n${hours} hour & ${minutes} minutes ago in this stream.`,
+							},
+						})
+						clearOBSResponse(obs, obsClearDisplayTime)
+					}
+				}
+			} else {
+				client.say(
+					channel,
+					`${tags.username} played "${vibeCheckSelection.trackId}" ${minutes} minutes ago in this stream.`
+				)
+				if (config.isObsResponseEnabled === true) {
+					obs.call('SetInputSettings', {
+						inputName: 'obs-chat-response',
+						inputSettings: {
+							text: `vibecheck:\n\n${tags.username} played\n"${vibeCheckSelection.trackId}"\n${minutes} minutes ago in this stream.`,
+						},
+					})
+					setTimeout(() => {
+						obs.call('SetInputSettings', {
+							inputName: 'obs-chat-response',
+							inputSettings: {
+								text: '',
+							},
+						})
+					}, 5000)
+				}
+			}
+		} else if (args[0] === 'options') {
+			client.say(
+				channel,
+				'Use the following commands to search through my play history: !np (current song), !np previous (previous song), !np start (first song), !np vibecheck (try it & find out), !stats, !doubles, !longestsong, !shortestsong, !dyp (artist name)'
+			)
 		}
+	} catch (error) {
+		console.log(error)
+		client.say(channel, "That doesn't appear to be working right now.")
 	}
-	scrapeSeratoData()
 }
 
 module.exports = {

@@ -5,13 +5,13 @@ const { obs, connectToOBS } = require('./obs/obsConnection')
 const Datastore = require('nedb')
 
 const initializeBot = async (config) => {
-	console.log('CONFIG:')
-	console.log(config)
+	// console.log('CONFIG:')
+	// console.log(config)
 	let userCommandHistory = {}
 	let urlCommandCooldown = false
 	const COOLDOWN_DURATION = 5000
 	const COMMAND_REPEAT_LIMIT = 5
-	const displayOBSMessage = config.isObsResponseEnabled	
+	const displayOBSMessage = config.isObsResponseEnabled
 
 	const db = {}
 	db.users = new Datastore({ filename: 'users.db', autoload: true })
@@ -37,17 +37,8 @@ const initializeBot = async (config) => {
 		console.log(error)
 	}
 
-	if (displayOBSMessage === true) {
-		console.log('call OBS connection')
-	} else {
-		console.log('no OBS messages')
-	}
-
 	await connectToOBS(config)
 	autoCommandsConfig(client, obs, config)
-	setTimeout(() => {
-		console.log('OBS: ', obs.protocol)
-	}, 1000)
 
 	client.on('message', (channel, tags, message, self) => {
 		if (self || !message.startsWith('!')) {
@@ -73,9 +64,6 @@ const initializeBot = async (config) => {
 					`@${tags.username}, try a different command before using that one again.`
 				)
 			} else {
-				console.log('OBS MSGS? ', displayOBSMessage)
-				console.log(displayOBSMessage === true ? 'YUP' : 'NOPE')
-
 				if (command in urlCommandList && displayOBSMessage) {
 					if (urlCommandCooldown) {
 						client.say(

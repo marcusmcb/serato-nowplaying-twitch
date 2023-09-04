@@ -1,7 +1,7 @@
 const createLiveReport = require('./createLiveReport')
 const clearOBSResponse = require('../../obs/obsHelpers/obsHelpers')
 
-const displayShortestTrackMessage = (obs, tags, reportData) => {
+const displayShortestTrackMessage = (obs, tags, reportData, config) => {
 	let message = `Shortest song in ${tags.username}'s set so far : \n\n${reportData.shortest_track.name}\n${reportData.shortest_track.length_value} (played ${reportData.shortest_track.time_since_played_string})`
 	obs.call('SetInputSettings', {
 		inputName: 'obs-chat-response',
@@ -34,7 +34,7 @@ const shortestTrackCommand = async (
 				`The shortest song in ${tags.username}'s set (so far) is ${reportData.shortest_track.name} (${reportData.shortest_track.length_value})`
 			)
 			if (config.isObsResponseEnabled === true) {
-				displayShortestTrackMessage(obs, tags, reportData)
+				displayShortestTrackMessage(obs, tags, reportData, config)
 			}
 		}
 	} catch (error) {

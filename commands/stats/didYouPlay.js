@@ -48,7 +48,7 @@ const dypCommand = async (channel, tags, args, client, obs, url, config) => {
           // add lastSongPlayed logic check here
           client.say(
             channel,
-            `${tags.username} has played '${searchItem}' ${searchResults.length} time so far in this stream. The last ${searchTerm} song played was :\n${lastSongPlayed}`
+            `${tags.username} has played '${searchItem}' ${searchResults.length} time so far in this stream. The last '${searchTerm}' song played was :\n${lastSongPlayed}`
           );
           if (config.isObsResponseEnabled === true) {
             obs.call("SetInputSettings", {

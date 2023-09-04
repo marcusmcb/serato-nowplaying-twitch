@@ -5,8 +5,8 @@ const [autoCommandList] = require("../../auto-commands-list/autoCommandList");
 const { commandList } = require("../../command-list/commandList");
 
 const autoCommandsConfig = (client, obs, config) => {
-  console.log("AUTO COMMANDS CONFIG: ")
-  console.log(config)
+  // console.log("AUTO COMMANDS CONFIG: ")
+  // console.log(config)
   const channel = `#${config.twitchChannelName}`;
   let tags, args;
   let commandIndex = 0;
