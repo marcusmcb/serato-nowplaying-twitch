@@ -23,6 +23,7 @@ const longestTrackCommand = async (
 ) => {
 	try {
 		const reportData = await createLiveReport(url)
+		console.log(reportData.longest_track.time_since_played)
 		if (reportData.total_tracks_played === 0) {
 			client.say(
 				channel,
@@ -31,7 +32,7 @@ const longestTrackCommand = async (
 		} else {
 			client.say(
 				channel,
-				`The longest song in ${tags.username}'s set (so far) is ${reportData.longest_track.name} (${reportData.longest_track.length_value})`
+				`The longest song in ${tags.username}'s set (so far) is ${reportData.longest_track.name} (${reportData.longest_track.length_value}), played ${reportData.longest_track.time_since_played_string}.`
 			)
 			if (config.isObsResponseEnabled === true) {
 				displayLongestTrackMessage(obs, tags, reportData, config)
