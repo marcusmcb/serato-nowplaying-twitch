@@ -1,54 +1,22 @@
-const scrapeData = require('./LiveReportHelpers/scrapeData')
-const parseTimeValues = require('./LiveReportHelpers/parseTimeValues')
-const parseStartTime = require('./LiveReportHelpers/parseStartTime')
-const calculateAverageTime = require('./LiveReportHelpers/calculateAverageTime')
+const scrapeData = require('../liveReport/LiveReportHelpers/scrapeData')
+const parseTimeValues = require('../liveReport/LiveReportHelpers/parseTimeValues')
+const parseStartTime = require('../liveReport/LiveReportHelpers/parseStartTime')
+const calculateAverageTime = require('../liveReport/LiveReportHelpers/calculateAverageTime')
 const {
 	extractPlaylistName,
 	parseDateAndTime,
-	createPlaylistDate,
-	convertTo24Hour,
+	createPlaylistDate,	
 	formatTimeSincePlayedString,
 	calculateTimeDifference,
 	compareTimes,
 	sumTimeValues,
-} = require('./LiveReportHelpers/liveReportHelpers')
-// const compareTimes = require("./LiveReportHelpers/liveReportHelpers");
-
-// move into helper module
-const removeLargestNumber = (arr) => {
-	const newArr = [...arr] // Make a copy of the original array
-	const indexOfLargest = newArr.indexOf(Math.max(...newArr))
-
-	if (indexOfLargest !== -1) {
-		newArr.splice(indexOfLargest, 1)
-	}
-
-	return newArr
-}
-
-// move into helper module
-const isDoubleOrMore = (longestTrack, secondLongestTrack) => {
-	let percentageDifference =
-		((longestTrack - secondLongestTrack) / secondLongestTrack) * 100
-	return {
-		isDoubleOrMore: longestTrack > 3 * secondLongestTrack,
-		percentageDifference: percentageDifference.toFixed(),
-	}
-}
-
-const calculateAverageMilliseconds = (times) => {
-	const getAverage = (numbers) => {
-		return Math.round(
-			numbers.reduce((acc, number) => acc + number, 0) / numbers.length
-		)
-	}
-
-	return getAverage(times)
-}
+	removeLargestNumber,
+	isDoubleOrMore,
+	calculateAverageMilliseconds
+} = require('../liveReport/LiveReportHelpers/liveReportHelpers')
 
 const createLiveReport = async (url) => {
 	const playlistArtistName = extractPlaylistName(url)
-
 	try {
 		// function to scrape data for report
 		let response = await scrapeData(url)
@@ -133,14 +101,14 @@ const createLiveReport = async (url) => {
     const adjustedAverage = calculateAverageMilliseconds(remainingArray)
 
 
-		console.log(longestTrackValue)
-		console.log(secondLongestTrackValue)
+		// console.log(longestTrackValue)
+		// console.log(secondLongestTrackValue)
 
-		console.log(msArray)
-		console.log(remainingArray)
+		// console.log(msArray)
+		// console.log(remainingArray)
 
-    console.log(actualAverage)
-    console.log(adjustedAverage)
+    // console.log(actualAverage)
+    // console.log(adjustedAverage)
 
 		// add method to calculate average time as MS for remainingArray
 		
@@ -148,8 +116,8 @@ const createLiveReport = async (url) => {
 		// isDoubleOrMore and update method to  check if
 		// longestTrackValue is more than double average time
 
-		console.log(isDoubleOrMore(longestTrackValue, secondLongestTrackValue))
-		console.log(isDoubleOrMore(actualAverage, adjustedAverage))
+		// console.log(isDoubleOrMore(longestTrackValue, secondLongestTrackValue))
+		// console.log(isDoubleOrMore(actualAverage, adjustedAverage))
 
 		let lastMSArray = msArray.slice(0, -1)
 		let averageTrackLength = calculateAverageTime(msArray)

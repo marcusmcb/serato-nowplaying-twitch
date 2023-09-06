@@ -1,4 +1,4 @@
-const createLiveReport = require('../stats/createLiveReport')
+const createLiveReport = require('../liveReport/createLiveReport')
 const clearOBSResponse = require('../../obs/obsHelpers/obsHelpers')
 const { parseTimeString, vibeCheckSelector } = require("../now-playing/npCommandHelpers/npCommandHelpers")
 
@@ -30,12 +30,12 @@ const npCommands = async (channel, tags, args, client, obs, url, config) => {
 				clearOBSResponse(obs, obsClearDisplayTime)
 			}
 		} else if (args[0] === 'previous') {
-			client.say(channel, `Now playing: ${previousTrackPlayed.trackId}`)
+			client.say(channel, `Previous song: ${previousTrackPlayed.trackId}`)
 			if (config.isObsResponseEnabled === true) {
 				obs.call('SetInputSettings', {
 					inputName: 'obs-chat-response',
 					inputSettings: {
-						text: `Now playing:\n${previousTrackPlayed.trackId}`,
+						text: `Previous song:\n${previousTrackPlayed.trackId}`,
 					},
 				})
 				clearOBSResponse(obs, obsClearDisplayTime)

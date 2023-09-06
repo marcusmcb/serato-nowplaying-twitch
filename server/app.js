@@ -17,7 +17,7 @@ app.use(bodyParser.json())
 app.use(cors())
 
 db.users = new Datastore({ filename: 'users.db', autoload: true })
-db.preferences = new Datastore({ filename: 'preferences.db', autoload: true })
+// db.preferences = new Datastore({ filename: 'preferences.db', autoload: true })
 
 app.get('/', (req, res) => {
 	res.send('Hello world, I am here YO!')

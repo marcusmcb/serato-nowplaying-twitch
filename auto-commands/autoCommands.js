@@ -8,7 +8,7 @@ const dypInfo = (channel, tags, args, client) => {
 const npInfo = (channel, tags, args, client) => {
   client.say(
     channel,
-    "If you want to know what song is now playing, enter !np in the chat to find out.  If you want to know what song was played before the current one, enter !np previous in the chat to find out."
+    "If you want to know what song is currently playing, enter !np in the chat to find out.  If you want to know what song was played before the current one, enter !np previous in the chat to find out."
   );
 };
 

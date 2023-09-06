@@ -1,4 +1,4 @@
-const createLiveReport = require('./createLiveReport')
+const createLiveReport = require('../liveReport/createLiveReport')
 const clearOBSResponse = require('../../obs/obsHelpers/obsHelpers')
 
 const timeDifference = (time1, time2) => {
