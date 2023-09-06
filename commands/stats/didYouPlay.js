@@ -1,35 +1,25 @@
 const createLiveReport = require('./createLiveReport')
 const clearOBSResponse = require('../../obs/obsHelpers/obsHelpers')
 
-function timeDifference(time1, time2) {
-	// Convert time string to Date object
-	function convertToTimeDate(timeStr) {
+const timeDifference = (time1, time2) => {
+	const convertToTimeDate = (timeStr) => {
 		const [time, meridian] = timeStr.split(' ')
 		const [hoursStr, minutesStr] = time.split(':')
 		let hours = parseInt(hoursStr, 10)
-
 		// Convert 12-hour format to 24-hour format
 		if (meridian === 'PM' && hours !== 12) {
 			hours += 12
 		} else if (meridian === 'AM' && hours === 12) {
 			hours = 0
 		}
-
 		const minutes = parseInt(minutesStr, 10)
-		// Return the time in minutes
 		return hours * 60 + minutes
 	}
-
 	const timeInMinutes1 = convertToTimeDate(time1)
 	const timeInMinutes2 = convertToTimeDate(time2)
-
-	// Calculate the difference
 	const diff = Math.abs(timeInMinutes1 - timeInMinutes2)
-
 	return `${diff} minutes`
 }
-
-// Test the function
 
 const dypCommand = async (channel, tags, args, client, obs, url, config) => {
 	const obsClearDisplayTime = config.obsClearDisplayTime
@@ -51,12 +41,11 @@ const dypCommand = async (channel, tags, args, client, obs, url, config) => {
 						.toLowerCase()
 						.includes(searchTerm.toLowerCase())
 				) {
-					console.log('HERE: ', reportData)
 					searchResults.push(reportData.track_array[i])
 				}
 			}
 
-			let fooResults = []
+			let timeStampsArray = []
 
 			for (let i = 0; i < reportData.track_log.length; i++) {
 				if (
@@ -64,20 +53,13 @@ const dypCommand = async (channel, tags, args, client, obs, url, config) => {
 						.toLowerCase()
 						.includes(searchTerm.toLowerCase())
 				) {
-					fooResults.push({
+					timeStampsArray.push({
 						trackId: reportData.track_log[i].trackId,
 						timestamp: reportData.track_log[i].timestamp,
 					})
 				}
 			}
 
-			// console.log('FOO RESULTS: ')
-			// console.log(fooResults[0].timestamp)
-			// console.log(
-			// 	reportData.track_log[reportData.track_log.length - 1].timestamp
-			// )
-
-			// if query value is not present in search results...
 			if (searchResults.length === 0) {
 				client.say(
 					channel,
@@ -93,13 +75,14 @@ const dypCommand = async (channel, tags, args, client, obs, url, config) => {
 					clearOBSResponse(obs, obsClearDisplayTime)
 				}
 			} else {
-				// find the last song played by the queried artist
 				const lastSongPlayed = searchResults[searchResults.length - 1]
-				const queriedTrackTime = fooResults[0].timestamp
+				const queriedTrackTime = timeStampsArray[0].timestamp
 				const currentTrackTime =
-					reportData.track_log[reportData.track_log.length - 1].timestamp				
-        const timeSincePlayed = timeDifference(queriedTrackTime, currentTrackTime)
-        console.log(timeSincePlayed)
+					reportData.track_log[reportData.track_log.length - 1].timestamp
+				const timeSincePlayed = timeDifference(
+					queriedTrackTime,
+					currentTrackTime
+				)
 
 				if (searchResults.length === 1) {
 					// add lastSongPlayed logic check here
@@ -111,7 +94,7 @@ const dypCommand = async (channel, tags, args, client, obs, url, config) => {
 						obs.call('SetInputSettings', {
 							inputName: 'obs-chat-response',
 							inputSettings: {
-								text: `${tags.username} has played\n'${searchItem}' ${searchResults.length} time so far in this stream.\n\nThe last ${searchTerm} song was: \n${lastSongPlayed} \n(played ${timeSincePlayed} ago)`,
+								text: `${tags.username} has played\n'${searchItem}' ${searchResults.length} time so far in this stream.\n\nThe last ${searchTerm} song was: \n${lastSongPlayed} \n* played ${timeSincePlayed} ago`,
 							},
 						})
 						clearOBSResponse(obs, obsClearDisplayTime)
@@ -125,7 +108,7 @@ const dypCommand = async (channel, tags, args, client, obs, url, config) => {
 						obs.call('SetInputSettings', {
 							inputName: 'obs-chat-response',
 							inputSettings: {
-								text: `${tags.username} has played\n'${searchItem}' ${searchResults.length} times so far in this stream.\n\nThe last ${searchTerm} song played was: \n${lastSongPlayed} \n(played ${timeSincePlayed} ago)`,
+								text: `${tags.username} has played\n'${searchItem}' ${searchResults.length} times so far in this stream.\n\nThe last ${searchTerm} song played was: \n${lastSongPlayed} \n* played ${timeSincePlayed} ago`,
 							},
 						})
 						clearOBSResponse(obs, obsClearDisplayTime)
