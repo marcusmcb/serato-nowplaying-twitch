@@ -24,7 +24,7 @@ const longestTrackCommand = async (
 	try {
 		const reportData = await createLiveReport(url)
 		console.log(reportData.longest_track.time_since_played)
-		if (reportData.total_tracks_played === 0) {
+		if (reportData === undefined) {
 			client.say(
 				channel,
 				'Sorry, no playlist stats for this stream at the moment.'

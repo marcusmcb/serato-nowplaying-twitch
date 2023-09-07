@@ -23,7 +23,7 @@ const shortestTrackCommand = async (
 ) => {
 	try {
 		const reportData = await createLiveReport(url)
-		if (reportData.total_tracks_played === 0) {
+		if (reportData === undefined) {
 			client.say(
 				channel,
 				'Sorry, no playlist stats for this stream at the moment.'

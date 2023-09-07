@@ -33,85 +33,92 @@ const dypCommand = async (channel, tags, args, client, obs, url, config) => {
 	} else {
 		try {
 			const reportData = await createLiveReport(url)
-			let searchResults = []
-			let searchTerm = `${args}`.replaceAll(',', ' ')
-			for (let i = 0; i < reportData.track_array.length; i++) {
-				if (
-					reportData.track_array[i]
-						.toLowerCase()
-						.includes(searchTerm.toLowerCase())
-				) {
-					searchResults.push(reportData.track_array[i])
-				}
-			}
-
-			let timeStampsArray = []
-
-			for (let i = 0; i < reportData.track_log.length; i++) {
-				if (
-					reportData.track_log[i].trackId
-						.toLowerCase()
-						.includes(searchTerm.toLowerCase())
-				) {
-					timeStampsArray.push({
-						trackId: reportData.track_log[i].trackId,
-						timestamp: reportData.track_log[i].timestamp,
-					})
-				}
-			}
-
-			if (searchResults.length === 0) {
+			if (reportData === undefined) {
 				client.say(
 					channel,
-					`${tags.username} has not played '${searchItem}' so far in this stream.`
+					'Sorry, no playlist stats for this stream at the moment.'
 				)
-				if (config.isObsResponseEnabled === true) {
-					obs.call('SetInputSettings', {
-						inputName: 'obs-chat-response',
-						inputSettings: {
-							text: `${tags.username} has not played\n'${searchItem}' so far in this stream.`,
-						},
-					})
-					clearOBSResponse(obs, obsClearDisplayTime)
-				}
 			} else {
-				const lastSongPlayed = searchResults[searchResults.length - 1]
-				const queriedTrackTime = timeStampsArray[0].timestamp
-				const currentTrackTime =
-					reportData.track_log[reportData.track_log.length - 1].timestamp
-				const timeSincePlayed = timeDifference(
-					queriedTrackTime,
-					currentTrackTime
-				)
+				let searchResults = []
+				let searchTerm = `${args}`.replaceAll(',', ' ')
+				for (let i = 0; i < reportData.track_array.length; i++) {
+					if (
+						reportData.track_array[i]
+							.toLowerCase()
+							.includes(searchTerm.toLowerCase())
+					) {
+						searchResults.push(reportData.track_array[i])
+					}
+				}
 
-				if (searchResults.length === 1) {
-					// add lastSongPlayed logic check here
+				let timeStampsArray = []
+
+				for (let i = 0; i < reportData.track_log.length; i++) {
+					if (
+						reportData.track_log[i].trackId
+							.toLowerCase()
+							.includes(searchTerm.toLowerCase())
+					) {
+						timeStampsArray.push({
+							trackId: reportData.track_log[i].trackId,
+							timestamp: reportData.track_log[i].timestamp,
+						})
+					}
+				}
+
+				if (searchResults.length === 0) {
 					client.say(
 						channel,
-						`${tags.username} has played '${searchItem}' ${searchResults.length} time so far in this stream. The last '${searchTerm}' song was \n${lastSongPlayed}, played ${timeSincePlayed} ago.`
+						`${tags.username} has not played '${searchItem}' so far in this stream.`
 					)
 					if (config.isObsResponseEnabled === true) {
 						obs.call('SetInputSettings', {
 							inputName: 'obs-chat-response',
 							inputSettings: {
-								text: `${tags.username} has played\n'${searchItem}' ${searchResults.length} time so far in this stream.\n\nThe last ${searchTerm} song was: \n${lastSongPlayed} \n* played ${timeSincePlayed} ago`,
+								text: `${tags.username} has not played\n'${searchItem}' so far in this stream.`,
 							},
 						})
 						clearOBSResponse(obs, obsClearDisplayTime)
 					}
 				} else {
-					client.say(
-						channel,
-						`${tags.username} has played '${searchItem}' ${searchResults.length} times so far in this stream. The last ${searchTerm} song played was \n${lastSongPlayed}, played ${timeSincePlayed} ago.`
+					const lastSongPlayed = searchResults[searchResults.length - 1]
+					const queriedTrackTime = timeStampsArray[0].timestamp
+					const currentTrackTime =
+						reportData.track_log[reportData.track_log.length - 1].timestamp
+					const timeSincePlayed = timeDifference(
+						queriedTrackTime,
+						currentTrackTime
 					)
-					if (config.isObsResponseEnabled === true) {
-						obs.call('SetInputSettings', {
-							inputName: 'obs-chat-response',
-							inputSettings: {
-								text: `${tags.username} has played\n'${searchItem}' ${searchResults.length} times so far in this stream.\n\nThe last ${searchTerm} song played was: \n${lastSongPlayed} \n* played ${timeSincePlayed} ago`,
-							},
-						})
-						clearOBSResponse(obs, obsClearDisplayTime)
+
+					if (searchResults.length === 1) {
+						// add lastSongPlayed logic check here
+						client.say(
+							channel,
+							`${tags.username} has played '${searchItem}' ${searchResults.length} time so far in this stream. The last '${searchTerm}' song was \n${lastSongPlayed}, played ${timeSincePlayed} ago.`
+						)
+						if (config.isObsResponseEnabled === true) {
+							obs.call('SetInputSettings', {
+								inputName: 'obs-chat-response',
+								inputSettings: {
+									text: `${tags.username} has played\n'${searchItem}' ${searchResults.length} time so far in this stream.\n\nThe last ${searchTerm} song was: \n${lastSongPlayed} \n* played ${timeSincePlayed} ago`,
+								},
+							})
+							clearOBSResponse(obs, obsClearDisplayTime)
+						}
+					} else {
+						client.say(
+							channel,
+							`${tags.username} has played '${searchItem}' ${searchResults.length} times so far in this stream. The last ${searchTerm} song played was \n${lastSongPlayed}, played ${timeSincePlayed} ago.`
+						)
+						if (config.isObsResponseEnabled === true) {
+							obs.call('SetInputSettings', {
+								inputName: 'obs-chat-response',
+								inputSettings: {
+									text: `${tags.username} has played\n'${searchItem}' ${searchResults.length} times so far in this stream.\n\nThe last ${searchTerm} song played was: \n${lastSongPlayed} \n* played ${timeSincePlayed} ago`,
+								},
+							})
+							clearOBSResponse(obs, obsClearDisplayTime)
+						}
 					}
 				}
 			}

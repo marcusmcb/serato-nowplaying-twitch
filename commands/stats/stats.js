@@ -33,7 +33,7 @@ const displayStatsMessage = (obs, tags, reportData, config, trendIndicator) => {
 const statsCommand = async (channel, tags, args, client, obs, url, config) => {
 	try {
 		const reportData = await createLiveReport(url)
-		if (reportData.total_tracks_played === 0) {
+		if (reportData === undefined) {
 			client.say(
 				channel,
 				'Sorry, no playlist stats for this stream at the moment.'

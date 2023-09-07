@@ -1,129 +1,174 @@
 const createLiveReport = require('../liveReport/createLiveReport')
 const clearOBSResponse = require('../../obs/obsHelpers/obsHelpers')
-const { parseTimeString, vibeCheckSelector } = require("../now-playing/npCommandHelpers/npCommandHelpers")
+const {
+	parseTimeString,
+	vibeCheckSelector,
+} = require('../now-playing/npCommandHelpers/npCommandHelpers')
+
+const NO_LIVE_DATA_MESSAGE =
+	'No live playlist data for this stream at the moment.'
+const ERROR_MESSAGE = "That doesn't appear to be working right now."
+const NP_OPITONS =
+	'npChatbot options: !np, !np previous, !np start, !np vibecheck, !dyp (query), !stats, !doubles, !shortestsong, !longestsong'
+
+const updateOBSWithText = (obs, text, obsClearDisplayTime, config) => {
+	if (config.isObsResponseEnabled) {
+		obs.call('SetInputSettings', {
+			inputName: 'obs-chat-response',
+			inputSettings: { text },
+		})
+		clearOBSResponse(obs, obsClearDisplayTime)
+	}
+}
+
+const handleOptions = (channel, client) => {
+	const message =
+		'Use the following commands to search through my play history: !np (current song), !np previous (previous song), !np start (first song), !np vibecheck (try it & find out), !stats, !doubles, !longestsong, !shortestsong, !dyp (artist name)'
+	client.say(channel, message)
+}
+
+const handleDefault = (
+	channel,
+	client,
+	reportData,
+	obs,
+	obsClearDisplayTime,
+	config
+) => {
+	const currentTrackPlaying =
+		reportData.track_log[reportData.track_log.length - 1]
+	const message = `Now playing: ${currentTrackPlaying.trackId}`
+	client.say(channel, message)
+	updateOBSWithText(
+		obs,
+		`Now playing:\n${currentTrackPlaying.trackId}`,
+		obsClearDisplayTime,
+		config
+	)
+}
+
+const handlePrevious = (
+	channel,
+	client,
+	reportData,
+	obs,
+	obsClearDisplayTime,
+	config
+) => {
+	const previousTrackPlayed =
+		reportData.track_log[reportData.track_log.length - 2]
+	const message = `Previous song: ${previousTrackPlayed.trackId}`
+	client.say(channel, message)
+	updateOBSWithText(
+		obs,
+		`Previous song:\n${previousTrackPlayed.trackId}`,
+		obsClearDisplayTime,
+		config
+	)
+}
+
+const handleStart = (
+	channel,
+	client,
+	reportData,
+	obs,
+	obsClearDisplayTime,
+	config,
+	tags
+) => {
+	const firstTrackPlayed = reportData.track_log[0]
+	const message = `${tags.username} kicked off this stream with ${firstTrackPlayed.trackId}`
+	client.say(channel, message)
+	updateOBSWithText(
+		obs,
+		`${tags.username} kicked off this stream with :\n${firstTrackPlayed.trackId}`,
+		obsClearDisplayTime,
+		config
+	)
+}
+
+const handleVibeCheck = (
+	channel,
+	client,
+	reportData,
+	obs,
+	obsClearDisplayTime,
+	config,
+	tags
+) => {
+	const vibeCheckSelection = vibeCheckSelector(reportData.track_log)
+	const { hours, minutes, seconds } = parseTimeString(
+		vibeCheckSelection.timeSincePlayed
+	)
+	if (hours > 0) {
+		if (hours > 1) {
+			const message = `${tags.username} played "${vibeCheckSelection.trackId}" ${hours} hours & ${minutes} minutes ago in this stream.`
+			client.say(channel, message)
+			updateOBSWithText(
+				obs,
+				`vibecheck:\n\n${tags.username} played\n"${vibeCheckSelection.trackId}"\n${hours} hours & ${minutes} minutes ago in this stream.`,
+				obsClearDisplayTime,
+				config
+			)
+		} else {
+			const message = `${tags.username} played "${vibeCheckSelection.trackId}" ${hours} hour & ${minutes} minutes ago in this stream.`
+			client.say(channel, message)
+			updateOBSWithText(
+				obs,
+				`vibecheck:\n\n${tags.username} played\n"${vibeCheckSelection.trackId}"\n${hours} hour & ${minutes} minutes ago in this stream.`,
+				obsClearDisplayTime,
+				config
+			)
+		}
+	} else {
+		const message = `${tags.username} played "${vibeCheckSelection.trackId}" ${minutes} minutes ago in this stream.`
+		client.say(channel, message)
+		updateOBSWithText(
+			obs,
+			`vibe check:\n\n${tags.username} played\n"${vibeCheckSelection.trackId}"\n${minutes} minutes ago in this stream.`,
+			obsClearDisplayTime,
+			config
+		)
+	}
+}
+
+const COMMAND_MAP = {
+	undefined: handleDefault,
+	previous: handlePrevious,
+	start: handleStart,
+	vibecheck: handleVibeCheck,
+	options: handleOptions,
+}
 
 const npCommands = async (channel, tags, args, client, obs, url, config) => {
 	const obsClearDisplayTime = config.obsClearDisplayTime
 	try {
 		const reportData = await createLiveReport(url)
-		const currentTrackPlaying =
-			reportData.track_log[reportData.track_log.length - 1]
-		const previousTrackPlayed =
-			reportData.track_log[reportData.track_log.length - 2]
-		const firstTrackPlayed = reportData.track_log[0]
-		const vibeCheckSelection = vibeCheckSelector(reportData.track_log)
+		if (reportData === undefined) {
+			client.say(channel, NO_LIVE_DATA_MESSAGE)
+			return
+		}
 
-		if (reportData.track_log.length === 0) {
-			client.say(
+		const handler = COMMAND_MAP[args[0]]
+		if (handler) {
+			handler(
 				channel,
-				'No live playlist data for this stream at the moment.'
+				client,
+				reportData,
+				obs,
+				obsClearDisplayTime,
+				config,
+				tags
 			)
-		} else if (args[0] === undefined) {
-			client.say(channel, `Now playing: ${currentTrackPlaying.trackId}`)
-			if (config.isObsResponseEnabled === true) {
-				obs.call('SetInputSettings', {
-					inputName: 'obs-chat-response',
-					inputSettings: {
-						text: `Now playing:\n${currentTrackPlaying.trackId}`,
-					},
-				})
-				clearOBSResponse(obs, obsClearDisplayTime)
-			}
-		} else if (args[0] === 'previous') {
-			client.say(channel, `Previous song: ${previousTrackPlayed.trackId}`)
-			if (config.isObsResponseEnabled === true) {
-				obs.call('SetInputSettings', {
-					inputName: 'obs-chat-response',
-					inputSettings: {
-						text: `Previous song:\n${previousTrackPlayed.trackId}`,
-					},
-				})
-				clearOBSResponse(obs, obsClearDisplayTime)
-			}
-		} else if (args[0] === 'start') {
-			client.say(
-				channel,
-				`${tags.username} kicked off this stream with ${firstTrackPlayed.trackId}`
-			)
-			if (config.isObsResponseEnabled === true) {
-				obs.call('SetInputSettings', {
-					inputName: 'obs-chat-response',
-					inputSettings: {
-						text: `${tags.username} kicked off this stream with :\n${firstTrackPlayed.trackId}`,
-					},
-				})
-				clearOBSResponse(obs, obsClearDisplayTime)
-			}
-		} else if (args[0] === 'vibecheck') {
-			const { hours, minutes, seconds } = parseTimeString(
-				vibeCheckSelection.timeSincePlayed
-			)
-
-			if (hours > 0) {
-				// if that hours value is > 1
-				if (hours > 1) {
-					client.say(
-						channel,
-						`${tags.username} played "${vibeCheckSelection.trackId}" ${hours} hours & ${minutes} minutes ago in this stream.`
-					)
-					if (config.isObsResponseEnabled === true) {
-						obs.call('SetInputSettings', {
-							inputName: 'obs-chat-response',
-							inputSettings: {
-								text: `vibecheck:\n\n${tags.username} played\n"${vibeCheckSelection.trackId}"\n${hours} hours & ${minutes} minutes ago in this stream.`,
-							},
-						})
-						clearOBSResponse(obs, obsClearDisplayTime)
-					}
-				} else {
-					client.say(
-						channel,
-						`${tags.username} played "${vibeCheckSelection.trackId}" ${hours} hour & ${minutes} minutes ago in this stream.`
-					)
-					if (config.isObsResponseEnabled === true) {
-						obs.call('SetInputSettings', {
-							inputName: 'obs-chat-response',
-							inputSettings: {
-								text: `vibecheck:\n\n${tags.username} played\n"${vibeCheckSelection.trackId}"\n${hours} hour & ${minutes} minutes ago in this stream.`,
-							},
-						})
-						clearOBSResponse(obs, obsClearDisplayTime)
-					}
-				}
-			} else {
-				client.say(
-					channel,
-					`${tags.username} played "${vibeCheckSelection.trackId}" ${minutes} minutes ago in this stream.`
-				)
-				if (config.isObsResponseEnabled === true) {
-					obs.call('SetInputSettings', {
-						inputName: 'obs-chat-response',
-						inputSettings: {
-							text: `vibecheck:\n\n${tags.username} played\n"${vibeCheckSelection.trackId}"\n${minutes} minutes ago in this stream.`,
-						},
-					})
-					setTimeout(() => {
-						obs.call('SetInputSettings', {
-							inputName: 'obs-chat-response',
-							inputSettings: {
-								text: '',
-							},
-						})
-					}, 5000)
-				}
-			}
-		} else if (args[0] === 'options') {
-			client.say(
-				channel,
-				'Use the following commands to search through my play history: !np (current song), !np previous (previous song), !np start (first song), !np vibecheck (try it & find out), !stats, !doubles, !longestsong, !shortestsong, !dyp (artist name)'
-			)
+		} else {
+			client.say(channel, NP_OPITONS)
 		}
 	} catch (error) {
 		console.log(error)
-		client.say(channel, "That doesn't appear to be working right now.")
+		client.say(channel, ERROR_MESSAGE)
 	}
 }
 
 module.exports = {
-	npCommands: npCommands,
+	npCommands,
 }

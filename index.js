@@ -1,12 +1,10 @@
 const tmi = require('tmi.js')
-const { commandList, urlCommandList } = require('./command-list/commandList')
-const autoCommandsConfig = require('./auto-commands/config/autoCommandsConfig')
-const { obs, connectToOBS } = require('./obs/obsConnection')
 const Datastore = require('nedb')
+const autoCommandsConfig = require('./auto-commands/config/autoCommandsConfig')
+const { commandList, urlCommandList } = require('./command-list/commandList')
+const { obs, connectToOBS } = require('./obs/obsConnection')
 
 const initializeBot = async (config) => {
-	// console.log('CONFIG:')
-	// console.log(config)
 	let userCommandHistory = {}
 	let urlCommandCooldown = false
 	const COOLDOWN_DURATION = 5000
@@ -17,6 +15,7 @@ const initializeBot = async (config) => {
 	db.users = new Datastore({ filename: 'users.db', autoload: true })
 
 	const url = `https://serato.com/playlists/${config.seratoDisplayName}/8-1-2023`
+	// const url = `https://serato.com/playlists/${config.seratoDisplayName}/live`
 
 	const client = new tmi.Client({
 		options: { debug: true },
