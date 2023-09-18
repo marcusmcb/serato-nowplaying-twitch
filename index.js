@@ -47,13 +47,18 @@ const initializeBot = async (config) => {
 		const args = message.slice(1).split(' ')
 		const command = args.shift().toLowerCase()
 
+		if (!userCommandHistory[tags.username]) {
+			userCommandHistory[tags.username] = []
+		}
+
+		let history = userCommandHistory[tags.username]
+		history.push(command)
+		
+		if (history.length > COMMAND_REPEAT_LIMIT) {
+			history.shift()
+		}
+
 		if (command in commandList) {
-			if (!userCommandHistory[tags.username]) {
-				userCommandHistory[tags.username] = []
-			}
-
-			let history = userCommandHistory[tags.username]
-
 			if (
 				history.length >= COMMAND_REPEAT_LIMIT &&
 				history.every((hist) => hist === command)
@@ -73,17 +78,11 @@ const initializeBot = async (config) => {
 					}
 					urlCommandCooldown = true
 					commandList[command](channel, tags, args, client, obs, url, config)
-					history.push(command)
 					setTimeout(() => {
 						urlCommandCooldown = false
 					}, COOLDOWN_DURATION)
 				} else {
 					commandList[command](channel, tags, args, client, obs, url, config)
-					history.push(command)
-				}
-
-				if (history.length > COMMAND_REPEAT_LIMIT) {
-					history.shift()
 				}
 			}
 		}

@@ -82,7 +82,8 @@ const InputField: React.FC<{
 			value={
 				hideSensitiveFields &&
 				(fieldConfig.name === 'twitchOAuthKey' ||
-					fieldConfig.name === 'obsWebsocketPassword' || fieldConfig.name === 'obsWebsocketAddress')
+					fieldConfig.name === 'obsWebsocketPassword' ||
+					fieldConfig.name === 'obsWebsocketAddress')
 					? '*'.repeat((value || '').length)
 					: value || ''
 			}
@@ -134,7 +135,12 @@ const CredentialsPanel: React.FC<CredentialsPanelProps> = (props) => {
 							checked={hideSensitiveFields}
 							onChange={(e) => setHideSensitiveFields(e.target.checked)}
 						/>
-						<label htmlFor='hideSensitiveFields' className='toggle-text-label-color'>Hide Sensitive Fields</label>
+						<label
+							htmlFor='hideSensitiveFields'
+							className='toggle-text-label-color'
+						>
+							Hide Sensitive Fields
+						</label>
 					</div>
 				</div>
 			</form>
