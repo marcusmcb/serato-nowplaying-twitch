@@ -40,6 +40,11 @@ const MessagePanel: React.FC<MessagePanelProps> = ({
 					channel here
 				</div>
 			)}
+			{showTooltip === 'obsClearDisplayTime' && (
+				<div className='info-tooltip'>
+					Enter the duration (in seconds) for the OBS response to remain on screen
+				</div>
+			)}
 			{showTooltip === 'seratoDisplayName' && (
 				<div className='info-tooltip'>
 					Enter the display name from your Serato playlist page here

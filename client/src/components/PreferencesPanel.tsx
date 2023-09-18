@@ -57,7 +57,7 @@ const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
 					htmlFor='obs-clear-display-time'
 					className={!props.isObsResponseEnabled ? 'disabled-label' : ''}
 				>
-					On-screen display time:
+					Display time (in seconds):
 				</label>
 
 				<input
@@ -106,7 +106,7 @@ const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
 					htmlFor='obs-interval-duration'
 					className={!props.isIntervalEnabled ? 'disabled-label' : ''}
 				>
-					Interval Duration:
+					Interval duration:
 				</label>
 
 				<input
