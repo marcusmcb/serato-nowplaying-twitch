@@ -5,7 +5,11 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const Datastore = require('nedb')
 const fs = require('fs')
-const testEncryptionKeys = require('./encryption')
+const {
+	testEncryptionKeys,
+	encryptCredential,
+	decryptCredential,
+} = require('./auth/encryption')
 
 const db = {}
 let botProcess
@@ -32,7 +36,7 @@ app.get('/getUserData', (req, res) => {
 			if (err) {
 				console.error('Error fetching the user:', err)
 			} else if (user) {
-				console.log("***********************")
+				console.log('***********************')
 				console.log('User information:', user)
 				res.send(user)
 			} else {
@@ -46,9 +50,8 @@ app.get('/getUserData', (req, res) => {
 })
 
 app.post('/submitUserData', async (req, res) => {
-	// console.log('REQUEST BODY: ')
-	// console.log(req.body)
-
+	const encryptedOAuthKey = await encryptCredential(req.body.twitchOAuthKey)
+	console.log("---> ", encryptedOAuthKey)
 	const user = {
 		twitchChannelName: req.body.twitchChannelName,
 		twitchChatbotName: req.body.twitchChatbotName,
@@ -62,16 +65,17 @@ app.post('/submitUserData', async (req, res) => {
 		isObsResponseEnabled: req.body.isObsResponseEnabled,
 		isIntervalEnabled: req.body.isIntervalEnabled,
 		isReportEnabled: req.body.isReportEnabled,
+		encryptedKey: encryptedOAuthKey
 	}
 
-	testEncryptionKeys(req.body.twitchOAuthKey)
+	// testEncryptionKeys(req.body.twitchOAuthKey)
 
 	db.users.remove({}, { multi: true }, (err, numRemoved) => {
 		if (err) return res.status(500).send({ error: 'DB error during deletion' })
 		db.users.insert(user, (err, newUser) => {
 			if (err)
 				return res.status(500).send({ error: 'DB error during creation' })
-			// console.log(newUser)
+			console.log(newUser)
 			res.json(newUser)
 		})
 	})

@@ -1,10 +1,17 @@
 const tmi = require('tmi.js')
 const Datastore = require('nedb')
-const autoCommandsConfig = require('./auto-commands/config/autoCommandsConfig')
-const { commandList, urlCommandList } = require('./command-list/commandList')
+const autoCommandsConfig = require('./bot-assets/auto-commands/config/autoCommandsConfig')
+const { commandList, urlCommandList } = require('./bot-assets/command-list/commandList')
 const { obs, connectToOBS } = require('./obs/obsConnection')
+const { decryptCredential } = require('./server/auth/encryption')
 
 const initializeBot = async (config) => {
+	console.log("CONFIG ----")
+	console.log(config)
+
+	const twitchOAuthKey = await decryptCredential(config.encryptedKey)
+	console.log("KEY?????? ", twitchOAuthKey)
+
 	let userCommandHistory = {}
 	let urlCommandCooldown = false
 	const COOLDOWN_DURATION = 5000
@@ -25,7 +32,7 @@ const initializeBot = async (config) => {
 		},
 		identity: {
 			username: config.twitchChatbotName,
-			password: config.twitchOAuthKey,
+			password: twitchOAuthKey,
 		},
 		channels: [config.twitchChannelName],
 	})

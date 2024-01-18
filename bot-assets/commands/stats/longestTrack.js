@@ -1,5 +1,5 @@
 const createLiveReport = require('../liveReport/createLiveReport')
-const clearOBSResponse = require('../../obs/obsHelpers/obsHelpers')
+const clearOBSResponse = require('../../../obs/obsHelpers/obsHelpers')
 
 const displayLongestTrackMessage = (obs, tags, reportData, config) => {
 	let message = `Longest song in ${tags.username}'s set so far : \n\n${reportData.longest_track.name}\n${reportData.longest_track.length_value} (played ${reportData.longest_track.time_since_played_string})`

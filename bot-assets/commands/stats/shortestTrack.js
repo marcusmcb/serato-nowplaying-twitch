@@ -1,5 +1,5 @@
 const createLiveReport = require('../liveReport/createLiveReport')
-const clearOBSResponse = require('../../obs/obsHelpers/obsHelpers')
+const clearOBSResponse = require('../../../obs/obsHelpers/obsHelpers')
 
 const displayShortestTrackMessage = (obs, tags, reportData, config) => {
 	let message = `Shortest song in ${tags.username}'s set so far : \n\n${reportData.shortest_track.name}\n${reportData.shortest_track.length_value} (played ${reportData.shortest_track.time_since_played_string})`

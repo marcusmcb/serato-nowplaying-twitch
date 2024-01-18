@@ -1,5 +1,5 @@
 const createLiveReport = require('../liveReport/createLiveReport')
-const clearOBSResponse = require('../../obs/obsHelpers/obsHelpers')
+const clearOBSResponse = require('../../../obs/obsHelpers/obsHelpers')
 
 const doublesCommand = async (
 	channel,

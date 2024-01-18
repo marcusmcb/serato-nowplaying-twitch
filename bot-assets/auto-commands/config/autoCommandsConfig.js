@@ -1,8 +1,8 @@
 const dotenv = require("dotenv");
 dotenv.config();
 
-const [autoCommandList] = require("../../auto-commands-list/autoCommandList");
-const { commandList } = require("../../command-list/commandList");
+const [autoCommandList] = require("../../../bot-assets/auto-commands-list/autoCommandList");
+const { commandList } = require("../../../bot-assets/command-list/commandList");
 
 const autoCommandsConfig = (client, obs, config) => {
   // console.log("AUTO COMMANDS CONFIG: ")
