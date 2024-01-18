@@ -14,8 +14,8 @@ const initializeBot = async (config) => {
 	const db = {}
 	db.users = new Datastore({ filename: 'users.db', autoload: true })
 
-	const url = `https://serato.com/playlists/${config.seratoDisplayName}/8-1-2023`
-	// const url = `https://serato.com/playlists/${config.seratoDisplayName}/live`
+	// const url = `https://serato.com/playlists/${config.seratoDisplayName}/8-1-2023`
+	const url = `https://serato.com/playlists/${config.seratoDisplayName}/live`
 
 	const client = new tmi.Client({
 		options: { debug: true },

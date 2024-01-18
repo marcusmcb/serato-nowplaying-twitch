@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const Datastore = require('nedb')
 const fs = require('fs')
+const testEncryptionKeys = require('./encryption')
 
 const db = {}
 let botProcess
@@ -20,7 +21,7 @@ db.users = new Datastore({ filename: 'users.db', autoload: true })
 // db.preferences = new Datastore({ filename: 'preferences.db', autoload: true })
 
 app.get('/', (req, res) => {
-	res.send('Hello world, I am here YO!')
+	res.send('NPChatbot is up and running')
 })
 
 app.get('/getUserData', (req, res) => {
@@ -31,6 +32,7 @@ app.get('/getUserData', (req, res) => {
 			if (err) {
 				console.error('Error fetching the user:', err)
 			} else if (user) {
+				console.log("***********************")
 				console.log('User information:', user)
 				res.send(user)
 			} else {
@@ -44,8 +46,8 @@ app.get('/getUserData', (req, res) => {
 })
 
 app.post('/submitUserData', async (req, res) => {
-	console.log('REQUEST BODY: ')
-	console.log(req.body)
+	// console.log('REQUEST BODY: ')
+	// console.log(req.body)
 
 	const user = {
 		twitchChannelName: req.body.twitchChannelName,
@@ -62,12 +64,14 @@ app.post('/submitUserData', async (req, res) => {
 		isReportEnabled: req.body.isReportEnabled,
 	}
 
+	testEncryptionKeys(req.body.twitchOAuthKey)
+
 	db.users.remove({}, { multi: true }, (err, numRemoved) => {
 		if (err) return res.status(500).send({ error: 'DB error during deletion' })
 		db.users.insert(user, (err, newUser) => {
 			if (err)
 				return res.status(500).send({ error: 'DB error during creation' })
-			console.log(newUser)
+			// console.log(newUser)
 			res.json(newUser)
 		})
 	})
