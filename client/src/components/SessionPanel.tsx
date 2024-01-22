@@ -62,9 +62,9 @@ const SessionPanel: React.FC<SessionPanelProps> = (props) => {
 					className='bot-control-button'
 					type='submit'
 					onClick={(event) => {
-						resetUptime();
-						props.handleDisconnect(event);
-				}}
+						resetUptime()
+						props.handleDisconnect(event)
+					}}
 				>
 					End Session
 				</button>
@@ -73,13 +73,19 @@ const SessionPanel: React.FC<SessionPanelProps> = (props) => {
 			<div className='session-info-label'>
 				Status:
 				<span className='session-info-status'>
-					{props.isBotConnected ? 'connected' : 'not connected'}
+					{props.isBotConnected ? (
+						<span style={{ color: 'lightgreen' }}>connected</span>
+					) : (
+						<span>not connected</span>
+					)}
 				</span>
 			</div>
 			<div className='session-info-label'>
 				Uptime:
-				<span className='session-info-status'>
-					{hours > 0 ? `${hours} hours, ` : ''} {minutes > 0 ? `${minutes} mins, ` : ''} {seconds > 0 ? `${seconds} secs` : ''}
+				<span className='session-info-status' style={{ color: 'lightgreen' }}>
+					{hours > 0 ? `${hours} hours, ` : ''}{' '}
+					{minutes > 0 ? `${minutes} mins, ` : ''}{' '}
+					{seconds > 0 ? `${seconds} secs` : ''}
 				</span>
 			</div>
 		</div>
