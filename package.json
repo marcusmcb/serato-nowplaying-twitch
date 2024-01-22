@@ -10,7 +10,7 @@
     "server": "nodemon server/app.js",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "build": "react-scripts build",
-    "electron": "electron ."
+    "electron": "npm run build --prefix client && electron ."
   },
   "keywords": [
     "twitch",
