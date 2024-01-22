@@ -5,11 +5,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const Datastore = require('nedb')
 const fs = require('fs')
-const {
-	testEncryptionKeys,
-	encryptCredential,
-	decryptCredential,
-} = require('./auth/encryption')
+const { encryptCredential } = require('./auth/encryption')
 
 const db = {}
 let botProcess
@@ -51,7 +47,7 @@ app.get('/getUserData', (req, res) => {
 
 app.post('/submitUserData', async (req, res) => {
 	const encryptedOAuthKey = await encryptCredential(req.body.twitchOAuthKey)
-	console.log("---> ", encryptedOAuthKey)
+	console.log('---> ', encryptedOAuthKey)
 	const user = {
 		twitchChannelName: req.body.twitchChannelName,
 		twitchChatbotName: req.body.twitchChatbotName,
@@ -65,7 +61,7 @@ app.post('/submitUserData', async (req, res) => {
 		isObsResponseEnabled: req.body.isObsResponseEnabled,
 		isIntervalEnabled: req.body.isIntervalEnabled,
 		isReportEnabled: req.body.isReportEnabled,
-		encryptedKey: encryptedOAuthKey
+		encryptedKey: encryptedOAuthKey,
 	}
 
 	// testEncryptionKeys(req.body.twitchOAuthKey)
