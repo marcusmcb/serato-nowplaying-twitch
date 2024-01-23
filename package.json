@@ -10,7 +10,7 @@
     "server": "nodemon server/app.js",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "build": "react-scripts build",
-    "electron": "npm run build --prefix client && electron ."
+    "electron": "electron ."
   },
   "keywords": [
     "twitch",
@@ -27,6 +27,7 @@
     "chalk": "^5.3.0",
     "cheerio": "^1.0.0-rc.12",
     "concurrently": "^8.2.0",
+    "cross-spawn": "^7.0.3",
     "dotenv": "^16.3.1",
     "nedb": "^1.8.0",
     "nodemon": "^3.0.1",

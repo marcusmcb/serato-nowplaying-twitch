@@ -1,57 +1,73 @@
 const { app, BrowserWindow } = require('electron')
 const path = require('path')
-const url = require('url')
-const { spawn } = require('child_process')
-let serverProcess
-
-function startServer() {
-	// Start your Express server
-	serverProcess = spawn('npm', ['run', 'server'], {
-		cwd: process.cwd(),
-		detached: true,
-		stdio: 'inherit',
-	})
-
-	serverProcess.on('close', (code) => {
-		console.log(`Server process exited with code ${code}`)
-	})
-}
+const spawn = require('cross-spawn')
+// const isDev = require('electron-is-dev')
 
 let mainWindow
+let serverProcess
 
-app.on('ready', () => {
-	// ... Your code for starting the chatbot script ...
-	startServer()
-	// Create a new Electron browser window for the React app
+const isDev = false
+
+function startServer() {
+	if (!isDev) {
+		console.log('Starting server from:', process.cwd())
+		serverProcess = spawn('npm', ['run', 'server'], {
+			cwd: process.cwd(),
+			detached: true,
+			stdio: 'ignore',
+			shell: true,
+			windowsHide: true
+		})
+
+		serverProcess.on('error', (err) => {
+			console.log('Failed to start server:', err)
+		})
+
+		serverProcess.on('close', (code) => {
+			console.log(`Server process exited with code ${code}`)
+		})
+	}
+}
+
+function createWindow() {
 	mainWindow = new BrowserWindow({
 		width: 1280,
 		height: 680,
 		webPreferences: {
 			nodeIntegration: true,
+			contextIsolation: false, // Set to true in production
 		},
 	})
 
-	// Load the React app
-	const isDev = require('electron-is-dev')
-
-	let appURL = isDev
-		? 'http://localhost:3000' // URL of your local dev server
-		: `file://${path.join(__dirname, '../client/build/index.html')}` // Path to your production build file
-
+	const appURL = isDev
+		? 'http://localhost:3000'
+		: `file://${path.join(__dirname, './client/build/index.html')}`
+	console.log('Loading URL: ', appURL)
 	mainWindow.loadURL(appURL)
+}
 
-	// Uncomment the following line if you want to open the DevTools for debugging
-	// mainWindow.webContents.openDevTools();
-
-	// ... Your code for handling window events ...
+app.on('ready', () => {
+	startServer()
+	createWindow()
 })
 
-// Handle the closing of the Electron app
 app.on('before-quit', () => {
 	if (mainWindow) {
 		mainWindow.destroy()
 	}
 	if (serverProcess) {
-		process.kill(-serverProcess.pid) // Kills the entire subprocess tree
+		process.kill(-serverProcess.pid)
+	}
+})
+
+app.on('window-all-closed', () => {
+	if (process.platform !== 'darwin') {
+		app.quit()
+	}
+})
+
+app.on('activate', () => {
+	if (BrowserWindow.getAllWindows().length === 0) {
+		createWindow()
 	}
 })
