@@ -22,7 +22,7 @@ db.users = new Datastore({ filename: 'users.db', autoload: true })
 let mainWindow
 let botProcess
 let serverInstance
-const isDev = false // Set based on your environment
+const isDev = true // Set based on your environment
 
 // Express routes
 server.get('/', (req, res) => {
@@ -117,13 +117,25 @@ server.post('/stopBotScript', (req, res) => {
 	}
 })
 
-// Start Express server
-const startServer = () => {
-	if (!isDev) {
-		serverInstance = server.listen(PORT, () => {
-			console.log(`Server is running on port ${PORT}`)
+// Start React client app (dev only)
+const startClient = () => {
+	if (isDev) {
+		console.log('Starting client app...')
+		spawn('npm', ['start'], {
+			cwd: path.join(__dirname, './client'), // Adjust this path to your client app's directory
+			stdio: 'ignore',
+			shell: true,
+			detached: true,
+			windowsHide: true,
 		})
 	}
+}
+
+// Start Express server
+const startServer = () => {
+	serverInstance = server.listen(PORT, () => {
+		console.log(`Server is running on port ${PORT}`)
+	})
 }
 
 // Create the Electron BrowserWindow
@@ -147,15 +159,18 @@ const createWindow = () => {
 // Electron app event handlers
 app.on('ready', () => {
 	startServer()
+	if (isDev) {
+		startClient()
+	}
 	createWindow()
 	console.log('app loaded...')
 })
 
-app.on('before-quit', () => {	
-	if (mainWindow) {		
+app.on('before-quit', () => {
+	if (mainWindow) {
 		mainWindow.destroy()
 	}
-	if (serverInstance) {		
+	if (serverInstance) {
 		serverInstance.close(() => {
 			console.log('Server closed.')
 		})
@@ -164,7 +179,7 @@ app.on('before-quit', () => {
 
 app.on('window-all-closed', () => {
 	console.log('closing app...')
-	if (process.platform !== 'darwin') {		
+	if (process.platform !== 'darwin') {
 		app.quit()
 	}
 })

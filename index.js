@@ -8,13 +8,8 @@ const {
 const { obs, connectToOBS } = require('./obs/obsConnection')
 const { decryptCredential } = require('./auth/encryption')
 
-const initializeBot = async (config) => {
-	// console.log("CONFIG ----")
-	// console.log(config)
-
-	const twitchOAuthKey = await decryptCredential(config.encryptedKey)
-	// console.log("KEY?????? ", twitchOAuthKey)
-
+const initializeBot = async (config) => {	
+	const twitchOAuthKey = await decryptCredential(config.encryptedKey)	
 	let userCommandHistory = {}
 	let urlCommandCooldown = false
 	const COOLDOWN_DURATION = 5000

@@ -12,6 +12,7 @@ type PreferencesPanelProps = {
 		intervalMessageDuration: string
 		userEmailAddress: string
 	}
+	
 	isObsResponseEnabled: boolean
 	setIsObsResponseEnabled: (value: boolean) => void
 	isIntervalEnabled: boolean

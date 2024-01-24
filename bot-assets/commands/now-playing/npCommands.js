@@ -8,7 +8,7 @@ const {
 const NO_LIVE_DATA_MESSAGE =
 	'No live playlist data for this stream at the moment.'
 const ERROR_MESSAGE = "That doesn't appear to be working right now."
-const NP_OPITONS =
+const NP_OPTIONS =
 	'npChatbot options: !np, !np previous, !np start, !np vibecheck, !dyp (query), !stats, !doubles, !shortestsong, !longestsong'
 
 const updateOBSWithText = (obs, text, obsClearDisplayTime, config) => {
@@ -21,12 +21,14 @@ const updateOBSWithText = (obs, text, obsClearDisplayTime, config) => {
 	}
 }
 
+// !np options response
 const handleOptions = (channel, client) => {
 	const message =
 		'Use the following commands to search through my play history: !np (current song), !np previous (previous song), !np start (first song), !np vibecheck (try it & find out), !stats, !doubles, !longestsong, !shortestsong, !dyp (artist name)'
 	client.say(channel, message)
 }
 
+// !np response
 const handleDefault = (
 	channel,
 	client,
@@ -47,6 +49,7 @@ const handleDefault = (
 	)
 }
 
+// !np previous response
 const handlePrevious = (
 	channel,
 	client,
@@ -67,6 +70,7 @@ const handlePrevious = (
 	)
 }
 
+// !np start response
 const handleStart = (
 	channel,
 	client,
@@ -87,6 +91,7 @@ const handleStart = (
 	)
 }
 
+// !np vibecheck response
 const handleVibeCheck = (
 	channel,
 	client,
@@ -161,7 +166,7 @@ const npCommands = async (channel, tags, args, client, obs, url, config) => {
 				tags
 			)
 		} else {
-			client.say(channel, NP_OPITONS)
+			client.say(channel, NP_OPTIONS)
 		}
 	} catch (error) {
 		console.log(error)
