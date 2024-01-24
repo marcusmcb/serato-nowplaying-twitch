@@ -1,16 +1,19 @@
 const tmi = require('tmi.js')
 const Datastore = require('nedb')
 const autoCommandsConfig = require('./bot-assets/auto-commands/config/autoCommandsConfig')
-const { commandList, urlCommandList } = require('./bot-assets/command-list/commandList')
+const {
+	commandList,
+	urlCommandList,
+} = require('./bot-assets/command-list/commandList')
 const { obs, connectToOBS } = require('./obs/obsConnection')
-const { decryptCredential } = require('./server/auth/encryption')
+const { decryptCredential } = require('./auth/encryption')
 
 const initializeBot = async (config) => {
-	console.log("CONFIG ----")
-	console.log(config)
+	// console.log("CONFIG ----")
+	// console.log(config)
 
 	const twitchOAuthKey = await decryptCredential(config.encryptedKey)
-	console.log("KEY?????? ", twitchOAuthKey)
+	// console.log("KEY?????? ", twitchOAuthKey)
 
 	let userCommandHistory = {}
 	let urlCommandCooldown = false
@@ -60,7 +63,7 @@ const initializeBot = async (config) => {
 
 		let history = userCommandHistory[tags.username]
 		history.push(command)
-		
+
 		if (history.length > COMMAND_REPEAT_LIMIT) {
 			history.shift()
 		}
