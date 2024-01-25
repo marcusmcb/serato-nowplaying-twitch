@@ -1,13 +1,11 @@
 const createLiveReport = require('../liveReport/createLiveReport')
 const clearOBSResponse = require('../../../obs/obsHelpers/obsHelpers')
+const { NO_LIVE_DATA_MESSAGE, ERROR_MESSAGE } = require('../../constants/constants')
 const {
 	parseTimeString,
 	vibeCheckSelector,
 } = require('../now-playing/npCommandHelpers/npCommandHelpers')
 
-const NO_LIVE_DATA_MESSAGE =
-	'No live playlist data for this stream at the moment.'
-const ERROR_MESSAGE = "That doesn't appear to be working right now."
 const NP_OPTIONS =
 	'npChatbot options: !np, !np previous, !np start, !np vibecheck, !dyp (query), !stats, !doubles, !shortestsong, !longestsong'
 
@@ -146,7 +144,7 @@ const COMMAND_MAP = {
 }
 
 const npCommands = async (channel, tags, args, client, obs, url, config) => {
-	const obsClearDisplayTime = config.obsClearDisplayTime
+	const obsClearDisplayTime = config.obsClearDisplayTime	
 	try {
 		const reportData = await createLiveReport(url)
 		if (reportData === undefined) {

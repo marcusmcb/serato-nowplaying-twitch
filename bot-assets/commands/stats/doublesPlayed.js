@@ -1,5 +1,6 @@
 const createLiveReport = require('../liveReport/createLiveReport')
 const clearOBSResponse = require('../../../obs/obsHelpers/obsHelpers')
+const { NO_LIVE_DATA_MESSAGE, ERROR_MESSAGE } = require('../../constants/constants')
 
 const doublesCommand = async (
 	channel,
@@ -15,7 +16,7 @@ const doublesCommand = async (
 		if (reportData === undefined) {
 			client.say(
 				channel,
-				'Sorry, no playlist stats for this stream at the moment.'
+				NO_LIVE_DATA_MESSAGE
 			)
 		} else if (reportData.doubles_played.length === 0) {
 			client.say(
@@ -55,7 +56,7 @@ const doublesCommand = async (
 		}
 	} catch (error) {
 		console.log(error)
-		client.say(channel, "That doesn't appear to be working right now.")
+		client.say(channel, ERROR_MESSAGE)
 	}
 }
 

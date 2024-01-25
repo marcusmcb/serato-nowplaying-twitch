@@ -1,5 +1,6 @@
 const createLiveReport = require('../liveReport/createLiveReport')
 const clearOBSResponse = require('../../../obs/obsHelpers/obsHelpers')
+const { NO_LIVE_DATA_MESSAGE, ERROR_MESSAGE } = require('../../constants/constants')
 
 const timeDifference = (time1, time2) => {
 	const convertToTimeDate = (timeStr) => {
@@ -36,7 +37,7 @@ const dypCommand = async (channel, tags, args, client, obs, url, config) => {
 			if (reportData === undefined) {
 				client.say(
 					channel,
-					'Sorry, no playlist stats for this stream at the moment.'
+					NO_LIVE_DATA_MESSAGE
 				)
 			} else {
 				let searchResults = []
@@ -125,7 +126,7 @@ const dypCommand = async (channel, tags, args, client, obs, url, config) => {
 		} catch (error) {
 			console.log('DYP ERROR:')
 			console.log(error)
-			client.say(channel, "That doesn't appear to be working right now.")
+			client.say(channel, ERROR_MESSAGE)
 		}
 	}
 }

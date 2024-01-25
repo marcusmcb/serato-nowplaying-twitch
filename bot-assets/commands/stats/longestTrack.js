@@ -1,5 +1,6 @@
 const createLiveReport = require('../liveReport/createLiveReport')
 const clearOBSResponse = require('../../../obs/obsHelpers/obsHelpers')
+const { NO_LIVE_DATA_MESSAGE, ERROR_MESSAGE } = require('../../constants/constants')
 
 const displayLongestTrackMessage = (obs, tags, reportData, config) => {
 	let message = `Longest song in ${tags.username}'s set so far : \n\n${reportData.longest_track.name}\n${reportData.longest_track.length_value} (played ${reportData.longest_track.time_since_played_string})`
@@ -27,7 +28,7 @@ const longestTrackCommand = async (
 		if (reportData === undefined) {
 			client.say(
 				channel,
-				'Sorry, no playlist stats for this stream at the moment.'
+				NO_LIVE_DATA_MESSAGE
 			)
 		} else {
 			client.say(
@@ -40,7 +41,7 @@ const longestTrackCommand = async (
 		}
 	} catch (error) {
 		console.log(error)
-		client.say(channel, "That doesn't appear to be working right now.")
+		client.say(channel, ERROR_MESSAGE)
 	}
 }
 

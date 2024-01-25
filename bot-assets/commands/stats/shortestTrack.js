@@ -1,5 +1,6 @@
 const createLiveReport = require('../liveReport/createLiveReport')
 const clearOBSResponse = require('../../../obs/obsHelpers/obsHelpers')
+const { NO_LIVE_DATA_MESSAGE, ERROR_MESSAGE } = require('../../constants/constants')
 
 const displayShortestTrackMessage = (obs, tags, reportData, config) => {
 	let message = `Shortest song in ${tags.username}'s set so far : \n\n${reportData.shortest_track.name}\n${reportData.shortest_track.length_value} (played ${reportData.shortest_track.time_since_played_string})`
@@ -26,7 +27,7 @@ const shortestTrackCommand = async (
 		if (reportData === undefined) {
 			client.say(
 				channel,
-				'Sorry, no playlist stats for this stream at the moment.'
+				NO_LIVE_DATA_MESSAGE
 			)
 		} else {
 			client.say(
@@ -39,7 +40,7 @@ const shortestTrackCommand = async (
 		}
 	} catch (error) {
 		console.log(error)
-		client.say(channel, "That doesn't appear to be working right now.")
+		client.say(channel, ERROR_MESSAGE)
 	}
 }
 
