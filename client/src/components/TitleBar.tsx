@@ -1,5 +1,4 @@
 import '../App.css'
-import axios from 'axios'
 
 const TitleBar = (): JSX.Element => {
 	const handleAuthClick = () => {
