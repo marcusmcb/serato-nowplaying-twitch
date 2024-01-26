@@ -22,6 +22,13 @@ const initializeBot = async (config) => {
 	// const url = `https://serato.com/playlists/${config.seratoDisplayName}/8-1-2023`
 	const url = `https://serato.com/playlists/${config.seratoDisplayName}/live`
 
+	console.log("--------------------")
+	console.log("CONFIG: ")
+	console.log(config.twitchAuthKeyTest)
+	const newAuthKey = "oauth:" + config.twitchAuthKeyTest
+	console.log(newAuthKey)
+	console.log("--------------------")
+
 	const client = new tmi.Client({
 		options: { debug: true },
 		connection: {
@@ -30,7 +37,7 @@ const initializeBot = async (config) => {
 		},
 		identity: {
 			username: config.twitchChatbotName,
-			password: twitchOAuthKey,
+			password: newAuthKey,
 		},
 		channels: [config.twitchChannelName],
 	})
@@ -38,7 +45,7 @@ const initializeBot = async (config) => {
 	try {
 		client.connect()
 	} catch (error) {
-		console.log(error)
+		console.error("TWITCH CONNECTION ERROR: ", error)
 	}
 
 	await connectToOBS(config)

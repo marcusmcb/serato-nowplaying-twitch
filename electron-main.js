@@ -4,10 +4,14 @@ const path = require('path')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const express = require('express')
+const WebSocket = require('ws')
 const Datastore = require('nedb')
 const { app, BrowserWindow } = require('electron')
 const scriptPath = path.join(__dirname, './boot.js')
 const { encryptCredential } = require('./auth/encryption')
+
+const dotenv = require('dotenv')
+dotenv.config()
 
 // Express server setup
 const server = express()
@@ -24,9 +28,71 @@ let botProcess
 let serverInstance
 const isDev = true // Set based on your environment
 
+const axios = require('axios')
+
+async function exchangeCodeForToken(code) {
+	const params = new URLSearchParams()
+	params.append('client_id', `${process.env.TWITCH_CLIENT_ID}`)
+	params.append('client_secret', `${process.env.TWITCH_CLIENT_SECRET}`)
+	params.append('code', code)
+	params.append('grant_type', 'authorization_code')
+	params.append('redirect_uri', 'http://localhost:5000/auth/twitch/callback')
+
+	const response = await axios.post('https://id.twitch.tv/oauth2/token', params)
+	return response.data // Contains access token and refresh token
+}
+
 // Express routes
 server.get('/', (req, res) => {
 	res.send('NPChatbot is up and running')
+})
+
+server.get('/auth/twitch/callback', async (req, res) => {
+	const { code, state } = req.query
+
+	if (code) {
+		try {
+			const token = await exchangeCodeForToken(code)
+			console.log('Token:', token)
+
+			// Update user data in the database
+			db.users.findOne({}, (err, user) => {
+				if (err) {
+					console.error('Error finding the user:', err)
+					return res.status(500).send('Database error.')
+				}
+
+				if (user) {
+					// Update the existing user
+					db.users.update(
+						{ _id: user._id },
+						{ $set: { twitchAuthKeyTest: token.access_token } },
+						{},
+						(err, numReplaced) => {
+							if (err) {
+								console.error('Error updating the user:', err)
+								return res.status(500).send('Database error during update.')
+							}
+							console.log(
+								`Updated ${numReplaced} user(s) with new Twitch token.`
+							)
+						}
+					)
+				} else {
+					// Handle case where user does not exist
+					// This might involve creating a new user or handling it as an error
+					console.log('No user found to update.')
+				}
+			})
+
+			res.redirect('http://localhost:3000')
+		} catch (error) {
+			console.error('Error exchanging code for token:', error)
+			res.status(500).send('Error during authorization.')
+		}
+	} else {
+		res.status(400).send('No code received from Twitch.')
+	}
 })
 
 server.get('/getUserData', (req, res) => {
@@ -37,8 +103,8 @@ server.get('/getUserData', (req, res) => {
 			if (err) {
 				console.error('Error fetching the user:', err)
 			} else if (user) {
-				console.log('***********************')
-				console.log('User information:', user)
+				// console.log('***********************')
+				// console.log('User information:', user)
 				res.send(user)
 			} else {
 				console.log('users.db does not exist yet')
