@@ -50,6 +50,32 @@ server.get('/auth/twitch/callback', async (req, res) => {
 	const { code, state } = req.query
 
 	if (code) {
+
+		// *** TEST ***
+		// see if original auth code, when saved, will generate
+		// a valid token on each chatbot session connect
+
+		// add initial setup logic to check for user.db file
+		// if present, update it with code from Twitch response
+		// else, create it and add as appAuthorizationCode
+
+		// move the token exchange method that follows
+		// to the chatbot connection control logic and save
+		// the returned token to the user.db file
+		
+		// add logic/method to refresh token when needed
+		// during streaming session
+
+		// research the ability to set token duration when issued
+		// on chatbot connection
+
+		// research the validity duration of the code generated
+		// when the npChatbot app is originally authorized 
+		// by Twitch
+
+		// change scope in client params call (button click)
+		// to reset app auth state with Twitch for testing
+
 		try {
 			const token = await exchangeCodeForToken(code)
 			console.log('Token:', token)
@@ -65,7 +91,13 @@ server.get('/auth/twitch/callback', async (req, res) => {
 					// Update the existing user
 					db.users.update(
 						{ _id: user._id },
-						{ $set: { twitchAuthKeyTest: token.access_token } },
+						{
+							$set: {
+								twitchAuthKeyTest: token.access_token,
+								appAuthorizationCode: code,
+							},
+						},
+
 						{},
 						(err, numReplaced) => {
 							if (err) {
@@ -102,8 +134,8 @@ server.get('/getUserData', (req, res) => {
 			if (err) {
 				console.error('Error fetching the user:', err)
 			} else if (user) {
-				// console.log('***********************')
-				// console.log('User information:', user)
+				console.log('***********************')
+				console.log('User information:', user)
 				res.send(user)
 			} else {
 				console.log('users.db does not exist yet')
