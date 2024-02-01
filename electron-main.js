@@ -93,7 +93,8 @@ server.get('/auth/twitch/callback', async (req, res) => {
 						{ _id: user._id },
 						{
 							$set: {
-								twitchAuthKeyTest: token.access_token,
+								twitchAccessToken: token.access_token,
+								twitchRefreshToken: token.refresh_token,
 								appAuthorizationCode: code,
 							},
 						},

@@ -24,8 +24,8 @@ const initializeBot = async (config) => {
 
 	console.log("--------------------")
 	console.log("CONFIG: ")
-	console.log(config.twitchAuthKeyTest)
-	const newAuthKey = "oauth:" + config.twitchAuthKeyTest
+	console.log(config.twitchAccessToken)
+	const newAuthKey = "oauth:" + config.twitchAccessToken
 	console.log(newAuthKey)
 	console.log("--------------------")
 
