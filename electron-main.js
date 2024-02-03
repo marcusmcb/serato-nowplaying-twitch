@@ -47,6 +47,7 @@ server.get('/', (req, res) => {
 })
 
 server.get('/auth/twitch/callback', async (req, res) => {
+	
 	const { code, state } = req.query
 
 	if (code) {
@@ -122,7 +123,7 @@ server.get('/auth/twitch/callback', async (req, res) => {
 			console.error('Error exchanging code for token:', error)
 			res.status(500).send('Error during authorization.')
 		}
-	} else {
+	} else {		
 		res.status(400).send('No code received from Twitch.')
 	}
 })
@@ -135,8 +136,8 @@ server.get('/getUserData', (req, res) => {
 			if (err) {
 				console.error('Error fetching the user:', err)
 			} else if (user) {
-				console.log('***********************')
-				console.log('User information:', user)
+				// console.log('***********************')
+				// console.log('User information:', user)
 				res.send(user)
 			} else {
 				console.log('users.db does not exist yet')
