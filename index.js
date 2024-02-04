@@ -11,6 +11,7 @@ const {
 	returnAccessTokenConfig,
 	returnRefreshTokenConfig,
 } = require('./auth/accessTokenConfig')
+const { getRefreshToken } = require('./auth/createAccessToken')
 
 const initializeBot = async (config) => {
 	const twitchOAuthKey = await decryptCredential(config.encryptedKey)
@@ -30,6 +31,9 @@ const initializeBot = async (config) => {
 	console.log('CONFIG: ')
 	console.log(config)
 	console.log('--------------------')
+
+	const testAccessToken = await getRefreshToken(config.twitchRefreshToken)
+	console.log(testAccessToken)
 
 	const accessTokenConfig = returnAccessTokenConfig(config)
 	const client = new tmi.Client(accessTokenConfig)
