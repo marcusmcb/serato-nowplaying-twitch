@@ -8,8 +8,8 @@ const {
 const { obs, connectToOBS } = require('./obs/obsConnection')
 const { decryptCredential } = require('./auth/encryption')
 
-const initializeBot = async (config) => {	
-	const twitchOAuthKey = await decryptCredential(config.encryptedKey)	
+const initializeBot = async (config) => {
+	const twitchOAuthKey = await decryptCredential(config.encryptedKey)
 	let userCommandHistory = {}
 	let urlCommandCooldown = false
 	const COOLDOWN_DURATION = 5000
@@ -22,14 +22,12 @@ const initializeBot = async (config) => {
 	// const url = `https://serato.com/playlists/${config.seratoDisplayName}/8-1-2023`
 	const url = `https://serato.com/playlists/${config.seratoDisplayName}/live`
 
-	console.log("--------------------")
-	console.log("CONFIG: ")
-	console.log(config.twitchAccessToken)
-	const newAuthKey = "oauth:" + config.twitchAccessToken
-	console.log(newAuthKey)
-	console.log("--------------------")
+	console.log('--------------------')
+	console.log('CONFIG: ')
+	console.log(config)
+	console.log('--------------------')
 
-	const client = new tmi.Client({
+	const connectWithAccessTokenConfig = {
 		options: { debug: true },
 		connection: {
 			secure: true,
@@ -37,15 +35,30 @@ const initializeBot = async (config) => {
 		},
 		identity: {
 			username: config.twitchChatbotName,
-			password: newAuthKey,
+			password: 'oauth:' + config.twitchAccessToken,
 		},
 		channels: [config.twitchChannelName],
-	})
+	}
+
+	const connectWithRefreshTokenConfig = {
+		options: { debug: true },
+		connection: {
+			secure: true,
+			reconnect: true,
+		},
+		identity: {
+			username: config.twitchChatbotName,
+			password: 'oauth:' + config.twitchRefreshToken,
+		},
+		channels: [config.twitchChannelName],
+	}
+
+	const client = new tmi.Client(connectWithAccessTokenConfig)
 
 	try {
-		client.connect()
+		client.connect().catch(console.error)
 	} catch (error) {
-		console.error("TWITCH CONNECTION ERROR: ", error)
+		console.error('TWITCH CONNECTION ERROR: ', error)
 	}
 
 	await connectToOBS(config)

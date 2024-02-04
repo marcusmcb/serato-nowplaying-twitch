@@ -8,6 +8,7 @@ const Datastore = require('nedb')
 const { app, BrowserWindow } = require('electron')
 const scriptPath = path.join(__dirname, './boot.js')
 const { encryptCredential } = require('./auth/encryption')
+const exchangeCodeForToken = require('./auth/createAccessToken')
 
 const dotenv = require('dotenv')
 dotenv.config()
@@ -27,20 +28,6 @@ let botProcess
 let serverInstance
 const isDev = true // Set based on your environment
 
-const axios = require('axios')
-
-const exchangeCodeForToken = async (code) => {
-	const params = new URLSearchParams()
-	params.append('client_id', `${process.env.TWITCH_CLIENT_ID}`)
-	params.append('client_secret', `${process.env.TWITCH_CLIENT_SECRET}`)
-	params.append('code', code)
-	params.append('grant_type', 'authorization_code')
-	params.append('redirect_uri', `${process.env.TWITCH_AUTH_REDIRECT_URL}`)
-
-	const response = await axios.post(`${process.env.TWITCH_AUTH_URL}`, params)
-	return response.data // Contains access token and refresh token
-}
-
 // Express routes
 server.get('/', (req, res) => {
 	res.send('NPChatbot is up and running')
@@ -53,26 +40,16 @@ server.get('/auth/twitch/callback', async (req, res) => {
 	if (code) {
 
 		// *** TEST ***
-		// see if original auth code, when saved, will generate
-		// a valid token on each chatbot session connect
-
+		
 		// add initial setup logic to check for user.db file
 		// if present, update it with code from Twitch response
 		// else, create it and add as appAuthorizationCode
 
-		// move the token exchange method that follows
-		// to the chatbot connection control logic and save
-		// the returned token to the user.db file
-		
 		// add logic/method to refresh token when needed
 		// during streaming session
 
 		// research the ability to set token duration when issued
 		// on chatbot connection
-
-		// research the validity duration of the code generated
-		// when the npChatbot app is originally authorized 
-		// by Twitch
 
 		// change scope in client params call (button click)
 		// to reset app auth state with Twitch for testing
