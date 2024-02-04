@@ -169,11 +169,12 @@ button:hover {
 
 .session-info {
 	margin-top: 30px;
+	color: rgb(240, 253, 155);
 }
 
 .session-info-status {
 	margin-left: 15px;
-	color: rgb(240, 253, 155);
+	color: rgb(253, 157, 155);
 }
 
 .session-info-label {
