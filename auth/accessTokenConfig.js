@@ -14,7 +14,10 @@ const returnAccessTokenConfig = (config) => {
 	return connectWithAccessTokenConfig
 }
 
-const returnRefreshTokenConfig = (config) => {
+const returnRefreshTokenConfig = (config, token) => {
+  console.log("* * * * * * *")
+  console.log(token)
+  console.log("* * * * * * *")
 	const connectWithRefreshTokenConfig = {
 		options: { debug: true },
 		connection: {
@@ -23,7 +26,7 @@ const returnRefreshTokenConfig = (config) => {
 		},
 		identity: {
 			username: config.twitchChatbotName,
-			password: 'oauth:' + config.twitchRefreshToken,
+			password: 'oauth:' + token.access_token,
 		},
 		channels: [config.twitchChannelName],
 	}

@@ -36,7 +36,24 @@ const initializeBot = async (config) => {
 	console.log(testAccessToken)
 
 	const accessTokenConfig = returnAccessTokenConfig(config)
-	const client = new tmi.Client(accessTokenConfig)
+	const refreshTokenConfig = returnRefreshTokenConfig(config, testAccessToken)
+	
+	setTimeout(() => {
+		console.log("----------------")
+		console.log(refreshTokenConfig)
+		console.log("----------------")
+	}, 1000)
+
+	// await method to persist new access and refresh
+	// token values to user's NEDB settings
+
+	// set up test stream using serato auto play and
+	// live playlist features and see if it retains
+	// connection past the token expiration point
+
+	// test command during and after token expiration 
+
+	const client = new tmi.Client(refreshTokenConfig)
 
 	try {
 		client.connect()
