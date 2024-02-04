@@ -7,6 +7,10 @@ const {
 } = require('./bot-assets/command-list/commandList')
 const { obs, connectToOBS } = require('./obs/obsConnection')
 const { decryptCredential } = require('./auth/encryption')
+const {
+	returnAccessTokenConfig,
+	returnRefreshTokenConfig,
+} = require('./auth/accessTokenConfig')
 
 const initializeBot = async (config) => {
 	const twitchOAuthKey = await decryptCredential(config.encryptedKey)
@@ -27,36 +31,11 @@ const initializeBot = async (config) => {
 	console.log(config)
 	console.log('--------------------')
 
-	const connectWithAccessTokenConfig = {
-		options: { debug: true },
-		connection: {
-			secure: true,
-			reconnect: true,
-		},
-		identity: {
-			username: config.twitchChatbotName,
-			password: 'oauth:' + config.twitchAccessToken,
-		},
-		channels: [config.twitchChannelName],
-	}
-
-	const connectWithRefreshTokenConfig = {
-		options: { debug: true },
-		connection: {
-			secure: true,
-			reconnect: true,
-		},
-		identity: {
-			username: config.twitchChatbotName,
-			password: 'oauth:' + config.twitchRefreshToken,
-		},
-		channels: [config.twitchChannelName],
-	}
-
-	const client = new tmi.Client(connectWithAccessTokenConfig)
+	const accessTokenConfig = returnAccessTokenConfig(config)
+	const client = new tmi.Client(accessTokenConfig)
 
 	try {
-		client.connect().catch(console.error)
+		client.connect()
 	} catch (error) {
 		console.error('TWITCH CONNECTION ERROR: ', error)
 	}
