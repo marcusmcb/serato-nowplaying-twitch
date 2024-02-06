@@ -1,4 +1,8 @@
 const axios = require('axios')
+const Datastore = require('nedb')
+
+const db = {}
+db.users = new Datastore({ filename: '../users.db', autoload: true })
 
 const exchangeCodeForToken = async (code) => {
 	const params = new URLSearchParams()
@@ -23,4 +27,44 @@ const getRefreshToken = async (refreshToken) => {
 	return response.data // Contains access token and refresh token
 }
 
-module.exports = { exchangeCodeForToken, getRefreshToken }
+const updateUserToken = (token) => {
+	// Update user data in the database
+	db.users.findOne({}, (err, user) => {
+		if (err) {
+			console.error('Error finding the user:', err)
+			return res.status(500).send('Database error.')
+		}
+
+		if (user) {
+			// Update the existing user
+			db.users.update(
+				{ _id: user._id },
+				{
+					$set: {
+						twitchAccessToken: token.access_token,
+						twitchRefreshToken: token.refresh_token,
+					},
+				},
+
+				{},
+				(err, numReplaced) => {
+					if (err) {
+						console.error('Error updating the user:', err)
+						return ('Error updating the user:', err)						
+					}
+					console.log(`Updated ${numReplaced} user(s) with new Twitch token.`)
+					return (`Updated ${numReplaced} user(s) with new Twitch token.`)
+				}
+			)
+		} else {
+			// Handle case where user does not exist
+			// This might involve creating a new user or handling it as an error
+			console.log('No user found to update.')
+			return('No user found to update')
+		}
+	})
+}
+
+module.exports = { exchangeCodeForToken, getRefreshToken, updateUserToken }
+
+// 'no user found to update' is being triggered currently

@@ -8,7 +8,7 @@ const Datastore = require('nedb')
 const { app, BrowserWindow } = require('electron')
 const scriptPath = path.join(__dirname, './boot.js')
 const { encryptCredential } = require('./auth/encryption')
-const exchangeCodeForToken = require('./auth/createAccessToken')
+const { exchangeCodeForToken } = require('./auth/createAccessToken')
 
 const dotenv = require('dotenv')
 dotenv.config()

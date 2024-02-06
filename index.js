@@ -11,7 +11,10 @@ const {
 	returnAccessTokenConfig,
 	returnRefreshTokenConfig,
 } = require('./auth/accessTokenConfig')
-const { getRefreshToken } = require('./auth/createAccessToken')
+const { getRefreshToken, updateUserToken } = require('./auth/createAccessToken')
+
+const db = {}
+db.users = new Datastore({ filename: 'users.db', autoload: true })
 
 const initializeBot = async (config) => {
 	const twitchOAuthKey = await decryptCredential(config.encryptedKey)
@@ -21,9 +24,6 @@ const initializeBot = async (config) => {
 	const COMMAND_REPEAT_LIMIT = 5
 	const displayOBSMessage = config.isObsResponseEnabled
 
-	const db = {}
-	db.users = new Datastore({ filename: 'users.db', autoload: true })
-
 	// const url = `https://serato.com/playlists/${config.seratoDisplayName}/8-1-2023`
 	const url = `https://serato.com/playlists/${config.seratoDisplayName}/live`
 
@@ -32,16 +32,20 @@ const initializeBot = async (config) => {
 	console.log(config)
 	console.log('--------------------')
 
-	const testAccessToken = await getRefreshToken(config.twitchRefreshToken)
-	console.log(testAccessToken)
+	const currentAccessToken = await getRefreshToken(config.twitchRefreshToken)
+	console.log(currentAccessToken)
+	updateUserToken(currentAccessToken)
 
 	const accessTokenConfig = returnAccessTokenConfig(config)
-	const refreshTokenConfig = returnRefreshTokenConfig(config, testAccessToken)
-	
+	const refreshTokenConfig = returnRefreshTokenConfig(
+		config,
+		currentAccessToken
+	)
+
 	setTimeout(() => {
-		console.log("----------------")
+		console.log('----------------')
 		console.log(refreshTokenConfig)
-		console.log("----------------")
+		console.log('----------------')
 	}, 1000)
 
 	// await method to persist new access and refresh
@@ -51,7 +55,7 @@ const initializeBot = async (config) => {
 	// live playlist features and see if it retains
 	// connection past the token expiration point
 
-	// test command during and after token expiration 
+	// test command during and after token expiration
 
 	const client = new tmi.Client(refreshTokenConfig)
 
