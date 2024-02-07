@@ -156,6 +156,15 @@ server.post('/submitUserData', async (req, res) => {
 	})
 })
 
+// add endpoint and methods to update user.db file
+// with user credentials and preferences as they
+// later change
+
+// when user currently updates their preferences, the
+// original app code and most recent access and refresh
+// token values are lost, causing the bot init process
+// to fail as a result
+
 server.post('/startBotScript', (req, res) => {
 	if (botProcess) {
 		return res.send('npChatbot has already been started')

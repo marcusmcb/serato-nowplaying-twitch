@@ -126,6 +126,7 @@ const CredentialsPanel: React.FC<CredentialsPanelProps> = (props) => {
 
 				<div className='button-row'>
 					<button type='submit'>
+						{/* remove logic below and just set as update */}
 						{props.formData.twitchOAuthKey !== '' ? 'Update' : 'Submit'}
 					</button>
 					<div className='toggle-field hide-sensitive-toggle'>
