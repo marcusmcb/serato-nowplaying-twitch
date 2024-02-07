@@ -34,13 +34,11 @@ server.get('/', (req, res) => {
 })
 
 server.get('/auth/twitch/callback', async (req, res) => {
-	
 	const { code, state } = req.query
 
 	if (code) {
-
 		// *** TEST ***
-		
+
 		// add initial setup logic to check for user.db file
 		// if present, update it with code from Twitch response
 		// else, create it and add as appAuthorizationCode
@@ -100,7 +98,7 @@ server.get('/auth/twitch/callback', async (req, res) => {
 			console.error('Error exchanging code for token:', error)
 			res.status(500).send('Error during authorization.')
 		}
-	} else {		
+	} else {
 		res.status(400).send('No code received from Twitch.')
 	}
 })
@@ -127,43 +125,59 @@ server.get('/getUserData', (req, res) => {
 })
 
 server.post('/submitUserData', async (req, res) => {
-	const encryptedOAuthKey = await encryptCredential(req.body.twitchOAuthKey)
-	console.log('---> ', encryptedOAuthKey)
-	const user = {
-		twitchChannelName: req.body.twitchChannelName,
-		twitchChatbotName: req.body.twitchChatbotName,
-		twitchOAuthKey: req.body.twitchOAuthKey,
-		seratoDisplayName: req.body.seratoDisplayName,
-		obsWebsocketAddress: req.body.obsWebsocketAddress,
-		obsWebsocketPassword: req.body.obsWebsocketPassword,
-		intervalMessageDuration: req.body.intervalMessageDuration,
-		obsClearDisplayTime: req.body.obsClearDisplayTime,
-		userEmailAddress: req.body.userEmailAddress,
-		isObsResponseEnabled: req.body.isObsResponseEnabled,
-		isIntervalEnabled: req.body.isIntervalEnabled,
-		isReportEnabled: req.body.isReportEnabled,
-		encryptedKey: encryptedOAuthKey,
+	// Encrypt the OAuthKey if it's provided and has changed
+	let encryptedOAuthKey = ''
+	if (req.body.twitchOAuthKey) {
+		encryptedOAuthKey = await encryptCredential(req.body.twitchOAuthKey)
 	}
 
-	db.users.remove({}, { multi: true }, (err, numRemoved) => {
-		if (err) return res.status(500).send({ error: 'DB error during deletion' })
-		db.users.insert(user, (err, newUser) => {
-			if (err)
-				return res.status(500).send({ error: 'DB error during creation' })
-			console.log(newUser)
-			res.json(newUser)
-		})
+	db.users.findOne({}, async (err, existingUser) => {
+		if (err) {
+			console.error('Error fetching the user:', err)
+			return res.status(500).send('Database error.')
+		}
+
+		// If there's an existing user, update only the changed fields
+		if (existingUser) {
+			const updatedUser = { ...existingUser }
+
+			// Iterate over the keys in the request body to update only changed values
+			Object.keys(req.body).forEach((key) => {
+				if (req.body[key] !== existingUser[key]) {
+					updatedUser[key] = req.body[key]
+				}
+			})
+
+			// Special handling for the twitchOAuthKey to use the encrypted version
+			if (req.body.twitchOAuthKey) {
+				updatedUser.twitchOAuthKey = encryptedOAuthKey
+			}
+
+			db.users.update(
+				{ _id: existingUser._id },
+				{ $set: updatedUser },
+				{},
+				(err, numReplaced) => {
+					if (err) {
+						console.error('Error updating the user:', err)
+						return res.status(500).send('Database error during update.')
+					}
+					console.log(`Updated ${numReplaced} user(s) with new data.`)
+					res.send(updatedUser)
+				}
+			)
+		} else {
+			// If there's no existing user, insert a new one (or handle as an error)
+			console.log(
+				'No existing user found. Inserting new user or handling error.'
+			)
+			// Insert new user logic here, or return an error response
+		}
 	})
 })
 
-// add endpoint and methods to update user.db file
-// with user credentials and preferences as they
-// later change
-
-// when user currently updates their preferences, the
-// original app code and most recent access and refresh
-// token values are lost, causing the bot init process
-// to fail as a result
+// add client logic to disable user preference update
+// while bot is connected and active
 
 server.post('/startBotScript', (req, res) => {
 	if (botProcess) {
