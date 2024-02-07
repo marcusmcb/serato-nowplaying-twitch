@@ -1,5 +1,9 @@
 import '../App.css'
 
+// add logic to handle any errors returned
+// during the initial app authorization
+// on the app's client UI
+
 const TitleBar = (): JSX.Element => {
 	const handleAuthClick = () => {
 		window.location.href =

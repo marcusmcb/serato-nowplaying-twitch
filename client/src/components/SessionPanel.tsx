@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import '../App.css'
 
+// add logic to handle any errors returned
+// during the Twitch IRC connection process
+// in the client UI
+
+// add logic to handle any disconnection
+// events after initial connection
+// in the client UI
+
 interface SessionPanelProps {
 	handleConnect: (event: React.MouseEvent<HTMLButtonElement>) => void
 	handleDisconnect: (event: React.MouseEvent<HTMLButtonElement>) => void

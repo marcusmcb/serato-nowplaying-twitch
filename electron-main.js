@@ -126,10 +126,10 @@ server.get('/getUserData', (req, res) => {
 
 server.post('/submitUserData', async (req, res) => {
 	// Encrypt the OAuthKey if it's provided and has changed
-	let encryptedOAuthKey = ''
-	if (req.body.twitchOAuthKey) {
-		encryptedOAuthKey = await encryptCredential(req.body.twitchOAuthKey)
-	}
+	// let encryptedOAuthKey = ''
+	// if (req.body.twitchOAuthKey) {
+	// 	encryptedOAuthKey = await encryptCredential(req.body.twitchOAuthKey)
+	// }
 
 	db.users.findOne({}, async (err, existingUser) => {
 		if (err) {
@@ -149,11 +149,11 @@ server.post('/submitUserData', async (req, res) => {
 			})
 
 			// Special handling for the twitchOAuthKey to use the encrypted version
-			if (req.body.twitchOAuthKey) {
-				updatedUser.twitchOAuthKey = encryptedOAuthKey
-			}
+			// if (req.body.twitchOAuthKey) {
+			// 	updatedUser.twitchOAuthKey = encryptedOAuthKey
+			// }
 
-			db.users.update(
+			await db.users.update(
 				{ _id: existingUser._id },
 				{ $set: updatedUser },
 				{},
