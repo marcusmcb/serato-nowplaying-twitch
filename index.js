@@ -13,9 +13,6 @@ const {
 } = require('./auth/accessTokenConfig')
 const { getRefreshToken, updateUserToken } = require('./auth/createAccessToken')
 
-const db = {}
-db.users = new Datastore({ filename: 'users.db', autoload: true })
-
 const initializeBot = async (config) => {
 	const twitchOAuthKey = await decryptCredential(config.encryptedKey)
 	let userCommandHistory = {}
@@ -27,13 +24,17 @@ const initializeBot = async (config) => {
 	// const url = `https://serato.com/playlists/${config.seratoDisplayName}/8-1-2023`
 	const url = `https://serato.com/playlists/${config.seratoDisplayName}/live`
 
-	console.log('--------------------')
-	console.log('CONFIG: ')
-	console.log(config)
-	console.log('--------------------')
+	// console.log('--------------------')
+	// console.log('CONFIG: ')
+	// console.log(config)
+	// console.log('--------------------')
 
 	const currentAccessToken = await getRefreshToken(config.twitchRefreshToken)
+	
+	console.log("CURRENT ACCESS TOKEN: ")
 	console.log(currentAccessToken)
+	
+	
 	updateUserToken(currentAccessToken)
 
 	const accessTokenConfig = returnAccessTokenConfig(config)
@@ -42,11 +43,11 @@ const initializeBot = async (config) => {
 		currentAccessToken
 	)
 
-	setTimeout(() => {
-		console.log('----------------')
-		console.log(refreshTokenConfig)
-		console.log('----------------')
-	}, 1000)
+	// setTimeout(() => {
+	// 	console.log('----------------')
+	// 	console.log(refreshTokenConfig)
+	// 	console.log('----------------')
+	// }, 1000)
 
 	// await method to persist new access and refresh
 	// token values to user's NEDB settings

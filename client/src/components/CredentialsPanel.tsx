@@ -34,11 +34,11 @@ const fieldsConfig: FieldConfig[] = [
 		label: 'Twitch Chatbot Name:',
 		name: 'twitchChatbotName',
 	},
-	{
-		id: 'oauth-key',
-		label: 'Twitch OAuth Key:',
-		name: 'twitchOAuthKey',
-	},
+	// {
+	// 	id: 'oauth-key',
+	// 	label: 'Twitch OAuth Key:',
+	// 	name: 'twitchOAuthKey',
+	// },
 	{
 		id: 'serato-display-name',
 		label: 'Serato Display Name:',
@@ -81,8 +81,7 @@ const InputField: React.FC<{
 			name={fieldConfig.name}
 			value={
 				hideSensitiveFields &&
-				(fieldConfig.name === 'twitchOAuthKey' ||
-					fieldConfig.name === 'obsWebsocketPassword' ||
+				(fieldConfig.name === 'obsWebsocketPassword' ||
 					fieldConfig.name === 'obsWebsocketAddress')
 					? '*'.repeat((value || '').length)
 					: value || ''

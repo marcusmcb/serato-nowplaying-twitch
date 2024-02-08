@@ -20,8 +20,7 @@ server.use(bodyParser.json())
 server.use(cors())
 
 // Database setup
-const db = {}
-db.users = new Datastore({ filename: 'users.db', autoload: true })
+const db = require('./database')
 
 let mainWindow
 let botProcess

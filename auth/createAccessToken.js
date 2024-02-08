@@ -1,8 +1,7 @@
 const axios = require('axios')
 const Datastore = require('nedb')
 
-const db = {}
-db.users = new Datastore({ filename: '../users.db', autoload: true })
+const db = require('../database')
 
 const exchangeCodeForToken = async (code) => {
 	const params = new URLSearchParams()
@@ -59,8 +58,8 @@ const updateUserToken = (token) => {
 		} else {
 			// Handle case where user does not exist
 			// This might involve creating a new user or handling it as an error
-			console.log('No user found to update.')
-			return('No user found to update')
+			console.log('CREATE ACCESS TOKEN: No user found to update.')
+			return('CREATE ACCESS TOKEN: No user found to update')
 		}
 	})
 }

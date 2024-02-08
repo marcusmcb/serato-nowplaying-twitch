@@ -135,7 +135,7 @@ const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
 					?
 				</span>
 			</div>
-			<div className='toggle-field report-prefs-element'>
+			{/* <div className='toggle-field report-prefs-element'>
 				<input
 					type='checkbox'
 					id='sendReportToggle'
@@ -182,7 +182,7 @@ const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
 				>
 					?
 				</span>
-			</div>
+			</div> */}
 		</div>
 	)
 }
