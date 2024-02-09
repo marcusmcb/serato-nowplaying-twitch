@@ -196,8 +196,10 @@ server.post('/startBotScript', (req, res) => {
 		console.error(`stderr: ${data}`)
 	})
 
-	botProcess.on('close', (code) => {
-		console.log(`botProcess process exited with code ${code}`)
+	botProcess.on('close', (code) => {		
+		botProcess = null		
+		console.log(`botProcess process closed with code ${code}`)
+		res.send()
 	})
 })
 

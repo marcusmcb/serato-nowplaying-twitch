@@ -1,6 +1,7 @@
-const Datastore = require('nedb')
-const db = {}
-db.users = new Datastore({ filename: 'users.db', autoload: true })
+// const Datastore = require('nedb')
+// const db = {}
+// db.users = new Datastore({ filename: 'users.db', autoload: true })
+const db = require('./database')
 
 const loadConfigurations = () => {
 	return new Promise((resolve, reject) => {

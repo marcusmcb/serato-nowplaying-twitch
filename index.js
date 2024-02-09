@@ -32,10 +32,13 @@ const initializeBot = async (config) => {
 	const currentAccessToken = await getRefreshToken(config.twitchRefreshToken)
 	
 	console.log("CURRENT ACCESS TOKEN: ")
-	console.log(currentAccessToken)
+	console.log(currentAccessToken)	
 	
-	
-	updateUserToken(currentAccessToken)
+	try {
+		await updateUserToken(currentAccessToken)
+	} catch (error) {
+		console.error("Failed to update user token: ", error)
+	}
 
 	const accessTokenConfig = returnAccessTokenConfig(config)
 	const refreshTokenConfig = returnRefreshTokenConfig(

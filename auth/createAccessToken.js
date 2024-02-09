@@ -1,5 +1,4 @@
 const axios = require('axios')
-const Datastore = require('nedb')
 
 const db = require('../database')
 
@@ -27,40 +26,41 @@ const getRefreshToken = async (refreshToken) => {
 }
 
 const updateUserToken = (token) => {
-	// Update user data in the database
-	db.users.findOne({}, (err, user) => {
-		if (err) {
-			console.error('Error finding the user:', err)
-			return res.status(500).send('Database error.')
-		}
+	return new Promise((resolve, reject) => {
+		db.users.findOne({}, (err, user) => {
+			if (err) {
+				console.error('Error finding the user:', err)
+				reject('Database error.')
+				return
+			}
 
-		if (user) {
-			// Update the existing user
-			db.users.update(
-				{ _id: user._id },
-				{
-					$set: {
-						twitchAccessToken: token.access_token,
-						twitchRefreshToken: token.refresh_token,
+			if (user) {
+				db.users.update(
+					{ _id: user._id },
+					{
+						$set: {
+							twitchAccessToken: token.access_token,
+							twitchRefreshToken: token.refresh_token,
+						},
 					},
-				},
-
-				{},
-				(err, numReplaced) => {
-					if (err) {
-						console.error('Error updating the user:', err)
-						return ('Error updating the user:', err)						
+					{},
+					(err, numReplaced) => {
+						if (err) {
+							console.error('Error updating the user:', err)
+							reject('Error updating the user.')
+						} else {
+							console.log(
+								`Updated ${numReplaced} user(s) with new Twitch token.`
+							)
+							resolve(`Updated ${numReplaced} user(s) with new Twitch token.`)
+						}
 					}
-					console.log(`Updated ${numReplaced} user(s) with new Twitch token.`)
-					return (`Updated ${numReplaced} user(s) with new Twitch token.`)
-				}
-			)
-		} else {
-			// Handle case where user does not exist
-			// This might involve creating a new user or handling it as an error
-			console.log('CREATE ACCESS TOKEN: No user found to update.')
-			return('CREATE ACCESS TOKEN: No user found to update')
-		}
+				)
+			} else {
+				console.log('CREATE ACCESS TOKEN: No user found to update.')
+				resolve('No user found to update') // Or reject, depending on your error handling strategy
+			}
+		})
 	})
 }
 
