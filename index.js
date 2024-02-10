@@ -14,7 +14,7 @@ const {
 const { getRefreshToken, updateUserToken } = require('./auth/createAccessToken')
 
 const initializeBot = async (config) => {
-	const twitchOAuthKey = await decryptCredential(config.encryptedKey)
+	// const twitchOAuthKey = await decryptCredential(config.encryptedKey)
 	let userCommandHistory = {}
 	let urlCommandCooldown = false
 	const COOLDOWN_DURATION = 5000
