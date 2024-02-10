@@ -1,5 +1,4 @@
 const axios = require('axios')
-
 const db = require('../database')
 
 const exchangeCodeForToken = async (code) => {
@@ -11,7 +10,7 @@ const exchangeCodeForToken = async (code) => {
 	params.append('redirect_uri', `${process.env.TWITCH_AUTH_REDIRECT_URL}`)
 
 	const response = await axios.post(`${process.env.TWITCH_AUTH_URL}`, params)
-	return response.data // Contains access token and refresh token
+	return response.data
 }
 
 const getRefreshToken = async (refreshToken) => {
@@ -22,7 +21,7 @@ const getRefreshToken = async (refreshToken) => {
 	params.append('refresh_token', refreshToken)
 
 	const response = await axios.post(`${process.env.TWITCH_AUTH_URL}`, params)
-	return response.data // Contains access token and refresh token
+	return response.data
 }
 
 const updateUserToken = (token) => {
@@ -65,5 +64,3 @@ const updateUserToken = (token) => {
 }
 
 module.exports = { exchangeCodeForToken, getRefreshToken, updateUserToken }
-
-// 'no user found to update' is being triggered currently

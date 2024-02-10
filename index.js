@@ -1,12 +1,10 @@
 const tmi = require('tmi.js')
-const Datastore = require('nedb')
 const autoCommandsConfig = require('./bot-assets/auto-commands/config/autoCommandsConfig')
 const {
 	commandList,
 	urlCommandList,
 } = require('./bot-assets/command-list/commandList')
 const { obs, connectToOBS } = require('./obs/obsConnection')
-const { decryptCredential } = require('./auth/encryption')
 const {
 	returnAccessTokenConfig,
 	returnRefreshTokenConfig,
@@ -45,22 +43,7 @@ const initializeBot = async (config) => {
 		config,
 		currentAccessToken
 	)
-
-	// setTimeout(() => {
-	// 	console.log('----------------')
-	// 	console.log(refreshTokenConfig)
-	// 	console.log('----------------')
-	// }, 1000)
-
-	// await method to persist new access and refresh
-	// token values to user's NEDB settings
-
-	// set up test stream using serato auto play and
-	// live playlist features and see if it retains
-	// connection past the token expiration point
-
-	// test command during and after token expiration
-
+	
 	const client = new tmi.Client(refreshTokenConfig)
 
 	try {

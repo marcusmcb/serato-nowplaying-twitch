@@ -4,28 +4,24 @@ const path = require('path')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const express = require('express')
-const Datastore = require('nedb')
 const { app, BrowserWindow } = require('electron')
 const scriptPath = path.join(__dirname, './boot.js')
-const { encryptCredential } = require('./auth/encryption')
 const { exchangeCodeForToken } = require('./auth/createAccessToken')
 
 const dotenv = require('dotenv')
 dotenv.config()
 
-// Express server setup
 const server = express()
 const PORT = process.env.PORT || 5000
 server.use(bodyParser.json())
 server.use(cors())
 
-// Database setup
 const db = require('./database')
 
 let mainWindow
 let botProcess
 let serverInstance
-const isDev = true // Set based on your environment
+const isDev = true
 
 // Express routes
 server.get('/', (req, res) => {
@@ -36,20 +32,10 @@ server.get('/auth/twitch/callback', async (req, res) => {
 	const { code, state } = req.query
 
 	if (code) {
-		// *** TEST ***
-
+		
 		// add initial setup logic to check for user.db file
 		// if present, update it with code from Twitch response
-		// else, create it and add as appAuthorizationCode
-
-		// add logic/method to refresh token when needed
-		// during streaming session
-
-		// research the ability to set token duration when issued
-		// on chatbot connection
-
-		// change scope in client params call (button click)
-		// to reset app auth state with Twitch for testing
+		// else, create it and add as appAuthorizationCode		
 
 		try {
 			const token = await exchangeCodeForToken(code)
@@ -109,9 +95,7 @@ server.get('/getUserData', (req, res) => {
 		db.users.findOne({}, (err, user) => {
 			if (err) {
 				console.error('Error fetching the user:', err)
-			} else if (user) {
-				// console.log('***********************')
-				// console.log('User information:', user)
+			} else if (user) {				
 				res.send(user)
 			} else {
 				console.log('users.db does not exist yet')
@@ -185,8 +169,7 @@ server.post('/startBotScript', (req, res) => {
 	botProcess = spawn('node', [scriptPath])
 
 	botProcess.stdout.on('data', (data) => {
-		console.log(`stdout: ${data}`)
-		// add handler/listener for chatroom join confirmation
+		console.log(`stdout: ${data}`)		
 		if (data.includes('info: Joined #djmarcusmcb')) {
 			res.send('--- npChatbot has joined the chat ---')
 		}
@@ -222,7 +205,7 @@ const startClient = () => {
 	if (isDev) {
 		console.log('Starting client app...')
 		spawn('npm', ['start'], {
-			cwd: path.join(__dirname, './client'), // Adjust this path to your client app's directory
+			cwd: path.join(__dirname, './client'),
 			stdio: 'ignore',
 			shell: true,
 			detached: true,
