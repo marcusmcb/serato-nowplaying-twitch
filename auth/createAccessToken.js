@@ -57,7 +57,7 @@ const updateUserToken = (token) => {
 				)
 			} else {
 				console.log('CREATE ACCESS TOKEN: No user found to update.')
-				resolve('No user found to update') // Or reject, depending on your error handling strategy
+				resolve('No user found to update')
 			}
 		})
 	})
