@@ -63,6 +63,9 @@ const App = (): JSX.Element => {
 			setMessage('')
 			setMessage('npChatbot has been disconnected')
 			setIsBotConnected(false)
+			setTimeout(() => {
+				setMessage('')
+			}, 3000)
 		} catch (error) {
 			console.error('Error disconnecting the bot: ', error)
 		}

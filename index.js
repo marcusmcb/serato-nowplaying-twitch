@@ -28,14 +28,14 @@ const initializeBot = async (config) => {
 	// console.log('--------------------')
 
 	const currentAccessToken = await getRefreshToken(config.twitchRefreshToken)
-	
-	console.log("CURRENT ACCESS TOKEN: ")
-	console.log(currentAccessToken)	
-	
+
+	console.log('CURRENT ACCESS TOKEN: ')
+	console.log(currentAccessToken)
+
 	try {
 		await updateUserToken(currentAccessToken)
 	} catch (error) {
-		console.error("Failed to update user token: ", error)
+		console.error('Failed to update user token: ', error)
 	}
 
 	const accessTokenConfig = returnAccessTokenConfig(config)
@@ -43,7 +43,7 @@ const initializeBot = async (config) => {
 		config,
 		currentAccessToken
 	)
-	
+
 	const client = new tmi.Client(refreshTokenConfig)
 
 	try {
@@ -52,7 +52,10 @@ const initializeBot = async (config) => {
 		console.error('TWITCH CONNECTION ERROR: ', error)
 	}
 
-	await connectToOBS(config)
+	if (config.isObsResponseEnabled === true) {
+		await connectToOBS(config)
+	}
+
 	autoCommandsConfig(client, obs, config)
 
 	client.on('message', (channel, tags, message, self) => {

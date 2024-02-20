@@ -4,7 +4,7 @@ const path = require('path')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const express = require('express')
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
 const scriptPath = path.join(__dirname, './boot.js')
 const { exchangeCodeForToken } = require('./auth/createAccessToken')
 
