@@ -31,6 +31,23 @@ const App = (): JSX.Element => {
 	const [showTooltip, setShowTooltip] = useState<string | null>(null)
 	const [isBotConnected, setIsBotConnected] = useState(false)
 
+	useEffect(() => {		
+		if (window.electron && window.electron.ipcRenderer) {
+			window.electron.ipcRenderer.send('startBotScript', {})
+
+			window.electron.ipcRenderer.on('botScriptResponse', (response) => {
+				console.log("---- hook response ----")
+				console.log(response)
+			})
+
+			return () => {
+				window.electron.ipcRenderer.removeAllListeners('botScriptResponse')
+			}
+		} else {
+			console.error('Electron IPC Renderer is not available')
+		}
+	}, [])
+
 	const isValidEmail = (email: string) => {
 		var pattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
 		return pattern.test(email)

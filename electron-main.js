@@ -32,10 +32,9 @@ server.get('/auth/twitch/callback', async (req, res) => {
 	const { code, state } = req.query
 
 	if (code) {
-		
 		// add initial setup logic to check for user.db file
 		// if present, update it with code from Twitch response
-		// else, create it and add as appAuthorizationCode		
+		// else, create it and add as appAuthorizationCode
 
 		try {
 			const token = await exchangeCodeForToken(code)
@@ -91,11 +90,12 @@ server.get('/auth/twitch/callback', async (req, res) => {
 server.get('/getUserData', (req, res) => {
 	if (fs.existsSync('users.db')) {
 		console.log('users.db exists! Fetching the user information...')
-
+		let preloadPath = path.join(__dirname, './scripts/preload.js')
+		console.log(preloadPath)
 		db.users.findOne({}, (err, user) => {
 			if (err) {
 				console.error('Error fetching the user:', err)
-			} else if (user) {				
+			} else if (user) {
 				res.send(user)
 			} else {
 				console.log('users.db does not exist yet')
@@ -169,7 +169,7 @@ server.post('/startBotScript', (req, res) => {
 	botProcess = spawn('node', [scriptPath])
 
 	botProcess.stdout.on('data', (data) => {
-		console.log(`stdout: ${data}`)		
+		console.log(`stdout: ${data}`)
 		if (data.includes('info: Joined #djmarcusmcb')) {
 			res.send('--- npChatbot has joined the chat ---')
 		}
@@ -179,8 +179,8 @@ server.post('/startBotScript', (req, res) => {
 		console.error(`stderr: ${data}`)
 	})
 
-	botProcess.on('close', (code) => {		
-		botProcess = null		
+	botProcess.on('close', (code) => {
+		botProcess = null
 		console.log(`botProcess process closed with code ${code}`)
 		res.send()
 	})
@@ -221,14 +221,47 @@ const startServer = () => {
 	})
 }
 
+// IPC listener for starting the bot script
+ipcMain.on('startBotScript', async (event, arg) => {
+	console.log("YUP")
+	// if (botProcess) {
+	// 	console.log('Bot is already running.')
+	// 	event.reply('botScriptResponse', {
+	// 		success: false,
+	// 		error: 'Bot is already running.',
+	// 	})
+	// 	return
+	// }
+
+	// botProcess = spawn('node', [scriptPath], { stdio: 'inherit' })
+
+	// botProcess.stdout.on('data', (data) => {
+	// 	console.log(`stdout: IPC --> ${data}`)
+	// })
+
+	// botProcess.stderr.on('data', (data) => {
+	// 	console.error(`stderr: IPC --> ${data}`)
+	// })
+
+	// botProcess.on('close', (code) => {
+	// 	console.log(`botProcess process exited with code ${code}`)
+	// 	botProcess = null
+	// 	// Optionally, notify the renderer process here
+	// })
+
+	// Assume bot startup is successful for now
+	event.reply('botScriptResponse', { success: "message from ipcMain on main" })
+})
+
 // Create the Electron BrowserWindow
 const createWindow = () => {
 	mainWindow = new BrowserWindow({
 		width: 1280,
 		height: 680,
 		webPreferences: {
-			nodeIntegration: true,
-			contextIsolation: false, // Set to true in production
+			preload: path.join(__dirname, './scripts/preload.js'),
+			nodeIntegration: false,
+			contextIsolation: true, // Set to true in production
 		},
 	})
 
