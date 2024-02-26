@@ -5,11 +5,17 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const express = require('express')
 const { app, BrowserWindow, ipcMain } = require('electron')
+const isDev = require('electron-is-dev')
 const scriptPath = path.join(__dirname, './boot.js')
 const { exchangeCodeForToken } = require('./auth/createAccessToken')
 
 const dotenv = require('dotenv')
 dotenv.config()
+
+require('electron-reload')(__dirname, {
+	// Note: if you're using webpack, you might want to set the path to your src directory instead of __dirname
+	electron: require(`${__dirname}/node_modules/electron`),
+})
 
 const server = express()
 const PORT = process.env.PORT || 5000
@@ -21,7 +27,7 @@ const db = require('./database')
 let mainWindow
 let botProcess
 let serverInstance
-const isDev = true
+// const isDev = true
 
 // Express routes
 server.get('/', (req, res) => {
@@ -221,9 +227,15 @@ const startServer = () => {
 	})
 }
 
+ipcMain.on('clientStarted', async (event, arg) => {
+	event.reply('clientStartResponse', {
+		message: 'ipcMain process connected to client app',
+	})
+})
+
 // IPC listener for starting the bot script
 ipcMain.on('startBotScript', async (event, arg) => {
-	console.log("YUP")
+	console.log('YUP')
 	// if (botProcess) {
 	// 	console.log('Bot is already running.')
 	// 	event.reply('botScriptResponse', {
@@ -250,7 +262,9 @@ ipcMain.on('startBotScript', async (event, arg) => {
 	// })
 
 	// Assume bot startup is successful for now
-	event.reply('botScriptResponse', { success: "message from ipcMain on main" })
+	event.reply('botScriptResponse', {
+		success: 'ipcMain process connected to React client',
+	})
 })
 
 // Create the Electron BrowserWindow

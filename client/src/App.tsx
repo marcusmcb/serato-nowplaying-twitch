@@ -33,15 +33,13 @@ const App = (): JSX.Element => {
 
 	useEffect(() => {		
 		if (window.electron && window.electron.ipcRenderer) {
-			window.electron.ipcRenderer.send('startBotScript', {})
-
-			window.electron.ipcRenderer.on('botScriptResponse', (response) => {
-				console.log("---- hook response ----")
-				console.log(response)
+			window.electron.ipcRenderer.send('clientStarted', {})
+			window.electron.ipcRenderer.on('clientStartResponse', (response) => {
+				console.log("---- IPC RENDERER RESPONSE ----")
+				console.log(response.message)
 			})
-
 			return () => {
-				window.electron.ipcRenderer.removeAllListeners('botScriptResponse')
+				window.electron.ipcRenderer.removeAllListeners('clientStartResponse')
 			}
 		} else {
 			console.error('Electron IPC Renderer is not available')
