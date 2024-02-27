@@ -233,33 +233,34 @@ ipcMain.on('clientStarted', async (event, arg) => {
 	})
 })
 
+
+
 // IPC listener for starting the bot script
-ipcMain.on('startBotScript', async (event, arg) => {
-	console.log('YUP')
-	// if (botProcess) {
-	// 	console.log('Bot is already running.')
-	// 	event.reply('botScriptResponse', {
-	// 		success: false,
-	// 		error: 'Bot is already running.',
-	// 	})
-	// 	return
-	// }
+ipcMain.on('startBotScript', async (event, arg) => {	
+	if (botProcess) {
+		console.log('Bot is already running.')
+		event.reply('botScriptResponse', {
+			success: false,
+			error: 'Bot is already running.',
+		})
+		return
+	}
 
-	// botProcess = spawn('node', [scriptPath], { stdio: 'inherit' })
+	botProcess = spawn('node', [scriptPath], { stdio: 'inherit' })
 
-	// botProcess.stdout.on('data', (data) => {
-	// 	console.log(`stdout: IPC --> ${data}`)
-	// })
+	botProcess.stdout.on('data', (data) => {
+		console.log(`stdout: IPC --> ${data}`)
+	})
 
-	// botProcess.stderr.on('data', (data) => {
-	// 	console.error(`stderr: IPC --> ${data}`)
-	// })
+	botProcess.stderr.on('data', (data) => {
+		console.error(`stderr: IPC --> ${data}`)
+	})
 
-	// botProcess.on('close', (code) => {
-	// 	console.log(`botProcess process exited with code ${code}`)
-	// 	botProcess = null
-	// 	// Optionally, notify the renderer process here
-	// })
+	botProcess.on('close', (code) => {
+		console.log(`botProcess process exited with code ${code}`)
+		botProcess = null
+		// Optionally, notify the renderer process here
+	})
 
 	// Assume bot startup is successful for now
 	event.reply('botScriptResponse', {

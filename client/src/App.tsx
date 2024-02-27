@@ -31,11 +31,11 @@ const App = (): JSX.Element => {
 	const [showTooltip, setShowTooltip] = useState<string | null>(null)
 	const [isBotConnected, setIsBotConnected] = useState(false)
 
-	useEffect(() => {		
+	useEffect(() => {
 		if (window.electron && window.electron.ipcRenderer) {
 			window.electron.ipcRenderer.send('clientStarted', {})
 			window.electron.ipcRenderer.on('clientStartResponse', (response) => {
-				console.log("---- IPC RENDERER RESPONSE ----")
+				console.log('---- IPC RENDERER RESPONSE ----')
 				console.log(response.message)
 			})
 			return () => {
@@ -52,20 +52,27 @@ const App = (): JSX.Element => {
 	}
 
 	const handleConnect = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		console.log(event)
 		console.log('Chatbot session connect clicked.')
-		try {
-			const response = await axios.post('http://localhost:5000/startBotScript')
-			console.log(response.data)
-			setMessage('')
-			setMessage('npChatbot is connected to your Twitch chat')
-			setIsBotConnected(true)
-			setTimeout(() => {
-				setMessage('')
-			}, 3000)
-		} catch (error) {
-			console.error('Error starting the bot script:', error)
-		}
+		window.electron.ipcRenderer.send('startBotScript', {})
+
+		window.electron.ipcRenderer.on('botScriptResponse', (response) => {
+			console.log("--- HERE ---")
+			
+			// if (response && response.success) {
+			// 	console.log(response.message) // Assuming the success message is in response.message
+			// 	setMessage('npChatbot is connected to your Twitch chat')
+			// 	setIsBotConnected(true)
+			// } else if (response && response.error) {
+			// 	console.error(response.error) // Handling error message
+			// 	setMessage(response.error)
+			// } else {
+			// 	console.error('Unexpected response format from botScriptResponse')
+			// }
+
+			// setTimeout(() => {
+			// 	setMessage('')
+			// }, 3000)
+		})
 	}
 
 	const handleDisconnect = async (

@@ -1,5 +1,3 @@
-// In preload.js
-console.log('--- preload ---')
 const { contextBridge, ipcRenderer } = require('electron')
 
 contextBridge.exposeInMainWorld('electron', {
@@ -8,9 +6,10 @@ contextBridge.exposeInMainWorld('electron', {
 		on: (channel, func) => {
 			const subscription = (_, ...args) => func(...args)
 			ipcRenderer.on(channel, subscription)
-			console.log("---------------")
-			console.log(channel, subscription)
 			return () => ipcRenderer.removeListener(channel, subscription)
+		},
+		once: (channel, func) => {
+			ipcRenderer.once(channel, (_, ...args) => func(...args))
 		},
 		removeAllListeners: (channel) => ipcRenderer.removeAllListeners(channel),
 	},
