@@ -13,7 +13,6 @@ const dotenv = require('dotenv')
 dotenv.config()
 
 require('electron-reload')(__dirname, {
-	// Note: if you're using webpack, you might want to set the path to your src directory instead of __dirname
 	electron: require(`${__dirname}/node_modules/electron`),
 })
 
@@ -168,44 +167,6 @@ server.post('/submitUserData', async (req, res) => {
 // add client logic to disable user preference update
 // while bot is connected and active
 
-// server.post('/startBotScript', (req, res) => {
-// 	if (botProcess) {
-// 		return res.send('npChatbot has already been started')
-// 	}
-// 	botProcess = spawn('node', [scriptPath])
-
-// 	botProcess.stdout.on('data', (data) => {
-// 		console.log(`stdout: ${data}`)
-// 		if (data.includes('info: Joined #djmarcusmcb')) {
-// 			res.send('--- npChatbot has joined the chat ---')
-// 		}
-// 	})
-
-// 	botProcess.stderr.on('data', (data) => {
-// 		console.error(`stderr: ${data}`)
-// 	})
-
-// 	botProcess.on('close', (code) => {
-// 		botProcess = null
-// 		console.log(`botProcess process closed with code ${code}`)
-// 		res.send()
-// 	})
-// })
-
-// server.post('/stopBotScript', (req, res) => {
-// 	if (botProcess) {
-// 		botProcess.on('exit', () => {
-// 			console.log('botProcess has exited.')
-// 			botProcess = null
-// 		})
-
-// 		botProcess.kill()
-// 		res.send('Bot process termination requested.')
-// 	} else {
-// 		res.send('No bot process running.')
-// 	}
-// })
-
 // Start React client app (dev only)
 const startClient = () => {
 	if (isDev) {
@@ -237,7 +198,7 @@ ipcMain.on('clientStarted', async (event, arg) => {
 ipcMain.on('startBotScript', async (event, arg) => {
 	if (botProcess) {
 		console.log('Bot is already running.')
-		event.reply('botScriptResponse', {
+		event.reply('startBotResponse', {
 			success: false,
 			error: 'Bot is already running.',
 		})
@@ -261,7 +222,7 @@ ipcMain.on('startBotScript', async (event, arg) => {
 	// })
 
 	// Assume bot startup is successful for now
-	event.reply('botScriptResponse', {
+	event.reply('startBotResponse', {
 		success: 'ipcMain: bot process successfully started',
 	})
 })
@@ -275,11 +236,19 @@ ipcMain.on('stopBotScript', async (event, arg) => {
 
 		botProcess.kill()
 		event.reply('stopBotResponse', {
-			success: 'ipcMain: bot process successfully exited'
+			success: 'ipcMain: bot process successfully exited',
 		})
 	} else {
 		event.reply('ipcMain: no bot process running to exit')
 	}
+})
+
+ipcMain.on('submitUserData', async (event, arg) => {
+	console.log('--- submit user data ---')
+	console.log(arg)
+	event.reply('userDataResponse', {
+		success: 'ipcMain: submit user data received',
+	})
 })
 
 // Create the Electron BrowserWindow

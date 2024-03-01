@@ -52,10 +52,9 @@ const App = (): JSX.Element => {
 	}
 
 	const handleConnect = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		console.log('Chatbot session connect clicked.')
+		console.log('connect event')
 		window.electron.ipcRenderer.send('startBotScript', {})
-
-		window.electron.ipcRenderer.on('botScriptResponse', (response) => {
+		window.electron.ipcRenderer.on('startBotResponse', (response) => {
 			if (response && response.success) {
 				setMessage('npChatbot is connected to your Twitch chat')
 				setIsBotConnected(true)
@@ -63,9 +62,8 @@ const App = (): JSX.Element => {
 				console.error(response.error) // Handling error message
 				setMessage(response.error)
 			} else {
-				console.error('Unexpected response format from botScriptResponse')
+				console.error('Unexpected response format from startBotResponse')
 			}
-
 			setTimeout(() => {
 				setMessage('')
 			}, 4000)
@@ -75,7 +73,7 @@ const App = (): JSX.Element => {
 	const handleDisconnect = async (
 		event: React.MouseEvent<HTMLButtonElement>
 	) => {
-		console.log('--- npChatbot disconnect event ---')
+		console.log('disconnect event')
 		window.electron.ipcRenderer.send('stopBotScript', {})
 		window.electron.ipcRenderer.on('stopBotResponse', (response) => {
 			if (response && response.success) {
@@ -91,7 +89,7 @@ const App = (): JSX.Element => {
 			} else {
 				console.log('Unexpected response from stopBotResponse')
 			}
-		})		
+		})
 	}
 
 	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,7 +99,6 @@ const App = (): JSX.Element => {
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
-
 		// Validate the form fields
 		if (
 			!formData.twitchChannelName ||
@@ -136,6 +133,14 @@ const App = (): JSX.Element => {
 			isIntervalEnabled,
 			isReportEnabled,
 		}
+
+		window.electron.ipcRenderer.send('submitUserData', submitData)
+		window.electron.ipcRenderer.on('userDataResponse', (response) => {
+			if (response && response.success) {
+				console.log(response.success)
+			}
+		})
+
 		try {
 			const response = await axios.post(
 				`http://localhost:5000/submitUserData`,
@@ -150,6 +155,8 @@ const App = (): JSX.Element => {
 		setTimeout(() => {
 			setMessage('')
 		}, 4000)
+
+		window.electron.ipcRenderer.removeAllListeners('userDataResponse')
 	}
 
 	useEffect(() => {
