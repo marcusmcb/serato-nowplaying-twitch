@@ -168,43 +168,43 @@ server.post('/submitUserData', async (req, res) => {
 // add client logic to disable user preference update
 // while bot is connected and active
 
-server.post('/startBotScript', (req, res) => {
-	if (botProcess) {
-		return res.send('npChatbot has already been started')
-	}
-	botProcess = spawn('node', [scriptPath])
+// server.post('/startBotScript', (req, res) => {
+// 	if (botProcess) {
+// 		return res.send('npChatbot has already been started')
+// 	}
+// 	botProcess = spawn('node', [scriptPath])
 
-	botProcess.stdout.on('data', (data) => {
-		console.log(`stdout: ${data}`)
-		if (data.includes('info: Joined #djmarcusmcb')) {
-			res.send('--- npChatbot has joined the chat ---')
-		}
-	})
+// 	botProcess.stdout.on('data', (data) => {
+// 		console.log(`stdout: ${data}`)
+// 		if (data.includes('info: Joined #djmarcusmcb')) {
+// 			res.send('--- npChatbot has joined the chat ---')
+// 		}
+// 	})
 
-	botProcess.stderr.on('data', (data) => {
-		console.error(`stderr: ${data}`)
-	})
+// 	botProcess.stderr.on('data', (data) => {
+// 		console.error(`stderr: ${data}`)
+// 	})
 
-	botProcess.on('close', (code) => {
-		botProcess = null
-		console.log(`botProcess process closed with code ${code}`)
-		res.send()
-	})
-})
+// 	botProcess.on('close', (code) => {
+// 		botProcess = null
+// 		console.log(`botProcess process closed with code ${code}`)
+// 		res.send()
+// 	})
+// })
 
-server.post('/stopBotScript', (req, res) => {
-	if (botProcess) {
-		botProcess.on('exit', () => {
-			console.log('botProcess has exited.')
-			botProcess = null
-		})
+// server.post('/stopBotScript', (req, res) => {
+// 	if (botProcess) {
+// 		botProcess.on('exit', () => {
+// 			console.log('botProcess has exited.')
+// 			botProcess = null
+// 		})
 
-		botProcess.kill()
-		res.send('Bot process termination requested.')
-	} else {
-		res.send('No bot process running.')
-	}
-})
+// 		botProcess.kill()
+// 		res.send('Bot process termination requested.')
+// 	} else {
+// 		res.send('No bot process running.')
+// 	}
+// })
 
 // Start React client app (dev only)
 const startClient = () => {
@@ -233,10 +233,8 @@ ipcMain.on('clientStarted', async (event, arg) => {
 	})
 })
 
-
-
 // IPC listener for starting the bot script
-ipcMain.on('startBotScript', async (event, arg) => {	
+ipcMain.on('startBotScript', async (event, arg) => {
 	if (botProcess) {
 		console.log('Bot is already running.')
 		event.reply('botScriptResponse', {
@@ -248,24 +246,40 @@ ipcMain.on('startBotScript', async (event, arg) => {
 
 	botProcess = spawn('node', [scriptPath], { stdio: 'inherit' })
 
-	botProcess.stdout.on('data', (data) => {
-		console.log(`stdout: IPC --> ${data}`)
-	})
+	// botProcess.stdout.on('data', (data) => {
+	// 	console.log(`stdout: IPC --> ${data}`)
+	// })
 
-	botProcess.stderr.on('data', (data) => {
-		console.error(`stderr: IPC --> ${data}`)
-	})
+	// botProcess.stderr.on('data', (data) => {
+	// 	console.error(`stderr: IPC --> ${data}`)
+	// })
 
-	botProcess.on('close', (code) => {
-		console.log(`botProcess process exited with code ${code}`)
-		botProcess = null
-		// Optionally, notify the renderer process here
-	})
+	// botProcess.on('close', (code) => {
+	// 	console.log(`botProcess process exited with code ${code}`)
+	// 	botProcess = null
+	// 	// Optionally, notify the renderer process here
+	// })
 
 	// Assume bot startup is successful for now
 	event.reply('botScriptResponse', {
-		success: 'ipcMain process connected to React client',
+		success: 'ipcMain: bot process successfully started',
 	})
+})
+
+ipcMain.on('stopBotScript', async (event, arg) => {
+	if (botProcess) {
+		botProcess.on('exit', () => {
+			console.log('botProcess has exited.')
+			botProcess = null
+		})
+
+		botProcess.kill()
+		event.reply('stopBotResponse', {
+			success: 'ipcMain: bot process successfully exited'
+		})
+	} else {
+		event.reply('ipcMain: no bot process running to exit')
+	}
 })
 
 // Create the Electron BrowserWindow

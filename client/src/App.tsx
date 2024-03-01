@@ -56,22 +56,19 @@ const App = (): JSX.Element => {
 		window.electron.ipcRenderer.send('startBotScript', {})
 
 		window.electron.ipcRenderer.on('botScriptResponse', (response) => {
-			console.log("--- HERE ---")
-			
-			// if (response && response.success) {
-			// 	console.log(response.message) // Assuming the success message is in response.message
-			// 	setMessage('npChatbot is connected to your Twitch chat')
-			// 	setIsBotConnected(true)
-			// } else if (response && response.error) {
-			// 	console.error(response.error) // Handling error message
-			// 	setMessage(response.error)
-			// } else {
-			// 	console.error('Unexpected response format from botScriptResponse')
-			// }
+			if (response && response.success) {
+				setMessage('npChatbot is connected to your Twitch chat')
+				setIsBotConnected(true)
+			} else if (response && response.error) {
+				console.error(response.error) // Handling error message
+				setMessage(response.error)
+			} else {
+				console.error('Unexpected response format from botScriptResponse')
+			}
 
-			// setTimeout(() => {
-			// 	setMessage('')
-			// }, 3000)
+			setTimeout(() => {
+				setMessage('')
+			}, 4000)
 		})
 	}
 
@@ -79,18 +76,22 @@ const App = (): JSX.Element => {
 		event: React.MouseEvent<HTMLButtonElement>
 	) => {
 		console.log('--- npChatbot disconnect event ---')
-		try {
-			const response = await axios.post('http://localhost:5000/stopBotScript')
-			console.log(response.data)
-			setMessage('')
-			setMessage('npChatbot has been disconnected')
-			setIsBotConnected(false)
-			setTimeout(() => {
+		window.electron.ipcRenderer.send('stopBotScript', {})
+		window.electron.ipcRenderer.on('stopBotResponse', (response) => {
+			if (response && response.success) {
 				setMessage('')
-			}, 3000)
-		} catch (error) {
-			console.error('Error disconnecting the bot: ', error)
-		}
+				setMessage('npChatbot has been disconnected')
+				setIsBotConnected(false)
+				setTimeout(() => {
+					setMessage('')
+				}, 4000)
+			} else if (response && response.error) {
+				console.log('Disconnection error: ', response.error)
+				setMessage(response.error)
+			} else {
+				console.log('Unexpected response from stopBotResponse')
+			}
+		})		
 	}
 
 	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -148,7 +149,7 @@ const App = (): JSX.Element => {
 		setMessage('Credentials successfully entered')
 		setTimeout(() => {
 			setMessage('')
-		}, 3000)
+		}, 4000)
 	}
 
 	useEffect(() => {
