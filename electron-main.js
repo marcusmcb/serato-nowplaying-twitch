@@ -248,13 +248,13 @@ ipcMain.on('getUserData', async (event, arg) => {
 })
 
 ipcMain.on('submitUserData', async (event, arg) => {
-	console.log('--- submit user data ---')
-	console.log(arg)
+	console.log('--- submit user data event ---')
+
 	db.users.findOne({}, async (err, existingUser) => {
 		if (err) {
 			console.error('Error fetching the user:', err)
 			// return res.status(500).send('Database error.')
-			event.reply('ipcMain: no user found')
+			event.reply('userDataResponse', { error: 'ipcMain: no user found' })
 		}
 
 		// If there's an existing user, update only the changed fields
@@ -273,24 +273,31 @@ ipcMain.on('submitUserData', async (event, arg) => {
 			// 	updatedUser.twitchOAuthKey = encryptedOAuthKey
 			// }
 
-			await db.users.update(
-				{ _id: existingUser._id },
-				{ $set: updatedUser },
-				{},
-				(err, numReplaced) => {
-					if (err) {
-						console.error('Error updating the user:', err)
-						// return res.status(500).send('Database error during update.')
-						event.reply('userDataResponse', {
-							error: 'ipcMain: error updating user data',
-						})
-					}
-					console.log(`Updated ${numReplaced} user(s) with new data.`)
-					event.reply('userDataResponse', {
-						success: 'ipcMain: user data successfully updated',
-					})
-				}
-			)
+			try {
+				const numReplaced = await new Promise((resolve, reject) => {
+					db.users.update(
+						{ _id: existingUser._id },
+						{ $set: updatedUser },
+						{},
+						(err, numReplaced) => {
+							if (err) {
+								reject(err)
+							} else {
+								resolve(numReplaced)
+							}
+						}
+					)
+				})
+				console.log(`Updated ${numReplaced} user(s) with new data.`)
+				event.reply('userDataResponse', {
+					success: 'User data successfully updated',
+				})
+			} catch (error) {
+				console.error('Error updating the user:', error)
+				event.reply('userDataResponse', {
+					error: 'Error updating user data',
+				})
+			}
 		} else {
 			// If there's no existing user, insert a new one (or handle as an error)
 			console.log(
@@ -298,10 +305,6 @@ ipcMain.on('submitUserData', async (event, arg) => {
 			)
 			// Insert new user logic here, or return an error response
 		}
-	})
-
-	event.reply('userDataResponse', {
-		success: 'ipcMain: submit user data received',
 	})
 })
 

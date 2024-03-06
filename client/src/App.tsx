@@ -54,7 +54,7 @@ const App = (): JSX.Element => {
 	const handleConnect = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		console.log('connect event')
 		window.electron.ipcRenderer.send('startBotScript', {})
-		window.electron.ipcRenderer.on('startBotResponse', (response) => {
+		window.electron.ipcRenderer.once('startBotResponse', (response) => {
 			if (response && response.success) {
 				setMessage('npChatbot is connected to your Twitch chat')
 				setIsBotConnected(true)
@@ -75,7 +75,7 @@ const App = (): JSX.Element => {
 	) => {
 		console.log('disconnect event')
 		window.electron.ipcRenderer.send('stopBotScript', {})
-		window.electron.ipcRenderer.on('stopBotResponse', (response) => {
+		window.electron.ipcRenderer.once('stopBotResponse', (response) => {
 			if (response && response.success) {
 				setMessage('')
 				setMessage('npChatbot has been disconnected')
@@ -110,7 +110,7 @@ const App = (): JSX.Element => {
 			return
 		}
 		setError('')
-		console.log(formData)
+		// console.log(formData)
 
 		if (isReportEnabled && formData.userEmailAddress === '') {
 			setError('A valid email address is required for post-stream reporting.')
@@ -135,12 +135,20 @@ const App = (): JSX.Element => {
 		}
 
 		window.electron.ipcRenderer.send('submitUserData', submitData)
-		window.electron.ipcRenderer.on('userDataResponse', (response) => {
+		window.electron.ipcRenderer.once('userDataResponse', (response) => {
 			if (response && response.success) {
-				console.log("--- IPC RESPONSE (UPDATE USER DATA) ---")
 				console.log(response.success)
+				setMessage('')
+				setMessage('Preferences updated')
+				setTimeout(() => {
+					setMessage('')
+				}, 4000)
+			} else if (response && response.error) {
+				console.log('Update error: ', response.error)
+			} else {
+				console.log('Unexpected response when updating preferences')
 			}
-		})		
+		})
 
 		// try {
 		// 	const response = await axios.post(
@@ -156,17 +164,14 @@ const App = (): JSX.Element => {
 		// setTimeout(() => {
 		// 	setMessage('')
 		// }, 4000)
-
-		window.electron.ipcRenderer.removeAllListeners('userDataResponse')
 	}
 
 	useEffect(() => {
 		const getData = async () => {
-			console.log('APP RENDERED')
 			try {
 				const response = await axios.get('http://localhost:5000/getUserData')
-				console.log('STORED USER DATA:')
-				console.log(response.data)
+				// console.log('STORED USER DATA:')
+				// console.log(response.data)
 				if (response.data && Object.keys(response.data).length > 0) {
 					setFormData(response.data)
 					setIsObsResponseEnabled(response.data.isObsResponseEnabled)
