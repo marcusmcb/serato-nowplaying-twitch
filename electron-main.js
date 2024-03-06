@@ -112,57 +112,57 @@ server.get('/getUserData', (req, res) => {
 	}
 })
 
-server.post('/submitUserData', async (req, res) => {
-	// Encrypt the OAuthKey if it's provided and has changed
-	// let encryptedOAuthKey = ''
-	// if (req.body.twitchOAuthKey) {
-	// 	encryptedOAuthKey = await encryptCredential(req.body.twitchOAuthKey)
-	// }
+// server.post('/submitUserData', async (req, res) => {
+// 	// Encrypt the OAuthKey if it's provided and has changed
+// 	// let encryptedOAuthKey = ''
+// 	// if (req.body.twitchOAuthKey) {
+// 	// 	encryptedOAuthKey = await encryptCredential(req.body.twitchOAuthKey)
+// 	// }
 
-	db.users.findOne({}, async (err, existingUser) => {
-		if (err) {
-			console.error('Error fetching the user:', err)
-			return res.status(500).send('Database error.')
-		}
+// 	db.users.findOne({}, async (err, existingUser) => {
+// 		if (err) {
+// 			console.error('Error fetching the user:', err)
+// 			return res.status(500).send('Database error.')
+// 		}
 
-		// If there's an existing user, update only the changed fields
-		if (existingUser) {
-			const updatedUser = { ...existingUser }
+// 		// If there's an existing user, update only the changed fields
+// 		if (existingUser) {
+// 			const updatedUser = { ...existingUser }
 
-			// Iterate over the keys in the request body to update only changed values
-			Object.keys(req.body).forEach((key) => {
-				if (req.body[key] !== existingUser[key]) {
-					updatedUser[key] = req.body[key]
-				}
-			})
+// 			// Iterate over the keys in the request body to update only changed values
+// 			Object.keys(req.body).forEach((key) => {
+// 				if (req.body[key] !== existingUser[key]) {
+// 					updatedUser[key] = req.body[key]
+// 				}
+// 			})
 
-			// Special handling for the twitchOAuthKey to use the encrypted version
-			// if (req.body.twitchOAuthKey) {
-			// 	updatedUser.twitchOAuthKey = encryptedOAuthKey
-			// }
+// 			// Special handling for the twitchOAuthKey to use the encrypted version
+// 			// if (req.body.twitchOAuthKey) {
+// 			// 	updatedUser.twitchOAuthKey = encryptedOAuthKey
+// 			// }
 
-			await db.users.update(
-				{ _id: existingUser._id },
-				{ $set: updatedUser },
-				{},
-				(err, numReplaced) => {
-					if (err) {
-						console.error('Error updating the user:', err)
-						return res.status(500).send('Database error during update.')
-					}
-					console.log(`Updated ${numReplaced} user(s) with new data.`)
-					res.send(updatedUser)
-				}
-			)
-		} else {
-			// If there's no existing user, insert a new one (or handle as an error)
-			console.log(
-				'No existing user found. Inserting new user or handling error.'
-			)
-			// Insert new user logic here, or return an error response
-		}
-	})
-})
+// 			await db.users.update(
+// 				{ _id: existingUser._id },
+// 				{ $set: updatedUser },
+// 				{},
+// 				(err, numReplaced) => {
+// 					if (err) {
+// 						console.error('Error updating the user:', err)
+// 						return res.status(500).send('Database error during update.')
+// 					}
+// 					console.log(`Updated ${numReplaced} user(s) with new data.`)
+// 					res.send(updatedUser)
+// 				}
+// 			)
+// 		} else {
+// 			// If there's no existing user, insert a new one (or handle as an error)
+// 			console.log(
+// 				'No existing user found. Inserting new user or handling error.'
+// 			)
+// 			// Insert new user logic here, or return an error response
+// 		}
+// 	})
+// })
 
 // add client logic to disable user preference update
 // while bot is connected and active
@@ -243,9 +243,63 @@ ipcMain.on('stopBotScript', async (event, arg) => {
 	}
 })
 
+ipcMain.on('getUserData', async (event, arg) => {
+	// add initial user data load method here
+})
+
 ipcMain.on('submitUserData', async (event, arg) => {
 	console.log('--- submit user data ---')
 	console.log(arg)
+	db.users.findOne({}, async (err, existingUser) => {
+		if (err) {
+			console.error('Error fetching the user:', err)
+			// return res.status(500).send('Database error.')
+			event.reply('ipcMain: no user found')
+		}
+
+		// If there's an existing user, update only the changed fields
+		if (existingUser) {
+			const updatedUser = { ...existingUser }
+
+			// Iterate over the keys in the request body to update only changed values
+			Object.keys(arg).forEach((key) => {
+				if (arg[key] !== existingUser[key]) {
+					updatedUser[key] = arg[key]
+				}
+			})
+
+			// Special handling for the twitchOAuthKey to use the encrypted version
+			// if (req.body.twitchOAuthKey) {
+			// 	updatedUser.twitchOAuthKey = encryptedOAuthKey
+			// }
+
+			await db.users.update(
+				{ _id: existingUser._id },
+				{ $set: updatedUser },
+				{},
+				(err, numReplaced) => {
+					if (err) {
+						console.error('Error updating the user:', err)
+						// return res.status(500).send('Database error during update.')
+						event.reply('userDataResponse', {
+							error: 'ipcMain: error updating user data',
+						})
+					}
+					console.log(`Updated ${numReplaced} user(s) with new data.`)
+					event.reply('userDataResponse', {
+						success: 'ipcMain: user data successfully updated',
+					})
+				}
+			)
+		} else {
+			// If there's no existing user, insert a new one (or handle as an error)
+			console.log(
+				'No existing user found. Inserting new user or handling error.'
+			)
+			// Insert new user logic here, or return an error response
+		}
+	})
+
 	event.reply('userDataResponse', {
 		success: 'ipcMain: submit user data received',
 	})

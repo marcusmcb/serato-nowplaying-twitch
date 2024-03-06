@@ -137,24 +137,25 @@ const App = (): JSX.Element => {
 		window.electron.ipcRenderer.send('submitUserData', submitData)
 		window.electron.ipcRenderer.on('userDataResponse', (response) => {
 			if (response && response.success) {
+				console.log("--- IPC RESPONSE (UPDATE USER DATA) ---")
 				console.log(response.success)
 			}
-		})
+		})		
 
-		try {
-			const response = await axios.post(
-				`http://localhost:5000/submitUserData`,
-				submitData
-			)
-			console.log('EXPRESS RESPONSE: ')
-			console.log(response.data)
-		} catch (error) {
-			console.error('There was an error: ', error)
-		}
-		setMessage('Credentials successfully entered')
-		setTimeout(() => {
-			setMessage('')
-		}, 4000)
+		// try {
+		// 	const response = await axios.post(
+		// 		`http://localhost:5000/submitUserData`,
+		// 		submitData
+		// 	)
+		// 	console.log('EXPRESS RESPONSE: ')
+		// 	console.log(response.data)
+		// } catch (error) {
+		// 	console.error('There was an error: ', error)
+		// }
+		// setMessage('Credentials successfully entered')
+		// setTimeout(() => {
+		// 	setMessage('')
+		// }, 4000)
 
 		window.electron.ipcRenderer.removeAllListeners('userDataResponse')
 	}
