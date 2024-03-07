@@ -92,6 +92,12 @@ server.get('/auth/twitch/callback', async (req, res) => {
 	}
 })
 
+ipcMain.on('getUserData', (event, arg) => {
+	event.reply('getUserDataResponse', {
+		message: 'user data endpoint has been called'
+	})
+})
+
 server.get('/getUserData', (req, res) => {
 	if (fs.existsSync('users.db')) {
 		console.log('users.db exists! Fetching the user information...')
@@ -241,10 +247,6 @@ ipcMain.on('stopBotScript', async (event, arg) => {
 	} else {
 		event.reply('ipcMain: no bot process running to exit')
 	}
-})
-
-ipcMain.on('getUserData', async (event, arg) => {
-	// add initial user data load method here
 })
 
 ipcMain.on('submitUserData', async (event, arg) => {

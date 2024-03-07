@@ -167,6 +167,13 @@ const App = (): JSX.Element => {
 	}
 
 	useEffect(() => {
+		if (window.electron && window.electron.ipcRenderer) {
+			window.electron.ipcRenderer.send('getUserData', {})
+			window.electron.ipcRenderer.once('getUserDataResponse', (response) => {
+				console.log('--- get user data response ---')
+				console.log(response)
+			})
+		}
 		const getData = async () => {
 			try {
 				const response = await axios.get('http://localhost:5000/getUserData')
