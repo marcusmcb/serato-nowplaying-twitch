@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
 import TitleBar from './components/TitleBar'
 import CredentialsPanel from './components/CredentialsPanel'
 import PreferencesPanel from './components/PreferencesPanel'
@@ -8,6 +7,7 @@ import './App.css'
 import MessagePanel from './components/MessagePanel'
 
 const App = (): JSX.Element => {
+
 	const [formData, setFormData] = useState({
 		twitchChannelName: '',
 		twitchChatbotName: '',
@@ -30,21 +30,50 @@ const App = (): JSX.Element => {
 	const [isReportEnabled, setIsReportEnabled] = useState(false)
 	const [showTooltip, setShowTooltip] = useState<string | null>(null)
 	const [isBotConnected, setIsBotConnected] = useState(false)
+	const ipcRenderer = window.electron.ipcRenderer
 
+	// hook to fetch saved user data
 	useEffect(() => {
-		if (window.electron && window.electron.ipcRenderer) {
-			window.electron.ipcRenderer.send('clientStarted', {})
-			window.electron.ipcRenderer.on('clientStartResponse', (response) => {
-				console.log('---- IPC RENDERER RESPONSE ----')
-				console.log(response.message)
+		if (ipcRenderer) {
+			ipcRenderer.send('getUserData', {})
+			ipcRenderer.once('getUserDataResponse', (response) => {
+				console.log('--- get user data response ---')
+				console.log(response.data)
+				if (response.data && Object.keys(response.data).length > 0) {
+					setFormData(response.data)
+					setIsObsResponseEnabled(response.data.isObsResponseEnabled)
+					setIsIntervalEnabled(response.data.isIntervalEnabled)
+					setIsReportEnabled(response.data.isReportEnabled)
+				} else if (response.error) {
+					console.log('USER CONFIG ERROR: ')
+					console.log(response.error)
+				}
 			})
-			return () => {
-				window.electron.ipcRenderer.removeAllListeners('clientStartResponse')
-			}
-		} else {
-			console.error('Electron IPC Renderer is not available')
+		}
+		return () => {
+			ipcRenderer.removeAllListeners('getUserDataResponse')
 		}
 	}, [])
+
+	useEffect(() => {
+		setIsObsResponseEnabled(false) // Always reset to false whenever address or password changes
+	}, [formData.obsWebsocketAddress, formData.obsWebsocketPassword])
+
+	useEffect(() => {
+		const handleOutsideClick = (event: any) => {
+			if (
+				showTooltip &&
+				!event.target.closest('.question-icon') &&
+				!event.target.closest('.info-tooltip')
+			) {
+				setShowTooltip(null)
+			}
+		}
+		window.addEventListener('click', handleOutsideClick)
+		return () => {
+			window.removeEventListener('click', handleOutsideClick)
+		}
+	}, [showTooltip])
 
 	const isValidEmail = (email: string) => {
 		var pattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
@@ -53,8 +82,8 @@ const App = (): JSX.Element => {
 
 	const handleConnect = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		console.log('connect event')
-		window.electron.ipcRenderer.send('startBotScript', {})
-		window.electron.ipcRenderer.once('startBotResponse', (response) => {
+		ipcRenderer.send('startBotScript', {})
+		ipcRenderer.once('startBotResponse', (response) => {
 			if (response && response.success) {
 				setMessage('npChatbot is connected to your Twitch chat')
 				setIsBotConnected(true)
@@ -74,8 +103,8 @@ const App = (): JSX.Element => {
 		event: React.MouseEvent<HTMLButtonElement>
 	) => {
 		console.log('disconnect event')
-		window.electron.ipcRenderer.send('stopBotScript', {})
-		window.electron.ipcRenderer.once('stopBotResponse', (response) => {
+		ipcRenderer.send('stopBotScript', {})
+		ipcRenderer.once('stopBotResponse', (response) => {
 			if (response && response.success) {
 				setMessage('')
 				setMessage('npChatbot has been disconnected')
@@ -99,7 +128,6 @@ const App = (): JSX.Element => {
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
-		// Validate the form fields
 		if (
 			!formData.twitchChannelName ||
 			!formData.twitchChatbotName ||
@@ -110,7 +138,6 @@ const App = (): JSX.Element => {
 			return
 		}
 		setError('')
-		// console.log(formData)
 
 		if (isReportEnabled && formData.userEmailAddress === '') {
 			setError('A valid email address is required for post-stream reporting.')
@@ -134,8 +161,8 @@ const App = (): JSX.Element => {
 			isReportEnabled,
 		}
 
-		window.electron.ipcRenderer.send('submitUserData', submitData)
-		window.electron.ipcRenderer.once('userDataResponse', (response) => {
+		ipcRenderer.send('submitUserData', submitData)
+		ipcRenderer.once('userDataResponse', (response) => {
 			if (response && response.success) {
 				console.log(response.success)
 				setMessage('')
@@ -149,72 +176,7 @@ const App = (): JSX.Element => {
 				console.log('Unexpected response when updating preferences')
 			}
 		})
-
-		// try {
-		// 	const response = await axios.post(
-		// 		`http://localhost:5000/submitUserData`,
-		// 		submitData
-		// 	)
-		// 	console.log('EXPRESS RESPONSE: ')
-		// 	console.log(response.data)
-		// } catch (error) {
-		// 	console.error('There was an error: ', error)
-		// }
-		// setMessage('Credentials successfully entered')
-		// setTimeout(() => {
-		// 	setMessage('')
-		// }, 4000)
 	}
-
-	useEffect(() => {
-		if (window.electron && window.electron.ipcRenderer) {
-			window.electron.ipcRenderer.send('getUserData', {})
-			window.electron.ipcRenderer.once('getUserDataResponse', (response) => {
-				console.log('--- get user data response ---')
-				console.log(response)
-			})
-		}
-		const getData = async () => {
-			try {
-				const response = await axios.get('http://localhost:5000/getUserData')
-				// console.log('STORED USER DATA:')
-				// console.log(response.data)
-				if (response.data && Object.keys(response.data).length > 0) {
-					setFormData(response.data)
-					setIsObsResponseEnabled(response.data.isObsResponseEnabled)
-					setIsIntervalEnabled(response.data.isIntervalEnabled)
-					setIsReportEnabled(response.data.isReportEnabled)
-				}
-			} catch (error: any) {
-				if (error.response && error.response.status === 404) {
-					console.log('Database does not exist yet.')
-				} else {
-					console.error('An error has occurred: ', error)
-				}
-			}
-		}
-		getData()
-	}, [])
-
-	useEffect(() => {
-		setIsObsResponseEnabled(false) // Always reset to false whenever address or password changes
-	}, [formData.obsWebsocketAddress, formData.obsWebsocketPassword])
-
-	useEffect(() => {
-		const handleOutsideClick = (event: any) => {
-			if (
-				showTooltip &&
-				!event.target.closest('.question-icon') &&
-				!event.target.closest('.info-tooltip')
-			) {
-				setShowTooltip(null)
-			}
-		}
-		window.addEventListener('click', handleOutsideClick)
-		return () => {
-			window.removeEventListener('click', handleOutsideClick)
-		}
-	}, [showTooltip])
 
 	return (
 		<div className='App'>

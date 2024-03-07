@@ -81,7 +81,6 @@ server.get('/auth/twitch/callback', async (req, res) => {
 					console.log('No user found to update.')
 				}
 			})
-
 			res.redirect('http://localhost:3000')
 		} catch (error) {
 			console.error('Error exchanging code for token:', error)
@@ -93,82 +92,30 @@ server.get('/auth/twitch/callback', async (req, res) => {
 })
 
 ipcMain.on('getUserData', (event, arg) => {
-	event.reply('getUserDataResponse', {
-		message: 'user data endpoint has been called'
-	})
-})
-
-server.get('/getUserData', (req, res) => {
 	if (fs.existsSync('users.db')) {
 		console.log('users.db exists! Fetching the user information...')
 		let preloadPath = path.join(__dirname, './scripts/preload.js')
-		console.log(preloadPath)
 		db.users.findOne({}, (err, user) => {
 			if (err) {
 				console.error('Error fetching the user:', err)
 			} else if (user) {
-				res.send(user)
+				event.reply('getUserDataResponse', {
+					success: true,
+					data: user,
+				})
 			} else {
 				console.log('users.db does not exist yet')
-				res.status(404).send({ error: 'No user found.' })
+				// res.status(404).send({ error: 'No user found.' })
+				event.reply('getUserDataResponse', {
+					success: false,
+					error: 'no user found',
+				})
 			}
 		})
 	} else {
 		console.log('users.db does not exist yet.')
 	}
 })
-
-// server.post('/submitUserData', async (req, res) => {
-// 	// Encrypt the OAuthKey if it's provided and has changed
-// 	// let encryptedOAuthKey = ''
-// 	// if (req.body.twitchOAuthKey) {
-// 	// 	encryptedOAuthKey = await encryptCredential(req.body.twitchOAuthKey)
-// 	// }
-
-// 	db.users.findOne({}, async (err, existingUser) => {
-// 		if (err) {
-// 			console.error('Error fetching the user:', err)
-// 			return res.status(500).send('Database error.')
-// 		}
-
-// 		// If there's an existing user, update only the changed fields
-// 		if (existingUser) {
-// 			const updatedUser = { ...existingUser }
-
-// 			// Iterate over the keys in the request body to update only changed values
-// 			Object.keys(req.body).forEach((key) => {
-// 				if (req.body[key] !== existingUser[key]) {
-// 					updatedUser[key] = req.body[key]
-// 				}
-// 			})
-
-// 			// Special handling for the twitchOAuthKey to use the encrypted version
-// 			// if (req.body.twitchOAuthKey) {
-// 			// 	updatedUser.twitchOAuthKey = encryptedOAuthKey
-// 			// }
-
-// 			await db.users.update(
-// 				{ _id: existingUser._id },
-// 				{ $set: updatedUser },
-// 				{},
-// 				(err, numReplaced) => {
-// 					if (err) {
-// 						console.error('Error updating the user:', err)
-// 						return res.status(500).send('Database error during update.')
-// 					}
-// 					console.log(`Updated ${numReplaced} user(s) with new data.`)
-// 					res.send(updatedUser)
-// 				}
-// 			)
-// 		} else {
-// 			// If there's no existing user, insert a new one (or handle as an error)
-// 			console.log(
-// 				'No existing user found. Inserting new user or handling error.'
-// 			)
-// 			// Insert new user logic here, or return an error response
-// 		}
-// 	})
-// })
 
 // add client logic to disable user preference update
 // while bot is connected and active
@@ -193,12 +140,6 @@ const startServer = () => {
 		console.log(`Server is running on port ${PORT}`)
 	})
 }
-
-ipcMain.on('clientStarted', async (event, arg) => {
-	event.reply('clientStartResponse', {
-		message: 'ipcMain process connected to client app',
-	})
-})
 
 // IPC listener for starting the bot script
 ipcMain.on('startBotScript', async (event, arg) => {
