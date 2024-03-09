@@ -154,19 +154,19 @@ ipcMain.on('startBotScript', async (event, arg) => {
 
 	botProcess = spawn('node', [scriptPath], { stdio: 'inherit' })
 
-	// botProcess.stdout.on('data', (data) => {
-	// 	console.log(`stdout: IPC --> ${data}`)
-	// })
+	botProcess.stdout.on('data', (data) => {
+		console.log(`stdout: IPC --> ${data}`)
+	})
 
-	// botProcess.stderr.on('data', (data) => {
-	// 	console.error(`stderr: IPC --> ${data}`)
-	// })
+	botProcess.stderr.on('data', (data) => {
+		console.error(`stderr: IPC --> ${data}`)
+	})
 
-	// botProcess.on('close', (code) => {
-	// 	console.log(`botProcess process exited with code ${code}`)
-	// 	botProcess = null
-	// 	// Optionally, notify the renderer process here
-	// })
+	botProcess.on('close', (code) => {
+		console.log(`botProcess process exited with code ${code}`)
+		botProcess = null
+		// Optionally, notify the renderer process here
+	})
 
 	// Assume bot startup is successful for now
 	event.reply('startBotResponse', {
