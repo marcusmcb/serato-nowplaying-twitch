@@ -56,7 +56,7 @@ const App = (): JSX.Element => {
 
 	interface BotProcessResponse {
 		success: boolean
-		data?: string // Assuming data is a string for simplicity
+		message?: any // Assuming data is a string for simplicity
 		error?: string
 	}
 
@@ -65,7 +65,7 @@ const App = (): JSX.Element => {
 			event: any,
 			response: BotProcessResponse
 		) => {
-			console.log('Data from botProcess:', response)
+			console.log('Data from botProcess:', response.message)
 			// Handle the data in your React state or UI as needed
 		}
 
