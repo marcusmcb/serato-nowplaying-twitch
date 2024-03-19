@@ -7,7 +7,6 @@ import './App.css'
 import MessagePanel from './components/MessagePanel'
 
 const App = (): JSX.Element => {
-
 	const [formData, setFormData] = useState({
 		twitchChannelName: '',
 		twitchChatbotName: '',
@@ -52,6 +51,28 @@ const App = (): JSX.Element => {
 		}
 		return () => {
 			ipcRenderer.removeAllListeners('getUserDataResponse')
+		}
+	}, [])
+
+	interface BotProcessResponse {
+		success: boolean
+		data?: string // Assuming data is a string for simplicity
+		error?: string
+	}
+
+	useEffect(() => {
+		const handleBotProcessData = (
+			event: any,
+			response: BotProcessResponse
+		) => {
+			console.log('Data from botProcess:', response)
+			// Handle the data in your React state or UI as needed
+		}
+
+		window.electron.ipcRenderer.on('botProcessResponse', handleBotProcessData)
+
+		return () => {
+			window.electron.ipcRenderer.removeAllListeners('botProcessResponse')
 		}
 	}, [])
 

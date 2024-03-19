@@ -19,8 +19,8 @@ const initializeBot = async (config) => {
 	const COMMAND_REPEAT_LIMIT = 5
 	const displayOBSMessage = config.isObsResponseEnabled
 
-	// const url = `https://serato.com/playlists/${config.seratoDisplayName}/8-1-2023`
-	const url = `https://serato.com/playlists/${config.seratoDisplayName}/live`
+	const url = `https://serato.com/playlists/${config.seratoDisplayName}/3-1-2024`
+	// const url = `https://serato.com/playlists/${config.seratoDisplayName}/live`
 
 	// console.log('--------------------')
 	// console.log('CONFIG: ')
