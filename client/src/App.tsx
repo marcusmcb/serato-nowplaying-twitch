@@ -56,21 +56,16 @@ const App = (): JSX.Element => {
 
 	interface BotProcessResponse {
 		success: boolean
-		message?: any // Assuming data is a string for simplicity
+		message?: any
 		error?: string
 	}
 
 	useEffect(() => {
-		const handleBotProcessData = (
-			event: any,
-			response: BotProcessResponse
-		) => {
-			console.log('Data from botProcess:', response.message)
+		const handleBotProcessData = (response: BotProcessResponse) => {
+			console.log('Data from botProcess:', response)
 			// Handle the data in your React state or UI as needed
 		}
-
 		window.electron.ipcRenderer.on('botProcessResponse', handleBotProcessData)
-
 		return () => {
 			window.electron.ipcRenderer.removeAllListeners('botProcessResponse')
 		}

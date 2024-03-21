@@ -155,12 +155,13 @@ ipcMain.on('startBotScript', async (event, arg) => {
 	botProcess = spawn('node', [scriptPath])
 
 	botProcess.stdout.on('data', (data) => {
-		console.log(`stdout: IPC --> ${data}`)
+		console.log(`--- stdout: DATA ---`)
+		console.log(`${data.toString().trim()}`)
 		const botResponse = {
 			success: true,
 			message: data.toString().trim()
 		}
-		console.log("BOT RESPONSE: ", botResponse)
+		// console.log("BOT RESPONSE: ", botResponse)
 		event.reply('botProcessResponse', botResponse)
 	})
 
