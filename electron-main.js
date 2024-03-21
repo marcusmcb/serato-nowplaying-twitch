@@ -170,12 +170,13 @@ ipcMain.on('startBotScript', async (event, arg) => {
 			}
 			event.reply('startBotResponse', botResponse)
 		} else if (parsedMessage.toLowerCase().includes('error')) {
-			console.log('--- bot response error ---')
+			console.log('--- bot response error ---')			
 			const botResponse = {
 				success: false,
 				error: parsedMessage,
 			}
 			event.reply('startBotResponse', botResponse)
+			botProcess = null
 		}
 	})
 

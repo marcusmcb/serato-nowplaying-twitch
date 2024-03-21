@@ -60,6 +60,7 @@ const App = (): JSX.Element => {
 		error?: string
 	}
 
+	// hook to handle error messages from bot process
 	useEffect(() => {
 		const handleBotProcessData = (response: BotProcessResponse) => {
 			console.log('Data from botProcess:', response)
