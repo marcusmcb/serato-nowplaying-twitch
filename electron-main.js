@@ -155,14 +155,28 @@ ipcMain.on('startBotScript', async (event, arg) => {
 	botProcess = spawn('node', [scriptPath])
 
 	botProcess.stdout.on('data', (data) => {
+		const parsedMessage = data.toString().trim()
 		console.log(`--- stdout: DATA ---`)
-		console.log(`${data.toString().trim()}`)
-		const botResponse = {
-			success: true,
-			message: data.toString().trim()
+		console.log(parsedMessage)
+		if (
+			parsedMessage
+				.toLowerCase()
+				.includes(`joined #${arg.twitchChannelName.toLowerCase()}`)
+		) {
+			console.log('--- Twitch Chat Properly Connected ---')
+			const botResponse = {
+				success: true,
+				message: parsedMessage,
+			}
+			event.reply('startBotResponse', botResponse)
+		} else if (parsedMessage.toLowerCase().includes('error')) {
+			console.log('--- bot response error ---')
+			const botResponse = {
+				success: false,
+				error: parsedMessage,
+			}
+			event.reply('startBotResponse', botResponse)
 		}
-		// console.log("BOT RESPONSE: ", botResponse)
-		event.reply('botProcessResponse', botResponse)
 	})
 
 	botProcess.stderr.on('data', (data) => {
@@ -174,11 +188,6 @@ ipcMain.on('startBotScript', async (event, arg) => {
 	// 	botProcess = null
 	// 	// Optionally, notify the renderer process here
 	// })
-
-	// Assume bot startup is successful for now
-	event.reply('startBotResponse', {
-		success: 'ipcMain: bot process successfully started',
-	})
 })
 
 ipcMain.on('stopBotScript', async (event, arg) => {

@@ -98,7 +98,8 @@ const App = (): JSX.Element => {
 
 	const handleConnect = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		console.log('connect event')
-		ipcRenderer.send('startBotScript', {})
+		console.log("TCN: ", formData.twitchChannelName)
+		ipcRenderer.send('startBotScript', { twitchChannelName: formData.twitchChannelName })
 		ipcRenderer.once('startBotResponse', (response) => {
 			if (response && response.success) {
 				setMessage('npChatbot is connected to your Twitch chat')
