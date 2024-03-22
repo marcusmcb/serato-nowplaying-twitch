@@ -30,7 +30,7 @@ let serverInstance
 // const isDev = true
 
 // helper method to validate Serato live playlist URL
-const isValidSeratoURL = async (seratoDisplayName) => {
+const seratoURLValidityCheck = async (seratoDisplayName) => {
 	const url = `https://www.serato.com/playlists/${seratoDisplayName}`
 	console.log(url)
 	try {
@@ -44,10 +44,31 @@ const isValidSeratoURL = async (seratoDisplayName) => {
 		}
 	} catch (error) {
 		if (error.response && error.response.status === 404) {
-			console.log('Invalid URL')
+			console.log('Serato URL not found')
 			return false
 		} else {
-			console.log('Error checking URL: ', error.message)
+			console.log('Error checking Serato URL: ', error.message)
+			return false
+		}
+	}
+}
+
+const twitchURLValidityCheck = async (twitchDisplayName) => {
+	const url = `https://www.twitch.tv/${twitchDisplayName}`
+	try {
+		if (response.status >= 200 && response.status < 300) {
+			console.log('valid twitch url')
+			return true
+		} else {
+			console.log('INVALID TWITCH URL')
+			return false
+		}
+	} catch (error) {
+		if (error.response && error.response.status === 404) {
+			console.log('Twitch URL not found')
+			return false
+		} else {
+			console.log('Error checking Twitch URL: ', error.message)
 			return false
 		}
 	}
@@ -237,7 +258,7 @@ ipcMain.on('stopBotScript', async (event, arg) => {
 })
 
 ipcMain.on('submitUserData', async (event, arg) => {
-	const isValidURL = await isValidSeratoURL(arg.seratoDisplayName)
+	const isValidURL = await seratoURLValidityCheck(arg.seratoDisplayName)
 	if (isValidURL === true) {
 		db.users.findOne({}, async (err, existingUser) => {
 			if (err) {
