@@ -98,31 +98,6 @@ const App = (): JSX.Element => {
 		return pattern.test(email)
 	}
 
-	const isValidSeratoURL = async (
-		seratoDisplayName: string
-	): Promise<boolean> => {
-		const url = `https://www.serato.com/playlists/${seratoDisplayName}`
-		console.log(url)
-		try {
-			const response = await axios.head(url)
-			if (response.status >= 200 && response.status < 300) {
-				console.log('Valid')
-				return true
-			} else {
-				console.log('Invalid')
-				return false
-			}
-		} catch (error: any) {
-			if (error.response && error.response.status === 404) {
-				console.log('Invalid URL')
-				return false
-			} else {
-				console.log('Error checking URL: ', error.message)
-				return false
-			}
-		}
-	}
-
 	const handleConnect = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		console.log('connect event')
 		console.log('TCN: ', formData.twitchChannelName)
@@ -134,7 +109,7 @@ const App = (): JSX.Element => {
 				setMessage('npChatbot is connected to your Twitch chat')
 				setIsBotConnected(true)
 			} else if (response && response.error) {
-				console.error(response.error) // Handling error message
+				console.error(response.error)
 				setMessage(response.error)
 			} else {
 				console.error('Unexpected response format from startBotResponse')
@@ -183,7 +158,7 @@ const App = (): JSX.Element => {
 			setError('Please fill in all fields.')
 			return
 		}
-		setError('')		
+		setError('')
 
 		if (isReportEnabled && formData.userEmailAddress === '') {
 			setError('A valid email address is required for post-stream reporting.')

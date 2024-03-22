@@ -242,7 +242,6 @@ ipcMain.on('submitUserData', async (event, arg) => {
 		db.users.findOne({}, async (err, existingUser) => {
 			if (err) {
 				console.error('Error fetching the user:', err)
-				// return res.status(500).send('Database error.')
 				event.reply('userDataResponse', { error: 'ipcMain: no user found' })
 			}
 
@@ -296,7 +295,9 @@ ipcMain.on('submitUserData', async (event, arg) => {
 			}
 		})
 	} else {
-		event.reply('userDataResponse', { error: "The Serato profile name given is invalid"})
+		event.reply('userDataResponse', {
+			error: 'The Serato profile name given is invalid',
+		})
 	}
 })
 
