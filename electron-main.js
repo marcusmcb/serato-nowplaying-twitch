@@ -36,10 +36,10 @@ const seratoURLValidityCheck = async (seratoDisplayName) => {
 	try {
 		const response = await axios.head(url)
 		if (response.status >= 200 && response.status < 300) {
-			console.log('Valid')
+			// console.log('Valid')
 			return true
 		} else {
-			console.log('Invalid')
+			// console.log('Invalid')
 			return false
 		}
 	} catch (error) {
@@ -55,19 +55,26 @@ const seratoURLValidityCheck = async (seratoDisplayName) => {
 
 const twitchURLValidityCheck = async (twitchDisplayName) => {
 	const url = `https://www.twitch.tv/${twitchDisplayName}`
+
 	try {
-		const response = await axios.get(url);
-		console.log("RESPONSE: ", response)
-		const pageContent = response.data;		
-		// Look for a specific string in the page content that indicates the channel does not exist
-		if (pageContent.includes("Sorry. Unless you’ve got a time machine, that content is unavailable.")) {
-			return false; // Channel does not exist
-		} else {
-			return true; // Assuming the channel exists
-		}
+		const response = await axios.get(url)
+		const pageContent = response.data
+
+		// Construct a regex pattern to search for the presence of the expected content attribute
+		// This regex accounts for potential variations in how the attribute might be formatted
+		const pattern = new RegExp(
+			`content=["']twitch\\.tv/${twitchDisplayName}["']`,
+			'i'
+		)
+
+		// Use the regex to test the page content
+		const exists = pattern.test(pageContent)
+
+		// If the pattern is found, we can assume the channel exists
+		return exists
 	} catch (error) {
-		console.error('Error checking Twitch channel by content:', error);
-		return false;
+		console.error('Error checking Twitch channel by content:', error)
+		return false // Assume channel does not exist if an error occurs
 	}
 }
 
@@ -258,9 +265,9 @@ ipcMain.on('submitUserData', async (event, arg) => {
 	const isValidSeratoURL = await seratoURLValidityCheck(arg.seratoDisplayName)
 	const isValidTwitchURL = await twitchURLValidityCheck(arg.twitchChannelName)
 	if (isValidTwitchURL === true) {
-		console.log("Valid Twitch URL")
+		console.log('Valid Twitch URL')
 	} else {
-		console.log("Invalid Twitch URL")
+		console.log('Invalid Twitch URL')
 	}
 	if (isValidSeratoURL === true) {
 		db.users.findOne({}, async (err, existingUser) => {
