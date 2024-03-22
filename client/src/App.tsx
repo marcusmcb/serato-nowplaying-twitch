@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import TitleBar from './components/TitleBar'
+import axios from 'axios'
 import CredentialsPanel from './components/CredentialsPanel'
 import PreferencesPanel from './components/PreferencesPanel'
 import SessionPanel from './components/SessionPanel'
@@ -97,10 +98,37 @@ const App = (): JSX.Element => {
 		return pattern.test(email)
 	}
 
+	const isValidSeratoURL = async (
+		seratoDisplayName: string
+	): Promise<boolean> => {
+		const url = `https://www.serato.com/playlists/${seratoDisplayName}`
+		console.log(url)
+		try {
+			const response = await axios.head(url)
+			if (response.status >= 200 && response.status < 300) {
+				console.log('Valid')
+				return true
+			} else {
+				console.log('Invalid')
+				return false
+			}
+		} catch (error: any) {
+			if (error.response && error.response.status === 404) {
+				console.log('Invalid URL')
+				return false
+			} else {
+				console.log('Error checking URL: ', error.message)
+				return false
+			}
+		}
+	}
+
 	const handleConnect = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		console.log('connect event')
-		console.log("TCN: ", formData.twitchChannelName)
-		ipcRenderer.send('startBotScript', { twitchChannelName: formData.twitchChannelName })
+		console.log('TCN: ', formData.twitchChannelName)
+		ipcRenderer.send('startBotScript', {
+			twitchChannelName: formData.twitchChannelName,
+		})
 		ipcRenderer.once('startBotResponse', (response) => {
 			if (response && response.success) {
 				setMessage('npChatbot is connected to your Twitch chat')
@@ -127,15 +155,15 @@ const App = (): JSX.Element => {
 				setMessage('')
 				setMessage('npChatbot has been disconnected')
 				setIsBotConnected(false)
-				setTimeout(() => {
-					setMessage('')
-				}, 4000)
 			} else if (response && response.error) {
 				console.log('Disconnection error: ', response.error)
 				setMessage(response.error)
 			} else {
 				console.log('Unexpected response from stopBotResponse')
 			}
+			setTimeout(() => {
+				setMessage('')
+			}, 4000)
 		})
 	}
 
@@ -155,7 +183,7 @@ const App = (): JSX.Element => {
 			setError('Please fill in all fields.')
 			return
 		}
-		setError('')
+		setError('')		
 
 		if (isReportEnabled && formData.userEmailAddress === '') {
 			setError('A valid email address is required for post-stream reporting.')
@@ -184,15 +212,17 @@ const App = (): JSX.Element => {
 			if (response && response.success) {
 				console.log(response.success)
 				setMessage('')
-				setMessage('Preferences updated')
-				setTimeout(() => {
-					setMessage('')
-				}, 4000)
+				setMessage(response.success)
 			} else if (response && response.error) {
 				console.log('Update error: ', response.error)
+				setMessage('')
+				setMessage(response.error)
 			} else {
 				console.log('Unexpected response when updating preferences')
 			}
+			setTimeout(() => {
+				setMessage('')
+			}, 4000)
 		})
 	}
 

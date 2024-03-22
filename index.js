@@ -22,15 +22,9 @@ const initializeBot = async (config) => {
 	const url = `https://serato.com/playlists/${config.seratoDisplayName}/3-1-2024`
 	// const url = `https://serato.com/playlists/${config.seratoDisplayName}/live`
 
-	// console.log('--------------------')
-	// console.log('CONFIG: ')
-	// console.log(config)
-	// console.log('--------------------')
-
 	const currentAccessToken = await getRefreshToken(config.twitchRefreshToken)
-
-	console.log('CURRENT ACCESS TOKEN: ')
-	console.log(currentAccessToken)
+	// console.log('CURRENT ACCESS TOKEN: ')
+	// console.log(currentAccessToken)
 
 	try {
 		await updateUserToken(currentAccessToken)
