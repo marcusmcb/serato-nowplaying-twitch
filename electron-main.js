@@ -56,21 +56,18 @@ const seratoURLValidityCheck = async (seratoDisplayName) => {
 const twitchURLValidityCheck = async (twitchDisplayName) => {
 	const url = `https://www.twitch.tv/${twitchDisplayName}`
 	try {
-		if (response.status >= 200 && response.status < 300) {
-			console.log('valid twitch url')
-			return true
+		const response = await axios.get(url);
+		console.log("RESPONSE: ", response)
+		const pageContent = response.data;		
+		// Look for a specific string in the page content that indicates the channel does not exist
+		if (pageContent.includes("Sorry. Unless you’ve got a time machine, that content is unavailable.")) {
+			return false; // Channel does not exist
 		} else {
-			console.log('INVALID TWITCH URL')
-			return false
+			return true; // Assuming the channel exists
 		}
 	} catch (error) {
-		if (error.response && error.response.status === 404) {
-			console.log('Twitch URL not found')
-			return false
-		} else {
-			console.log('Error checking Twitch URL: ', error.message)
-			return false
-		}
+		console.error('Error checking Twitch channel by content:', error);
+		return false;
 	}
 }
 
@@ -258,8 +255,14 @@ ipcMain.on('stopBotScript', async (event, arg) => {
 })
 
 ipcMain.on('submitUserData', async (event, arg) => {
-	const isValidURL = await seratoURLValidityCheck(arg.seratoDisplayName)
-	if (isValidURL === true) {
+	const isValidSeratoURL = await seratoURLValidityCheck(arg.seratoDisplayName)
+	const isValidTwitchURL = await twitchURLValidityCheck(arg.twitchChannelName)
+	if (isValidTwitchURL === true) {
+		console.log("Valid Twitch URL")
+	} else {
+		console.log("Invalid Twitch URL")
+	}
+	if (isValidSeratoURL === true) {
 		db.users.findOne({}, async (err, existingUser) => {
 			if (err) {
 				console.error('Error fetching the user:', err)
