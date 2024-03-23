@@ -7,8 +7,15 @@ const express = require('express')
 const { app, BrowserWindow, ipcMain } = require('electron')
 const isDev = require('electron-is-dev')
 const scriptPath = path.join(__dirname, './boot.js')
+
 const { exchangeCodeForToken } = require('./auth/createAccessToken')
-const axios = require('axios')
+const {
+	seratoURLValidityCheck,
+	twitchURLValidityCheck,
+} = require('./helpers/validations/validations')
+const {
+	updateUserData,
+} = require('./helpers/updateUserParams/updateUserParams')
 
 const dotenv = require('dotenv')
 dotenv.config()
@@ -28,113 +35,6 @@ let mainWindow
 let botProcess
 let serverInstance
 // const isDev = true
-
-// helper method to validate Serato live playlist URL
-const seratoURLValidityCheck = async (seratoDisplayName) => {
-	const url = `https://www.serato.com/playlists/${seratoDisplayName}`
-	console.log(url)
-	try {
-		const response = await axios.head(url)
-		if (response.status >= 200 && response.status < 300) {
-			// console.log('Valid')
-			return true
-		} else {
-			// console.log('Invalid')
-			return false
-		}
-	} catch (error) {
-		if (error.response && error.response.status === 404) {
-			console.log('Serato URL not found')
-			return false
-		} else {
-			console.log('Error checking Serato URL: ', error.message)
-			return false
-		}
-	}
-}
-
-const twitchURLValidityCheck = async (twitchDisplayName) => {
-	const url = `https://www.twitch.tv/${twitchDisplayName}`
-
-	try {
-		const response = await axios.get(url)
-		const pageContent = response.data
-
-		// Construct a regex pattern to search for the presence of the expected content attribute
-		// This regex accounts for potential variations in how the attribute might be formatted
-		const pattern = new RegExp(
-			`content=["']twitch\\.tv/${twitchDisplayName}["']`,
-			'i'
-		)
-
-		// Use the regex to test the page content
-		const exists = pattern.test(pageContent)
-
-		// If the pattern is found, we can assume the channel exists
-		return exists
-	} catch (error) {
-		console.error('Error checking Twitch channel by content:', error)
-		return false // Assume channel does not exist if an error occurs
-	}
-}
-
-const updateUserData = async (db, event, arg) => {
-	db.users.findOne({}, async (err, existingUser) => {
-		if (err) {
-			console.error('Error fetching the user:', err)
-			event.reply('userDataResponse', { error: 'ipcMain: no user found' })
-		}
-
-		// If there's an existing user, update only the changed fields
-		if (existingUser) {
-			const updatedUser = { ...existingUser }
-
-			// Iterate over the keys in the request body to update only changed values
-			Object.keys(arg).forEach((key) => {
-				if (arg[key] !== existingUser[key]) {
-					updatedUser[key] = arg[key]
-				}
-			})
-
-			// Special handling for the twitchOAuthKey to use the encrypted version
-			// if (req.body.twitchOAuthKey) {
-			// 	updatedUser.twitchOAuthKey = encryptedOAuthKey
-			// }
-
-			try {
-				const numReplaced = await new Promise((resolve, reject) => {
-					db.users.update(
-						{ _id: existingUser._id },
-						{ $set: updatedUser },
-						{},
-						(err, numReplaced) => {
-							if (err) {
-								reject(err)
-							} else {
-								resolve(numReplaced)
-							}
-						}
-					)
-				})
-				console.log(`Updated ${numReplaced} user(s) with new data.`)
-				event.reply('userDataResponse', {
-					success: 'User data successfully updated',
-				})
-			} catch (error) {
-				console.error('Error updating the user:', error)
-				event.reply('userDataResponse', {
-					error: 'Error updating user data',
-				})
-			}
-		} else {
-			// If there's no existing user, insert a new one (or handle as an error)
-			console.log(
-				'No existing user found. Inserting new user or handling error.'
-			)
-			// Insert new user logic here, or return an error response
-		}
-	})
-}
 
 // Express routes
 server.get('/', (req, res) => {
@@ -333,7 +233,12 @@ ipcMain.on('submitUserData', async (event, arg) => {
 	}
 	if (isValidSeratoURL === true) {
 		await updateUserData(db, event, arg)
-		// move update params into callable helper method
+		event.reply('userDataResponse', {
+			success: 'User data successfully updated',
+		})
+		// refactor helper method to remove event.reply blocks
+		// and return object responses instead
+		// add logic here to pass object response to event.reply block
 	} else {
 		event.reply('userDataResponse', {
 			error: 'The Serato profile name given is invalid',
