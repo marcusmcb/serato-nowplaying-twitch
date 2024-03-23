@@ -185,9 +185,9 @@ const App = (): JSX.Element => {
 		ipcRenderer.send('submitUserData', submitData)
 		ipcRenderer.once('userDataResponse', (response) => {
 			if (response && response.success) {
-				console.log(response.success)
+				console.log(response.message)
 				setMessage('')
-				setMessage(response.success)
+				setMessage(response.message)
 			} else if (response && response.error) {
 				console.log('Update error: ', response.error)
 				setMessage('')

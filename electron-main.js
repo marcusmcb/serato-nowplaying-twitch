@@ -220,29 +220,27 @@ ipcMain.on('stopBotScript', async (event, arg) => {
 })
 
 ipcMain.on('submitUserData', async (event, arg) => {
+	// add helper method to check submitted args against
+	// stored user preferences
+	// if different, run the necessary validations on only
+	// the changed fields
 	const isValidSeratoURL = await seratoURLValidityCheck(arg.seratoDisplayName)
 	const isValidTwitchURL = await twitchURLValidityCheck(arg.twitchChannelName)
-	if (isValidTwitchURL === true) {
-		console.log('Valid Twitch URL')
-		// call update params helper method here
+	if (isValidTwitchURL && isValidSeratoURL) {
+		try {
+			const data = await updateUserData(db, event, arg)
+			console.log('--- DATA ---', data)
+			event.reply('userDataResponse', data) // Directly use the response from updateUserData
+		} catch (error) {
+			console.error(error)
+			event.reply('userDataResponse', error) // Send the error response
+		}
 	} else {
-		console.log('Invalid Twitch URL')
-		event.reply('userDataResponse', {
-			error: 'The Twitch profile name given is invalid',
-		})
-	}
-	if (isValidSeratoURL === true) {
-		await updateUserData(db, event, arg)
-		event.reply('userDataResponse', {
-			success: 'User data successfully updated',
-		})
-		// refactor helper method to remove event.reply blocks
-		// and return object responses instead
-		// add logic here to pass object response to event.reply block
-	} else {
-		event.reply('userDataResponse', {
-			error: 'The Serato profile name given is invalid',
-		})
+		// Handle invalid URLs
+		const errorMessage = isValidTwitchURL
+			? 'The Serato profile name given is invalid'
+			: 'The Twitch profile name given is invalid'
+		event.reply('userDataResponse', { error: errorMessage })
 	}
 })
 
