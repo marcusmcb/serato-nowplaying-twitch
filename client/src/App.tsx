@@ -65,6 +65,10 @@ const App = (): JSX.Element => {
 	useEffect(() => {
 		const handleBotProcessData = (response: BotProcessResponse) => {
 			console.log('Data from botProcess:', response)
+			setMessage(response.message)
+			setTimeout(() => {
+				setMessage("")
+			}, 4000)
 			// Handle the data in your React state or UI as needed
 		}
 		window.electron.ipcRenderer.on('botProcessResponse', handleBotProcessData)
@@ -99,10 +103,14 @@ const App = (): JSX.Element => {
 	}
 
 	const handleConnect = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		console.log('connect event')
-		console.log('TCN: ', formData.twitchChannelName)
+		console.log("FORM DATA: ")
+		console.log(formData)
+		// console.log('connect event')
+		// console.log('TCN: ', formData.twitchChannelName)
 		ipcRenderer.send('startBotScript', {
 			twitchChannelName: formData.twitchChannelName,
+			obsWebsocketAddress: formData.obsWebsocketAddress ? formData.obsWebsocketAddress : "",
+			isObsResponseEnabled: formData.isObsResponseEnabled
 		})
 		ipcRenderer.once('startBotResponse', (response) => {
 			if (response && response.success) {
@@ -181,6 +189,9 @@ const App = (): JSX.Element => {
 			isIntervalEnabled,
 			isReportEnabled,
 		}
+
+		console.log("SUBMIT DATA: ")
+		console.log(submitData)
 
 		ipcRenderer.send('submitUserData', submitData)
 		ipcRenderer.once('userDataResponse', (response) => {

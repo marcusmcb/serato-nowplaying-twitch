@@ -1,13 +1,14 @@
 const axios = require('axios')
+const WebSocket = require('ws')
 
 // helper method to validate Serato live playlist URL
 const seratoURLValidityCheck = async (seratoDisplayName) => {
-	const url = `https://www.serato.com/playlists/${seratoDisplayName}`	
+	const url = `https://www.serato.com/playlists/${seratoDisplayName}`
 	try {
 		const response = await axios.head(url)
-		if (response.status >= 200 && response.status < 300) {			
+		if (response.status >= 200 && response.status < 300) {
 			return true
-		} else {			
+		} else {
 			return false
 		}
 	} catch (error) {
@@ -46,7 +47,41 @@ const twitchURLValidityCheck = async (twitchDisplayName) => {
 	}
 }
 
+const obsWebSocketValidityCheck = async (socketAddress) => {
+	console.log('SOCKET CHECK: ')
+	console.log(socketAddress)
+	return new Promise((resolve, reject) => {
+		const ws = new WebSocket(socketAddress)
+		ws.on('open', function open() {
+			console.log('OBS connection established')
+			ws.send('{"request-type": "GetVersion", "message-id": "test"}')
+		})
+		ws.on('message', function message(data) {
+			console.log('Received response: ', data)
+			resolve(() => {
+				ws.close()
+				const response = {
+					success: true,
+					message: "OBS websocket communication established."
+				}
+				return response
+			})
+		})
+		ws.on('error', function error(err) {
+			reject(() => {
+				console.log('Connection error: ', err.message)
+				const response = {
+					success: false,
+					message: "Couldn't connect to OBS socket."
+				}
+				return response
+			})
+		})
+	})
+}
+
 module.exports = {
 	seratoURLValidityCheck: seratoURLValidityCheck,
-	twitchURLValidityCheck: twitchURLValidityCheck
+	twitchURLValidityCheck: twitchURLValidityCheck,
+	obsWebSocketValidityCheck: obsWebSocketValidityCheck,
 }

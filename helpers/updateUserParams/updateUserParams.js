@@ -1,4 +1,8 @@
 const updateUserData = async (db, event, arg) => {
+	console.log("------------------------")
+	console.log("*** UPDATE USER DATA ***")
+	console.log(arg)
+	console.log("------------------------")
 	return new Promise((resolve, reject) => {
 		db.users.findOne({}, async (err, existingUser) => {
 			if (err) {

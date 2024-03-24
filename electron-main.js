@@ -12,6 +12,7 @@ const { exchangeCodeForToken } = require('./auth/createAccessToken')
 const {
 	seratoURLValidityCheck,
 	twitchURLValidityCheck,
+	obsWebSocketValidityCheck
 } = require('./helpers/validations/validations')
 const {
 	updateUserData,
@@ -107,6 +108,9 @@ ipcMain.on('getUserData', (event, arg) => {
 			if (err) {
 				console.error('Error fetching the user:', err)
 			} else if (user) {
+				// console.log("--------------------")
+				// console.log("USER: ")
+				// console.log(user)
 				event.reply('getUserDataResponse', {
 					success: true,
 					data: user,
@@ -151,6 +155,28 @@ const startServer = () => {
 
 // IPC listener for starting the bot script
 ipcMain.on('startBotScript', async (event, arg) => {
+
+	console.log("ARGS: ", arg)
+
+	if (arg.isObsResponseEnabled === true) {
+		const isOBSWebSocketValid = await obsWebSocketValidityCheck(arg.obsWebsocketAddress)
+		console.log("VALID?: ", isOBSWebSocketValid)
+		// if (isOBSWebSocketValid === true) {
+		// 	console.log("Valid websocket")
+		// } else {
+		// 	console.log("Invalid websocket")
+		// }
+	}
+
+	// disable "connect" button in client UI if botProcess is already running
+	// test functionality for accuracy and then remove the botProcess check below
+
+	// if user has OBS responses enabled, run validity check that OBS
+	// websocket can be reached
+
+	// if not, inform user to check address/password or to disable 
+	// OBS responses to proceed	
+
 	if (botProcess) {
 		console.log('Bot is already running.')
 		event.reply('startBotResponse', {
@@ -189,6 +215,14 @@ ipcMain.on('startBotScript', async (event, arg) => {
 	})
 
 	botProcess.stderr.on('data', (data) => {
+		if (data.includes("OBSWebSocketError")) {
+			console.log("OBS ERROR")
+			const botResponse = {
+				success: false,
+				message: "npChatbot could not detect OBS. Please ensure OBS is running."
+			}
+			event.reply('botProcessResponse', botResponse)
+		}
 		console.error(`stderr: IPC --> ${data}`)
 	})
 
@@ -224,6 +258,7 @@ ipcMain.on('submitUserData', async (event, arg) => {
 	// stored user preferences
 	// if different, run the necessary validations on only
 	// the changed fields
+
 	const isValidSeratoURL = await seratoURLValidityCheck(arg.seratoDisplayName)
 	const isValidTwitchURL = await twitchURLValidityCheck(arg.twitchChannelName)
 	if (isValidTwitchURL && isValidSeratoURL) {
@@ -236,6 +271,8 @@ ipcMain.on('submitUserData', async (event, arg) => {
 			event.reply('userDataResponse', error) // Send the error response
 		}
 	} else {
+		console.log("SERATO? ", isValidSeratoURL)
+		console.log("TWITCH? ", isValidTwitchURL)
 		// Handle invalid URLs
 		const errorMessage = isValidTwitchURL
 			? 'The Serato profile name given is invalid'
