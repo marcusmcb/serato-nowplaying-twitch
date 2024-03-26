@@ -12,7 +12,7 @@ type PreferencesPanelProps = {
 		intervalMessageDuration: string
 		userEmailAddress: string
 	}
-	
+
 	isObsResponseEnabled: boolean
 	setIsObsResponseEnabled: (value: boolean) => void
 	isIntervalEnabled: boolean
@@ -25,8 +25,8 @@ type PreferencesPanelProps = {
 }
 
 const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
-	// console.log('Props: ')
-	// console.log(props)
+	console.log('Props: ')
+	console.log(props.isObsResponseEnabled)
 	return (
 		<div className='app-container-column'>
 			<div className='app-form-title'>Preferences:</div>
@@ -41,9 +41,12 @@ const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
 							props.formData.obsWebsocketPassword
 						)
 					}
-					onChange={() =>
+					onChange={() => {
+						console.log("OBS toggle changed: ")
+						console.log(props.isObsResponseEnabled)
 						props.setIsObsResponseEnabled(!props.isObsResponseEnabled)
-					}
+						console.log(props.isObsResponseEnabled)
+					}}
 				/>
 				<label
 					htmlFor='obsResponseToggle'
