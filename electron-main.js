@@ -158,14 +158,13 @@ ipcMain.on('startBotScript', async (event, arg) => {
 
 	console.log("ARGS: ", arg)
 
-	if (arg.isObsResponseEnabled === true) {
-		const isOBSWebSocketValid = await obsWebSocketValidityCheck(arg.obsWebsocketAddress)
-		console.log("VALID?: ", isOBSWebSocketValid)
-		// if (isOBSWebSocketValid === true) {
-		// 	console.log("Valid websocket")
-		// } else {
-		// 	console.log("Invalid websocket")
-		// }
+	if (arg.isObsResponseEnabled === true) {		
+		try {
+			const result = await obsWebSocketValidityCheck("ws://" + arg.obsWebsocketAddress)
+			console.log("OBS CONNECTION SUCCESS: ", result.message)
+		} catch (error) {
+			console.error("OBS CONNECTION ERROR: ", error.message)
+		}		
 	}
 
 	// disable "connect" button in client UI if botProcess is already running

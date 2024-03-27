@@ -58,24 +58,20 @@ const obsWebSocketValidityCheck = async (socketAddress) => {
 		})
 		ws.on('message', function message(data) {
 			console.log('Received response: ', data)
-			resolve(() => {
-				ws.close()
-				const response = {
-					success: true,
-					message: "OBS websocket communication established."
-				}
-				return response
-			})
+			ws.close()
+			const response = {
+				success: true,
+				message: 'OBS websocket connection established.'
+			}
+			resolve(response)
 		})
 		ws.on('error', function error(err) {
-			reject(() => {
-				console.log('Connection error: ', err.message)
-				const response = {
-					success: false,
-					message: "Couldn't connect to OBS socket."
-				}
-				return response
-			})
+			console.log('Connection error: ', err.message)
+			const response = {
+				success: false,
+				message: "Couldn't connect to OBS socket.",
+			}
+			reject(response)
 		})
 	})
 }

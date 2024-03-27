@@ -41,6 +41,13 @@ const App = (): JSX.Element => {
 				console.log('Interval enabled? ', response.data.isIntervalEnabled)
 				console.log(response.data)
 				if (response.data && Object.keys(response.data).length > 0) {
+					if (
+						response.data.obsWebsocketAddress &&
+						response.data.obsWebsocketAddress.startsWith('ws://')
+					) {
+						response.data.obsWebsocketAddress =
+							response.data.obsWebsocketAddress.substring(5)
+					}
 					setFormData(response.data)
 					setIsObsResponseEnabled(response.data.isObsResponseEnabled)
 					setIsIntervalEnabled(response.data.isIntervalEnabled)
@@ -171,6 +178,8 @@ const App = (): JSX.Element => {
 		}
 		setError('')
 
+		formData.obsWebsocketAddress = 'ws://' + formData.obsWebsocketAddress
+
 		if (isReportEnabled && formData.userEmailAddress === '') {
 			setError('A valid email address is required for post-stream reporting.')
 			return
@@ -199,6 +208,13 @@ const App = (): JSX.Element => {
 		ipcRenderer.send('submitUserData', submitData)
 		ipcRenderer.once('userDataResponse', (response) => {
 			if (response && response.success) {
+				if (
+					response.data.obsWebsocketAddress &&
+					response.data.obsWebsocketAddress.startsWith('ws://')
+				) {
+					response.data.obsWebsocketAddress =
+						response.data.obsWebsocketAddress.substring(5)
+				}
 				console.log(response)
 				setMessage('')
 				setMessage(response.message)
