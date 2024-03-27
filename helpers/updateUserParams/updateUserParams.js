@@ -25,6 +25,11 @@ const updateUserData = async (db, event, arg) => {
 				}
 			})
 
+			console.log("--------------------")
+			console.log("UPDATED USER: ")
+			console.log(updatedUser)
+			console.log("--------------------")
+
 			try {
 				const numReplaced = await new Promise((resolve, reject) => {
 					db.users.update(
@@ -42,7 +47,7 @@ const updateUserData = async (db, event, arg) => {
 				})
 
 				console.log(`Updated ${numReplaced} user(s) with new data.`)
-				resolve({ success: true, message: 'User data successfully updated' })
+				resolve({ success: true, message: 'User data successfully updated', data: updatedUser })
 			} catch (error) {
 				console.error('Error updating the user:', error)
 				reject({ success: false, error: 'Error updating user' })

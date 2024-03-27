@@ -25,11 +25,11 @@ type PreferencesPanelProps = {
 }
 
 const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
-	console.log('-----------------')
-	console.log('Props: ')
-	console.log('OBS enabled? ', props.isObsResponseEnabled)
-	console.log('Interval enabled? ', props.isIntervalEnabled)
-	console.log(props)
+	// console.log('-----------------')
+	// console.log('Props: ')
+	// console.log('OBS enabled? ', props.isObsResponseEnabled)
+	// console.log('Interval enabled? ', props.isIntervalEnabled)
+	// console.log(props)
 	return (
 		<div className='app-container-column'>
 			<div className='app-form-title'>Preferences:</div>
