@@ -108,9 +108,9 @@ ipcMain.on('getUserData', (event, arg) => {
 			if (err) {
 				console.error('Error fetching the user:', err)
 			} else if (user) {
-				// console.log("--------------------")
-				// console.log("USER: ")
-				// console.log(user)
+				console.log("--------------------")
+				console.log("USER: ")
+				console.log(user)
 				event.reply('getUserDataResponse', {
 					success: true,
 					data: user,
@@ -298,6 +298,7 @@ const createWindow = () => {
 		: `file://${path.join(__dirname, './client/build/index.html')}`
 	console.log('Loading URL: ', appURL)
 	mainWindow.loadURL(appURL)
+	mainWindow.webContents.openDevTools()
 }
 
 // Electron app event handlers

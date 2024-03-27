@@ -25,8 +25,11 @@ type PreferencesPanelProps = {
 }
 
 const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
+	console.log('-----------------')
 	console.log('Props: ')
-	console.log(props.isObsResponseEnabled)
+	console.log('OBS enabled? ', props.isObsResponseEnabled)
+	console.log('Interval enabled? ', props.isIntervalEnabled)
+	console.log(props)
 	return (
 		<div className='app-container-column'>
 			<div className='app-form-title'>Preferences:</div>
@@ -42,10 +45,7 @@ const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
 						)
 					}
 					onChange={() => {
-						console.log("OBS toggle changed: ")
-						console.log(props.isObsResponseEnabled)
 						props.setIsObsResponseEnabled(!props.isObsResponseEnabled)
-						console.log(props.isObsResponseEnabled)
 					}}
 				/>
 				<label

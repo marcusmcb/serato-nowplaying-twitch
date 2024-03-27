@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import TitleBar from './components/TitleBar'
-import axios from 'axios'
 import CredentialsPanel from './components/CredentialsPanel'
 import PreferencesPanel from './components/PreferencesPanel'
 import SessionPanel from './components/SessionPanel'
-import './App.css'
 import MessagePanel from './components/MessagePanel'
+import './App.css'
 
 const App = (): JSX.Element => {
 	const [formData, setFormData] = useState({
@@ -37,7 +36,9 @@ const App = (): JSX.Element => {
 		if (ipcRenderer) {
 			ipcRenderer.send('getUserData', {})
 			ipcRenderer.once('getUserDataResponse', (response) => {
-				console.log('--- get user data response ---')
+				console.log('--- USER CONFIG DATA ---')
+				console.log('OBS enabled? ', response.data.isObsResponseEnabled)
+				console.log('Interval enabled? ', response.data.isIntervalEnabled)
 				console.log(response.data)
 				if (response.data && Object.keys(response.data).length > 0) {
 					setFormData(response.data)
@@ -67,7 +68,7 @@ const App = (): JSX.Element => {
 			console.log('Data from botProcess:', response)
 			setMessage(response.message)
 			setTimeout(() => {
-				setMessage("")
+				setMessage('')
 			}, 4000)
 			// Handle the data in your React state or UI as needed
 		}
@@ -77,9 +78,9 @@ const App = (): JSX.Element => {
 		}
 	}, [])
 
-	useEffect(() => {
-		setIsObsResponseEnabled(false) // Always reset to false whenever address or password changes
-	}, [formData.obsWebsocketAddress, formData.obsWebsocketPassword])
+	// useEffect(() => {
+	// 	setIsObsResponseEnabled(false) // Always reset to false whenever address or password changes
+	// }, [formData.obsWebsocketAddress, formData.obsWebsocketPassword])
 
 	useEffect(() => {
 		const handleOutsideClick = (event: any) => {
@@ -103,14 +104,16 @@ const App = (): JSX.Element => {
 	}
 
 	const handleConnect = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		console.log("FORM DATA: ")
+		console.log('FORM DATA: ')
 		console.log(formData)
 		// console.log('connect event')
 		// console.log('TCN: ', formData.twitchChannelName)
 		ipcRenderer.send('startBotScript', {
 			twitchChannelName: formData.twitchChannelName,
-			obsWebsocketAddress: formData.obsWebsocketAddress ? formData.obsWebsocketAddress : "",
-			isObsResponseEnabled: formData.isObsResponseEnabled
+			obsWebsocketAddress: formData.obsWebsocketAddress
+				? formData.obsWebsocketAddress
+				: '',
+			isObsResponseEnabled: formData.isObsResponseEnabled,
 		})
 		ipcRenderer.once('startBotResponse', (response) => {
 			if (response && response.success) {
@@ -190,7 +193,7 @@ const App = (): JSX.Element => {
 			isReportEnabled,
 		}
 
-		console.log("SUBMIT DATA: ")
+		console.log('SUBMIT DATA: ')
 		console.log(submitData)
 
 		ipcRenderer.send('submitUserData', submitData)
