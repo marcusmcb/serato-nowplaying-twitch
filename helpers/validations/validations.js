@@ -24,7 +24,7 @@ const seratoURLValidityCheck = async (seratoDisplayName) => {
 
 // helper method to validate Twitch URL
 const twitchURLValidityCheck = async (twitchDisplayName) => {
-	console.log('TWITCH VALIDITY CHECK: ', twitchDisplayName)
+	console.log("TWITCH VALIDITY CHECK: ", twitchDisplayName)
 	const url = `https://www.twitch.tv/${twitchDisplayName}`
 	try {
 		const response = await axios.get(url)
@@ -48,79 +48,31 @@ const twitchURLValidityCheck = async (twitchDisplayName) => {
 	}
 }
 
-const crypto = require('crypto')
-
-const obsWebSocketValidityCheck = async (socketAddress, password) => {
+const obsWebSocketValidityCheck = async (socketAddress) => {
 	console.log('SOCKET CHECK: ')
 	console.log(socketAddress)
-	console.log(password)
 	return new Promise((resolve, reject) => {
 		const ws = new WebSocket(socketAddress)
-
-		const generateAuthResponse = (password, salt, challenge) => {
-			const secret = crypto
-				.createHash('sha256')
-				.update(password + salt)
-				.digest('base64')
-			const authResponse = crypto
-				.createHash('sha256')
-				.update(secret + challenge)
-				.digest('base64')
-			return authResponse
-		}
-
 		ws.on('open', function open() {
-			console.log('OBS connection attempt...')
-			ws.send(
-				JSON.stringify({
-					'request-type': 'GetAuthRequired',
-					'message-id': 'authRequiredTest',
-				})
-			)
+			console.log('OBS connection established')
+			ws.send('{"request-type": "GetVersion", "message-id": "test"}')
 		})
-
 		ws.on('message', function message(data) {
-			const responseData = JSON.parse(data)
-			console.log('Received response: ', responseData)
-
-			if (responseData['message-id'] === 'authRequiredTest') {
-				if (responseData.authRequired) {
-					const authResponse = generateAuthResponse(
-						password,
-						responseData.salt,
-						responseData.challenge
-					)
-					ws.send(
-						JSON.stringify({
-							'request-type': 'Authenticate',
-							'message-id': 'authTest',
-							auth: authResponse,
-						})
-					)
-				} else {
-					ws.close()
-					resolve({
-						success: true,
-						message: 'OBS WebSocket connection established (No Auth Required).',
-					})
-				}
-			} else if (responseData['message-id'] === 'authTest') {
-				if (responseData.status === 'ok') {
-					ws.close()
-					resolve({
-						success: true,
-						message: 'OBS WebSocket connection established and authenticated.',
-					})
-				} else {
-					ws.close()
-					reject({ success: false, message: 'Authentication failed.' })
-				}
+			console.log('Received response: ', data)
+			ws.close()
+			const response = {
+				success: true,
+				message: 'OBS websocket connection established.'
 			}
+			resolve(response)
 		})
-
 		ws.on('error', function error(err) {
 			console.log('Connection error: ', err.message)
-			reject({ success: false, message: "Couldn't connect to OBS socket." })
+			const response = {
+				success: false,
+				message: "Couldn't connect to OBS socket.",
+			}
+			reject(response)
 		})
 	})
 }

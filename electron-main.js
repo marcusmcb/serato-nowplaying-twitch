@@ -13,7 +13,7 @@ const { exchangeCodeForToken } = require('./auth/createAccessToken')
 const {
 	seratoURLValidityCheck,
 	twitchURLValidityCheck,
-	obsWebSocketValidityCheck
+	obsWebSocketValidityCheck,
 } = require('./helpers/validations/validations')
 const {
 	updateUserData,
@@ -111,8 +111,8 @@ ipcMain.on('getUserData', (event, arg) => {
 			if (err) {
 				console.error('Error fetching the user:', err)
 			} else if (user) {
-				console.log("--------------------")
-				console.log("USER: ")
+				console.log('--------------------')
+				console.log('USER: ')
 				console.log(user)
 				event.reply('getUserDataResponse', {
 					success: true,
@@ -158,24 +158,42 @@ const startServer = () => {
 
 // IPC listener for starting the bot script
 ipcMain.on('startBotScript', async (event, arg) => {
+	console.log('ARGS: ', arg)
 
-	console.log("ARGS: ", arg)
-
-	if (arg.isObsResponseEnabled === true) {		
+	if (arg.isObsResponseEnabled === true) {
 		try {
-			await obs.connect("ws://" + arg.obsWebsocketAddress, arg.obsWebsocketPassword)
-			console.log("Connected to OBS properly")
+			await obs.connect(
+				'ws://' + arg.obsWebsocketAddress,
+				arg.obsWebsocketPassword
+			)
+			console.log('Connected to OBS properly')
+		} catch (error) {			
+			const errorMessage = error.toString()
+			console.error('Failed to connect to OBS: ', errorMessage)
+			switch (true) {
+				case errorMessage.includes('authentication is required'):
+					event.reply('startBotResponse', {
+						success: false,
+						error: 'Authentication is required. Check your password.',
+					})
+				case errorMessage.includes("connect ETIMEDOUT"):
+					event.reply('startBotResponse', {
+						success: false,
+						error: 'OBS connection timed out. Check your OBS websocket address or disable OBS responses.'
+					})
+				case errorMessage.includes("connect ECONNREFUSED"):
+					event.reply('startBotResponse', {
+						success: false,
+						error: 'OBS connection refused. Check your OBS websocket address and port or disable OBS responses.'
+					})
+				default:
+					event.reply('startBotResponse', {
+						success: false,
+						error: 'Unable to connect to OBS',
+					})
+			}
 			return
-		} catch (error) {
-			console.error("Failed to connect to OBS: ", error)
-			return 
 		}
-		// try {
-		// 	const result = await obsWebSocketValidityCheck("ws://" + arg.obsWebsocketAddress, arg.obsWebsocketPassword)
-		// 	console.log("OBS CONNECTION SUCCESS: ", result.message)
-		// } catch (error) {
-		// 	console.error("OBS CONNECTION ERROR: ", error.message)
-		// }		
 	}
 
 	// disable "connect" button in client UI if botProcess is already running
@@ -184,8 +202,8 @@ ipcMain.on('startBotScript', async (event, arg) => {
 	// if user has OBS responses enabled, run validity check that OBS
 	// websocket can be reached
 
-	// if not, inform user to check address/password or to disable 
-	// OBS responses to proceed	
+	// if not, inform user to check address/password or to disable
+	// OBS responses to proceed
 
 	if (botProcess) {
 		console.log('Bot is already running.')
@@ -225,11 +243,12 @@ ipcMain.on('startBotScript', async (event, arg) => {
 	})
 
 	botProcess.stderr.on('data', (data) => {
-		if (data.includes("OBSWebSocketError")) {
-			console.log("OBS ERROR")
+		if (data.includes('OBSWebSocketError')) {
+			console.log('OBS ERROR')
 			const botResponse = {
 				success: false,
-				message: "npChatbot could not detect OBS. Please ensure OBS is running."
+				message:
+					'npChatbot could not detect OBS. Please ensure OBS is running.',
 			}
 			event.reply('botProcessResponse', botResponse)
 		}
@@ -268,8 +287,8 @@ ipcMain.on('submitUserData', async (event, arg) => {
 	// stored user preferences
 	// if different, run the necessary validations on only
 	// the changed fields
-	console.log("------------------")
-	console.log("SUBMIT USER DATA: ")
+	console.log('------------------')
+	console.log('SUBMIT USER DATA: ')
 	console.log(arg)
 
 	const isValidSeratoURL = await seratoURLValidityCheck(arg.seratoDisplayName)
@@ -284,8 +303,8 @@ ipcMain.on('submitUserData', async (event, arg) => {
 			event.reply('userDataResponse', error) // Send the error response
 		}
 	} else {
-		console.log("SERATO? ", isValidSeratoURL)
-		console.log("TWITCH? ", isValidTwitchURL)
+		console.log('SERATO? ', isValidSeratoURL)
+		console.log('TWITCH? ', isValidTwitchURL)
 		// Handle invalid URLs
 		const errorMessage = isValidTwitchURL
 			? 'The Serato profile name given is invalid'
