@@ -113,6 +113,8 @@ const App = (): JSX.Element => {
 	const handleConnect = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		console.log('FORM DATA: ')
 		console.log(formData)		
+		setMessage("")
+		setMessage("Connecting to Twitch...")
 		ipcRenderer.send('startBotScript', {
 			twitchChannelName: formData.twitchChannelName,
 			obsWebsocketAddress: formData.obsWebsocketAddress

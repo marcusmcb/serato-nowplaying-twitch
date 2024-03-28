@@ -63,6 +63,7 @@ const SessionPanel: React.FC<SessionPanelProps> = (props) => {
 					className='bot-control-button'
 					type='submit'
 					onClick={props.handleConnect}
+					disabled={props.isBotConnected}
 				>
 					{!props.isBotConnected ? 'Connect' : 'Connected'}
 				</button>
