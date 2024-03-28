@@ -1,8 +1,12 @@
 :root {
 	--main-bg-color: rgb(49, 49, 49);
+	--main-text-color: #fff;
 	--highlight-color: rgb(74, 242, 228);
 	--success-color: rgb(87, 255, 104);
 	--error-color: rgb(255, 136, 136);
+	--session-info-label-color: rgb(240, 253, 155);
+	--session-info-status-color: rgb(253, 157, 155);
+	--disabled-color: #aaa;
 	--fira-sans: 'Fira Sans', sans-serif;
 	--dm-sans: 'DM Sans', sans-serif;
 }
@@ -16,7 +20,7 @@
 .app-container {
 	display: flex;
 	flex-direction: row;
-	color: white;
+	color: var(--main-text-color);
 }
 
 .app-container-column {
@@ -33,7 +37,7 @@
 	font-family: var(--fira-sans);
 	font-weight: 600;
 	font-size: 40px;
-	color: white;
+	color: var(--main-text-color);
 	padding-bottom: 20px;
 }
 
@@ -71,7 +75,7 @@
 
 label {
 	font-family: var(--fira-sans);
-	color: white;
+	color: var(--main-text-color);
 	font-size: 16px;
 	min-width: 200px;
 }
@@ -85,9 +89,9 @@ label {
 input {
 	padding: 5px;
 	border-radius: 5px;
-	border: 1px solid white;
-	background-color: rgb(49, 49, 49);
-	color: white;
+	border: 1px solid var(--main-text-color);
+	background-color: var(--main-bg-color);
+	color: var(--main-text-color);
 	font-size: 14px;
 }
 
@@ -96,15 +100,26 @@ button {
 	padding: 10px 20px;
 	border-radius: 5px;
 	border: none;
-	background-color: rgb(49, 49, 49);
-	color: white;
+	background-color: var(--main-bg-color);
+	color: var(--main-text-color);
 	font-size: 16px;
 	cursor: pointer;
 	border: 2px solid rgb(74, 242, 228);
 }
 
 button:hover {
-	background-color: var(--highlight-color);;
+	background-color: var(--highlight-color);
+	color: black;
+}
+
+button:disabled {
+	background-color: var(--main-bg-color);
+	color: var(--main-text-color);
+	cursor: not-allowed;
+}
+
+button:disabled:hover {
+	background-color: grey;
 	color: black;
 }
 
@@ -115,9 +130,8 @@ button:hover {
 	cursor: pointer;
 }
 
-/* App.css */
 .disabled-label {
-	color: #aaa;
+	color: var(--disabled-color);
 }
 
 .obs-prefs-element {
@@ -147,18 +161,18 @@ button:hover {
 }
 
 .question-icon {
-	background-color: rgb(49, 49, 49);
-	color: white;
+	background-color: var(--main-bg-color);
+	color: var(--main-text-color);
 }
 
 .active-icon {
-	background-color: var(--highlight-color);;
-	color: rgb(49, 49, 49);
+	background-color: var(--highlight-color);
+	color: var(--main-bg-color);
 }
 
 .info-tooltip {
-	color: white;
-	background-color: rgb(49, 49, 49);
+	color: var(--main-text-color);
+	background-color: var(--main-bg-color);
 	font-family: var(--fira-sans);
 	margin-top: 5px;
 }
@@ -169,12 +183,12 @@ button:hover {
 
 .session-info {
 	margin-top: 30px;
-	color: rgb(240, 253, 155);
+	color: var(--session-info-label-color);
 }
 
 .session-info-status {
 	margin-left: 15px;
-	color: rgb(253, 157, 155);
+	color: var(--session-info-status-color);
 }
 
 .session-info-label {
@@ -183,7 +197,7 @@ button:hover {
 }
 
 .info-tooltip a:visited {
-	color: var(--highlight-color);;
+	color: var(--highlight-color);
 }
 
 .toggle-field {
@@ -227,7 +241,7 @@ button:hover {
 
 a,
 a:visited {
-	color: white;
+	color: var(--main-text-color);
 	text-decoration: none;
 }
 
@@ -244,7 +258,7 @@ input[type='checkbox'] {
 	width: 35px;
 	height: 18px;
 	border-radius: 9px;
-	background-color: #2b2b2b;
+	background-color: var(--main-bg-color);
 	position: relative;
 	outline: none;
 	cursor: pointer;
@@ -259,7 +273,7 @@ input[type='checkbox']:before {
 	border-radius: 9px;
 	top: 0;
 	left: 0;
-	background-color: #fff;
+	background-color: var(--main-text-color);
 	transition: 0.3s;
 }
 
@@ -275,5 +289,3 @@ input[type='checkbox']:checked:before {
 .toggle-text-label-color {
 	color: var(--highlight-color);
 }
-
-

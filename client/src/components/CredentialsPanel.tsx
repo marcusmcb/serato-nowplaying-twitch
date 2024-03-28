@@ -14,6 +14,7 @@ type CredentialsPanelProps = {
 	showTooltip: string | null
 	setShowTooltip: (value: string | null) => void
 	handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void
+	isBotConnected: boolean
 }
 
 type FieldConfig = {
@@ -34,11 +35,6 @@ const fieldsConfig: FieldConfig[] = [
 		label: 'Twitch Chatbot Name:',
 		name: 'twitchChatbotName',
 	},
-	// {
-	// 	id: 'oauth-key',
-	// 	label: 'Twitch OAuth Key:',
-	// 	name: 'twitchOAuthKey',
-	// },
 	{
 		id: 'serato-display-name',
 		label: 'Serato Display Name:',
@@ -119,14 +115,13 @@ const CredentialsPanel: React.FC<CredentialsPanelProps> = (props) => {
 						handleInputChange={props.handleInputChange}
 						showTooltip={props.showTooltip}
 						setShowTooltip={props.setShowTooltip}
-						hideSensitiveFields={hideSensitiveFields} // <-- Add this
+						hideSensitiveFields={hideSensitiveFields}
 					/>
 				))}
 
 				<div className='button-row'>
-					<button type='submit'>
-						{/* remove logic below and just set as update */}
-						{props.formData.twitchOAuthKey !== '' ? 'Update' : 'Submit'}
+					<button disabled={props.isBotConnected} type='submit'>
+						Update
 					</button>
 					<div className='toggle-field hide-sensitive-toggle'>
 						<input

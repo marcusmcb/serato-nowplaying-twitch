@@ -112,9 +112,7 @@ const App = (): JSX.Element => {
 
 	const handleConnect = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		console.log('FORM DATA: ')
-		console.log(formData)
-		// console.log('connect event')
-		// console.log('TCN: ', formData.twitchChannelName)
+		console.log(formData)		
 		ipcRenderer.send('startBotScript', {
 			twitchChannelName: formData.twitchChannelName,
 			obsWebsocketAddress: formData.obsWebsocketAddress
@@ -242,6 +240,7 @@ const App = (): JSX.Element => {
 					showTooltip={showTooltip}
 					setShowTooltip={setShowTooltip}
 					handleSubmit={handleSubmit}
+					isBotConnected={isBotConnected}
 				/>
 				<PreferencesPanel
 					formData={formData}
