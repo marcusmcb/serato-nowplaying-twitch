@@ -7,6 +7,7 @@ const express = require('express')
 const { app, BrowserWindow, ipcMain } = require('electron')
 const isDev = require('electron-is-dev')
 const scriptPath = path.join(__dirname, './boot.js')
+const OBSWebSocket = require('obs-websocket-js').default
 
 const { exchangeCodeForToken } = require('./auth/createAccessToken')
 const {
@@ -35,6 +36,8 @@ const db = require('./database')
 let mainWindow
 let botProcess
 let serverInstance
+
+const obs = new OBSWebSocket()
 // const isDev = true
 
 // Express routes
@@ -160,11 +163,19 @@ ipcMain.on('startBotScript', async (event, arg) => {
 
 	if (arg.isObsResponseEnabled === true) {		
 		try {
-			const result = await obsWebSocketValidityCheck("ws://" + arg.obsWebsocketAddress)
-			console.log("OBS CONNECTION SUCCESS: ", result.message)
+			await obs.connect("ws://" + arg.obsWebsocketAddress, arg.obsWebsocketPassword)
+			console.log("Connected to OBS properly")
+			return
 		} catch (error) {
-			console.error("OBS CONNECTION ERROR: ", error.message)
-		}		
+			console.error("Failed to connect to OBS: ", error)
+			return 
+		}
+		// try {
+		// 	const result = await obsWebSocketValidityCheck("ws://" + arg.obsWebsocketAddress, arg.obsWebsocketPassword)
+		// 	console.log("OBS CONNECTION SUCCESS: ", result.message)
+		// } catch (error) {
+		// 	console.error("OBS CONNECTION ERROR: ", error.message)
+		// }		
 	}
 
 	// disable "connect" button in client UI if botProcess is already running
@@ -257,6 +268,9 @@ ipcMain.on('submitUserData', async (event, arg) => {
 	// stored user preferences
 	// if different, run the necessary validations on only
 	// the changed fields
+	console.log("------------------")
+	console.log("SUBMIT USER DATA: ")
+	console.log(arg)
 
 	const isValidSeratoURL = await seratoURLValidityCheck(arg.seratoDisplayName)
 	const isValidTwitchURL = await twitchURLValidityCheck(arg.twitchChannelName)
