@@ -171,7 +171,7 @@ button:disabled:hover {
 }
 
 .info-tooltip {
-	color: var(--main-text-color);
+	color: var(--session-info-label-color);
 	background-color: var(--main-bg-color);
 	font-family: var(--fira-sans);
 	margin-top: 5px;
@@ -288,4 +288,8 @@ input[type='checkbox']:checked:before {
 
 .toggle-text-label-color {
 	color: var(--highlight-color);
+}
+
+.muted-input {
+	color: var(--disabled-color);
 }

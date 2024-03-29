@@ -246,6 +246,7 @@ const App = (): JSX.Element => {
 					setShowTooltip={setShowTooltip}
 					handleSubmit={handleSubmit}
 					isBotConnected={isBotConnected}
+					isObsResponseEnabled={isObsResponseEnabled}
 				/>
 				<PreferencesPanel
 					formData={formData}

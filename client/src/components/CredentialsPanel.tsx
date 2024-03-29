@@ -15,6 +15,7 @@ type CredentialsPanelProps = {
 	setShowTooltip: (value: string | null) => void
 	handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void
 	isBotConnected: boolean
+	isObsResponseEnabled: boolean
 }
 
 type FieldConfig = {
@@ -61,6 +62,7 @@ const InputField: React.FC<{
 	showTooltip: string | null
 	setShowTooltip: (value: string | null) => void
 	hideSensitiveFields: boolean
+	isObsResponseEnabled: boolean
 }> = ({
 	fieldConfig,
 	value,
@@ -68,6 +70,7 @@ const InputField: React.FC<{
 	showTooltip,
 	setShowTooltip,
 	hideSensitiveFields,
+	isObsResponseEnabled
 }) => (
 	<div className='form-field'>
 		<label htmlFor={fieldConfig.id}>{fieldConfig.label}</label>
@@ -84,6 +87,7 @@ const InputField: React.FC<{
 			}
 			onChange={handleInputChange}
 			placeholder={fieldConfig.placeholder}
+			className={!isObsResponseEnabled && (fieldConfig.name === 'obsWebsocketAddress' || fieldConfig.name === 'obsWebsocketPassword') ? 'muted-input' : ''}
 		/>
 		<span
 			className={`question-icon ${
@@ -116,6 +120,7 @@ const CredentialsPanel: React.FC<CredentialsPanelProps> = (props) => {
 						showTooltip={props.showTooltip}
 						setShowTooltip={props.setShowTooltip}
 						hideSensitiveFields={hideSensitiveFields}
+						isObsResponseEnabled={props.isObsResponseEnabled}
 					/>
 				))}
 

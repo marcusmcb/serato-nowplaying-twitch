@@ -57,7 +57,7 @@ const MessagePanel: React.FC<MessagePanelProps> = ({
 			)}
 			{showTooltip === 'obsWebsocketAddress' && (
 				<div className='info-tooltip'>
-					Enter your local OBS web socket address here
+					Enter your local OBS web socket address here (optional)
 				</div>
 			)}
 			{showTooltip === 'obsWebsocketPassword' && (
