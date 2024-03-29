@@ -24,7 +24,7 @@ const seratoURLValidityCheck = async (seratoDisplayName) => {
 
 // helper method to validate Twitch URL
 const twitchURLValidityCheck = async (twitchDisplayName) => {
-	console.log("TWITCH VALIDITY CHECK: ", twitchDisplayName)
+	console.log('TWITCH VALIDITY CHECK: ', twitchDisplayName)
 	const url = `https://www.twitch.tv/${twitchDisplayName}`
 	try {
 		const response = await axios.get(url)
@@ -48,37 +48,7 @@ const twitchURLValidityCheck = async (twitchDisplayName) => {
 	}
 }
 
-const obsWebSocketValidityCheck = async (socketAddress) => {
-	console.log('SOCKET CHECK: ')
-	console.log(socketAddress)
-	return new Promise((resolve, reject) => {
-		const ws = new WebSocket(socketAddress)
-		ws.on('open', function open() {
-			console.log('OBS connection established')
-			ws.send('{"request-type": "GetVersion", "message-id": "test"}')
-		})
-		ws.on('message', function message(data) {
-			console.log('Received response: ', data)
-			ws.close()
-			const response = {
-				success: true,
-				message: 'OBS websocket connection established.'
-			}
-			resolve(response)
-		})
-		ws.on('error', function error(err) {
-			console.log('Connection error: ', err.message)
-			const response = {
-				success: false,
-				message: "Couldn't connect to OBS socket.",
-			}
-			reject(response)
-		})
-	})
-}
-
 module.exports = {
 	seratoURLValidityCheck: seratoURLValidityCheck,
 	twitchURLValidityCheck: twitchURLValidityCheck,
-	obsWebSocketValidityCheck: obsWebSocketValidityCheck,
 }

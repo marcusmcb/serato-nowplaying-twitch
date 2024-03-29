@@ -161,36 +161,38 @@ ipcMain.on('startBotScript', async (event, arg) => {
 	console.log('ARGS: ', arg)
 
 	if (arg.isObsResponseEnabled === true) {
+		let errorResponse = {
+			success: false,
+			error: null,
+		}
 		try {
 			await obs.connect(
 				'ws://' + arg.obsWebsocketAddress,
 				arg.obsWebsocketPassword
 			)
 			console.log('Connected to OBS properly')
-		} catch (error) {			
+		} catch (error) {
 			const errorMessage = error.toString()
 			console.error('Failed to connect to OBS: ', errorMessage)
 			switch (true) {
 				case errorMessage.includes('authentication is required'):
-					event.reply('startBotResponse', {
-						success: false,
-						error: 'Authentication is required. Check your password.',
-					})
-				case errorMessage.includes("connect ETIMEDOUT"):
-					event.reply('startBotResponse', {
-						success: false,
-						error: 'OBS connection timed out. Check your OBS websocket address or disable OBS responses.'
-					})
-				case errorMessage.includes("connect ECONNREFUSED"):
-					event.reply('startBotResponse', {
-						success: false,
-						error: 'OBS connection refused. Check your OBS websocket address and port or disable OBS responses.'
-					})
+					errorResponse.error =
+						'Authentication is required. Check your password.'
+					event.reply('startBotResponse', errorResponse)
+				case errorMessage.includes('Authentication failed'):
+					errorResponse.error = "Authentication failed. Please check that your password is correct."
+					event.reply('startBotResponse', errorResponse)
+				case errorMessage.includes('connect ETIMEDOUT'):
+					errorResponse.error =
+						'OBS connection timed out. Check your OBS websocket address or disable OBS responses.'
+					event.reply('startBotResponse', errorResponse)
+				case errorMessage.includes('connect ECONNREFUSED'):
+					errorResponse.error =
+						'OBS connection refused. Check your OBS websocket address and port or disable OBS responses.'
+					event.reply('startBotResponse', errorResponse)
 				default:
-					event.reply('startBotResponse', {
-						success: false,
-						error: 'Unable to connect to OBS',
-					})
+					errorResponse.error = 'Unable to connect to OBS'
+					event.reply('startBotResponse', errorResponse)
 			}
 			return
 		}
