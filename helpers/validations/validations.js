@@ -48,7 +48,12 @@ const twitchURLValidityCheck = async (twitchDisplayName) => {
 	}
 }
 
+const obsCredentialsCheck = async (obsWebsocketAddress, obsWebsocketPassword) => {
+
+}
+
 module.exports = {
 	seratoURLValidityCheck: seratoURLValidityCheck,
 	twitchURLValidityCheck: twitchURLValidityCheck,
+	obsCredentialsCheck: obsCredentialsCheck
 }
