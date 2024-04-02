@@ -8,6 +8,12 @@ const { app, BrowserWindow, ipcMain } = require('electron')
 const isDev = require('electron-is-dev')
 const scriptPath = path.join(__dirname, './boot.js')
 const OBSWebSocket = require('obs-websocket-js').default
+const dotenv = require('dotenv')
+dotenv.config()
+
+require('electron-reload')(__dirname, {
+	electron: require(`${__dirname}/node_modules/electron`),
+})
 
 const { exchangeCodeForToken } = require('./auth/createAccessToken')
 const {
@@ -17,21 +23,7 @@ const {
 const {
 	updateUserData,
 } = require('./helpers/updateUserParams/updateUserParams')
-
-const {
-	OBS_AUTH_ERROR,
-	OBS_AUTH_FAILURE,
-	OBS_TIMEOUT_ERROR,
-	OBS_SOCKET_ERROR,
-	OBS_DEFAULT_ERROR,
-} = require('./bot-assets/constants/constants')
-
-const dotenv = require('dotenv')
-dotenv.config()
-
-require('electron-reload')(__dirname, {
-	electron: require(`${__dirname}/node_modules/electron`),
-})
+const errorHandler = require('./helpers/errorHandler/errorHandler')
 
 const server = express()
 const PORT = process.env.PORT || 5000
@@ -47,7 +39,6 @@ let serverInstance
 const obs = new OBSWebSocket()
 // const isDev = true
 
-// Express routes
 server.get('/', (req, res) => {
 	res.send('NPChatbot is up and running')
 })
@@ -179,25 +170,8 @@ ipcMain.on('startBotScript', async (event, arg) => {
 			)
 			console.log('Connected to OBS properly')
 		} catch (error) {
-			const errorMessage = error.toString()
-			console.error('Failed to connect to OBS: ', errorMessage)
-			switch (true) {
-				case errorMessage.includes('authentication is required'):
-					errorResponse.error = OBS_AUTH_ERROR
-					event.reply('startBotResponse', errorResponse)
-				case errorMessage.includes('Authentication failed'):
-					errorResponse.error = OBS_AUTH_FAILURE
-					event.reply('startBotResponse', errorResponse)
-				case errorMessage.includes('connect ETIMEDOUT'):
-					errorResponse.error = OBS_TIMEOUT_ERROR
-					event.reply('startBotResponse', errorResponse)
-				case errorMessage.includes('connect ECONNREFUSED'):
-					errorResponse.error = OBS_SOCKET_ERROR
-					event.reply('startBotResponse', errorResponse)
-				default:
-					errorResponse.error = OBS_DEFAULT_ERROR
-					event.reply('startBotResponse', errorResponse)
-			}
+			errorResponse.error = errorHandler(error)
+			event.reply('startBotResponse', errorResponse)
 			return
 		}
 	}
@@ -303,10 +277,10 @@ ipcMain.on('submitUserData', async (event, arg) => {
 		try {
 			const data = await updateUserData(db, event, arg)
 			console.log('--- DATA ---', data)
-			event.reply('userDataResponse', data) // Directly use the response from updateUserData
+			event.reply('userDataResponse', data)
 		} catch (error) {
 			console.error(error)
-			event.reply('userDataResponse', error) // Send the error response
+			event.reply('userDataResponse', error)
 		}
 	} else {
 		console.log('SERATO? ', isValidSeratoURL)
