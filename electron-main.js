@@ -110,8 +110,10 @@ ipcMain.on('getUserData', (event, arg) => {
 				console.error('Error fetching the user:', err)
 			} else if (user) {
 				console.log('--------------------')
-				console.log('USER: ')
+				console.log('Fetched User Data: ')
 				console.log(user)
+				console.log('--------------------')
+
 				event.reply('getUserDataResponse', {
 					success: true,
 					data: user,
@@ -242,7 +244,7 @@ ipcMain.on('stopBotScript', async (event, arg) => {
 			botProcess = null
 		})
 
-		botProcess.kill()		
+		botProcess.kill()
 		event.reply('stopBotResponse', {
 			success: true,
 			message: 'ipcMain: bot process successfully exited',
@@ -261,11 +263,18 @@ ipcMain.on('submitUserData', async (event, arg) => {
 	// if different, run the necessary validations on only
 	// the changed fields
 	console.log('------------------')
-	console.log('SUBMIT USER DATA: ')
+	console.log('Received Form Data: ')
 	console.log(arg)
+	console.log('------------------')
 
-	const isValidSeratoURL = await seratoURLValidityCheck(arg.seratoDisplayName)
+	const isValidSeratoURL = await seratoURLValidityCheck(arg.seratoDisplayName)	
 	const isValidTwitchURL = await twitchURLValidityCheck(arg.twitchChannelName)
+
+	console.log("----------------")
+	console.log("Valid Serato URL?: ", isValidSeratoURL)
+	console.log("Valid Twitch URL?: "), isValidTwitchURL
+	console.log("----------------")
+
 	if (isValidTwitchURL && isValidSeratoURL) {
 		try {
 			const data = await updateUserData(db, event, arg)

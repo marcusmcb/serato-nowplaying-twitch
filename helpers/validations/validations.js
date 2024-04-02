@@ -26,6 +26,7 @@ const seratoURLValidityCheck = async (seratoDisplayName) => {
 const twitchURLValidityCheck = async (twitchDisplayName) => {
 	console.log('TWITCH VALIDITY CHECK: ', twitchDisplayName)
 	const url = `https://www.twitch.tv/${twitchDisplayName}`
+	console.log(url)
 	try {
 		const response = await axios.get(url)
 		const pageContent = response.data
@@ -39,7 +40,7 @@ const twitchURLValidityCheck = async (twitchDisplayName) => {
 
 		// Use the regex to test the page content
 		const exists = pattern.test(pageContent)
-
+		console.log("Exists?: ", exists)
 		// If the pattern is found, we can assume the channel exists
 		return exists
 	} catch (error) {

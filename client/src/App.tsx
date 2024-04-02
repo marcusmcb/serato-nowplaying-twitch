@@ -37,10 +37,11 @@ const App = (): JSX.Element => {
 		if (ipcRenderer) {
 			ipcRenderer.send('getUserData', {})
 			ipcRenderer.once('getUserDataResponse', (response) => {
-				console.log('--- USER CONFIG DATA ---')
-				console.log('OBS enabled? ', response.data.isObsResponseEnabled)
-				console.log('Interval enabled? ', response.data.isIntervalEnabled)
+
+				console.log('--- Saved User Data ---')
 				console.log(response.data)
+				console.log('-----------------------')
+
 				if (response.data && Object.keys(response.data).length > 0) {
 					if (response.data.twitchAccessToken.length > 0) {
 						console.log('-- npChatbot is authorized --')
@@ -177,6 +178,10 @@ const App = (): JSX.Element => {
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
+		setMessage("Updating...")
+		console.log('--- Form Data Submitted ---')
+		console.log(formData)
+		console.log('---------------------------')
 		if (
 			!formData.twitchChannelName ||
 			!formData.twitchChatbotName ||
@@ -212,8 +217,9 @@ const App = (): JSX.Element => {
 			isReportEnabled,
 		}
 
-		console.log('SUBMIT DATA: ')
+		console.log('--- Form Data Submitted ---')
 		console.log(submitData)
+		console.log('---------------------------')
 
 		ipcRenderer.send('submitUserData', submitData)
 		ipcRenderer.once('userDataResponse', (response) => {
