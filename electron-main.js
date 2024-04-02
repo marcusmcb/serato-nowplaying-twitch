@@ -242,7 +242,7 @@ ipcMain.on('stopBotScript', async (event, arg) => {
 			botProcess = null
 		})
 
-		botProcess.kill()
+		botProcess.kill()		
 		event.reply('stopBotResponse', {
 			success: true,
 			message: 'ipcMain: bot process successfully exited',

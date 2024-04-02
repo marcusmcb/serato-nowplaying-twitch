@@ -29,6 +29,7 @@ const App = (): JSX.Element => {
 	const [isReportEnabled, setIsReportEnabled] = useState(false)
 	const [showTooltip, setShowTooltip] = useState<string | null>(null)
 	const [isBotConnected, setIsBotConnected] = useState(false)
+	const [isAuthorized, setIsAuthorized] = useState(false)
 	const ipcRenderer = window.electron.ipcRenderer
 
 	// hook to fetch saved user data
@@ -41,6 +42,12 @@ const App = (): JSX.Element => {
 				console.log('Interval enabled? ', response.data.isIntervalEnabled)
 				console.log(response.data)
 				if (response.data && Object.keys(response.data).length > 0) {
+					if (response.data.twitchAccessToken.length > 0) {
+						console.log('-- npChatbot is authorized --')
+						setIsAuthorized(true)
+					} else {
+						console.log('-- npChatbot has not been authorized --')
+					}
 					if (
 						response.data.obsWebsocketAddress &&
 						response.data.obsWebsocketAddress.startsWith('ws://')
@@ -237,7 +244,7 @@ const App = (): JSX.Element => {
 
 	return (
 		<div className='App'>
-			<TitleBar />
+			<TitleBar isAuthorized={isAuthorized} />
 			<div className='app-container'>
 				<CredentialsPanel
 					formData={formData}

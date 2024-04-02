@@ -4,7 +4,11 @@ import '../App.css'
 // during the initial app authorization
 // on the app's client UI
 
-const TitleBar = (): JSX.Element => {
+interface TitleBarProps {
+	isAuthorized: boolean
+}
+
+const TitleBar = ({ isAuthorized }: TitleBarProps): JSX.Element => {
 	const handleAuthClick = () => {
 		window.location.href =
 			'https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=19evlkrdxmriyliiey2fhhhxd8kkl6&redirect_uri=http://localhost:5000/auth/twitch/callback&scope=chat:read+chat:edit&state=c3ab8aa609ea11e793ae92361f002671'
@@ -12,7 +16,9 @@ const TitleBar = (): JSX.Element => {
 	return (
 		<div>
 			<div className='app-title'>npChatbot App</div>
-			<button onClick={handleAuthClick}>Connect with Twitch</button>
+			<button disabled={isAuthorized} onClick={handleAuthClick}>
+				Connect with Twitch
+			</button>
 		</div>
 	)
 }
