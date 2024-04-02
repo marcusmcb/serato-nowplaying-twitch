@@ -11,9 +11,9 @@ const OBS_TIMEOUT_ERROR = 'OBS connection timed out. Check your OBS websocket ad
 
 const OBS_SOCKET_ERROR = 'OBS connection refused. Make sure OBS is running & check your websocket address & port address.'
 
+const OBS_NOT_FOUND_ERROR = 'npChatbot could not connect to OBS. Make sure OBS is running.'
+
 const OBS_DEFAULT_ERROR = 'Unable to connect to OBS'
-
-
 
 module.exports = {
   NO_LIVE_DATA_MESSAGE,
@@ -22,6 +22,7 @@ module.exports = {
   OBS_AUTH_FAILURE,
   OBS_TIMEOUT_ERROR,
   OBS_SOCKET_ERROR,
-  OBS_DEFAULT_ERROR
+  OBS_DEFAULT_ERROR,
+  OBS_NOT_FOUND_ERROR
 }
 

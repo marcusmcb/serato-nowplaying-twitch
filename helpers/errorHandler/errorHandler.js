@@ -4,6 +4,7 @@ const {
 	OBS_TIMEOUT_ERROR,
 	OBS_SOCKET_ERROR,
 	OBS_DEFAULT_ERROR,
+	OBS_NOT_FOUND_ERROR,
 } = require('../../bot-assets/constants/constants')
 
 const errorHandler = (error) => {
@@ -13,21 +14,24 @@ const errorHandler = (error) => {
 	switch (true) {
 		case errorMessage.includes('authentication is required'):
 			errorResponse = OBS_AUTH_ERROR
-      break
+			break
 		case errorMessage.includes('Authentication failed'):
 			errorResponse = OBS_AUTH_FAILURE
-      break
+			break
 		case errorMessage.includes('connect ETIMEDOUT'):
 			errorResponse = OBS_TIMEOUT_ERROR
-      break
+			break
 		case errorMessage.includes('connect ECONNREFUSED'):
 			errorResponse = OBS_SOCKET_ERROR
-      break
+			break
+		case errorMessage.includes('getaddrinfo ENOTFOUND'):
+			errorResponse = OBS_NOT_FOUND_ERROR
+			break
 		default:
 			errorResponse = OBS_DEFAULT_ERROR
-      break
+			break
 	}
-  return errorResponse
+	return errorResponse
 }
 
 module.exports = errorHandler
