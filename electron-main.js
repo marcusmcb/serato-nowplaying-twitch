@@ -130,9 +130,6 @@ ipcMain.on('getUserData', (event, arg) => {
 	}
 })
 
-// add client logic to disable user preference update
-// while bot is connected and active
-
 // Start React client app (dev only)
 const startClient = () => {
 	if (isDev) {
@@ -158,6 +155,7 @@ const startServer = () => {
 ipcMain.on('startBotScript', async (event, arg) => {
 	console.log('ARGS: ', arg)
 
+	// validate local OBS connection if OBS responses are enabled
 	if (arg.isObsResponseEnabled === true) {
 		let errorResponse = {
 			success: false,
@@ -169,21 +167,14 @@ ipcMain.on('startBotScript', async (event, arg) => {
 				arg.obsWebsocketPassword
 			)
 			console.log('Connected to OBS properly')
+			// add logic to remove obs object is properly returned
 		} catch (error) {
+			// format and return OBS connection error response to client app
 			errorResponse.error = errorHandler(error)
 			event.reply('startBotResponse', errorResponse)
 			return
 		}
 	}
-
-	// disable "connect" button in client UI if botProcess is already running
-	// test functionality for accuracy and then remove the botProcess check below
-
-	// if user has OBS responses enabled, run validity check that OBS
-	// websocket can be reached
-
-	// if not, inform user to check address/password or to disable
-	// OBS responses to proceed
 
 	if (botProcess) {
 		console.log('Bot is already running.')
@@ -283,8 +274,6 @@ ipcMain.on('submitUserData', async (event, arg) => {
 			event.reply('userDataResponse', error)
 		}
 	} else {
-		console.log('SERATO? ', isValidSeratoURL)
-		console.log('TWITCH? ', isValidTwitchURL)
 		// Handle invalid URLs
 		const errorMessage = isValidTwitchURL
 			? 'The Serato profile name given is invalid'
