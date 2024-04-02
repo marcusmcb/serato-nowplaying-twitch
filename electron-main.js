@@ -13,11 +13,18 @@ const { exchangeCodeForToken } = require('./auth/createAccessToken')
 const {
 	seratoURLValidityCheck,
 	twitchURLValidityCheck,
-	obsWebSocketValidityCheck,
 } = require('./helpers/validations/validations')
 const {
 	updateUserData,
 } = require('./helpers/updateUserParams/updateUserParams')
+
+const {
+	OBS_AUTH_ERROR,
+	OBS_AUTH_FAILURE,
+	OBS_TIMEOUT_ERROR,
+	OBS_SOCKET_ERROR,
+	OBS_DEFAULT_ERROR,
+} = require('./bot-assets/constants/constants')
 
 const dotenv = require('dotenv')
 dotenv.config()
@@ -176,22 +183,19 @@ ipcMain.on('startBotScript', async (event, arg) => {
 			console.error('Failed to connect to OBS: ', errorMessage)
 			switch (true) {
 				case errorMessage.includes('authentication is required'):
-					errorResponse.error =
-						'Authentication is required. Check your password.'
+					errorResponse.error = OBS_AUTH_ERROR
 					event.reply('startBotResponse', errorResponse)
 				case errorMessage.includes('Authentication failed'):
-					errorResponse.error = "Authentication failed. Please check that your password is correct."
+					errorResponse.error = OBS_AUTH_FAILURE
 					event.reply('startBotResponse', errorResponse)
 				case errorMessage.includes('connect ETIMEDOUT'):
-					errorResponse.error =
-						'OBS connection timed out. Check your OBS websocket address or disable OBS responses.'
+					errorResponse.error = OBS_TIMEOUT_ERROR
 					event.reply('startBotResponse', errorResponse)
 				case errorMessage.includes('connect ECONNREFUSED'):
-					errorResponse.error =
-						'OBS connection refused. Check your OBS websocket address and port or disable OBS responses.'
+					errorResponse.error = OBS_SOCKET_ERROR
 					event.reply('startBotResponse', errorResponse)
 				default:
-					errorResponse.error = 'Unable to connect to OBS'
+					errorResponse.error = OBS_DEFAULT_ERROR
 					event.reply('startBotResponse', errorResponse)
 			}
 			return
