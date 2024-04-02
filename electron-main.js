@@ -167,6 +167,8 @@ ipcMain.on('startBotScript', async (event, arg) => {
 				arg.obsWebsocketPassword
 			)
 			console.log('Connected to OBS properly')
+			await obs.disconnect()
+			console.log('OBS validatiion passed')
 			// add logic to remove obs object is properly returned
 		} catch (error) {
 			// format and return OBS connection error response to client app
