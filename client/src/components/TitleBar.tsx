@@ -17,7 +17,7 @@ const TitleBar = ({ isAuthorized }: TitleBarProps): JSX.Element => {
 		<div>
 			<div className='app-title'>npChatbot App</div>
 			<button disabled={isAuthorized} onClick={handleAuthClick}>
-				Connect with Twitch
+				{isAuthorized ? 'Authorized' : 'Connect with Twitch'}
 			</button>
 		</div>
 	)
