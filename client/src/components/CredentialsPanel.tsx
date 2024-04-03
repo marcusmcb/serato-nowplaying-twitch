@@ -5,7 +5,7 @@ type CredentialsPanelProps = {
 	formData: {
 		twitchChannelName: string
 		twitchChatbotName: string
-		twitchOAuthKey: string
+		// twitchOAuthKey: string
 		seratoDisplayName: string
 		obsWebsocketAddress?: string
 		obsWebsocketPassword?: string

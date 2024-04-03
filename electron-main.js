@@ -4,7 +4,7 @@ const path = require('path')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const express = require('express')
-const { app, BrowserWindow, ipcMain } = require('electron')
+const { app, protocol, shell, BrowserWindow, ipcMain } = require('electron')
 const isDev = require('electron-is-dev')
 const scriptPath = path.join(__dirname, './boot.js')
 const OBSWebSocket = require('obs-websocket-js').default
@@ -91,7 +91,7 @@ server.get('/auth/twitch/callback', async (req, res) => {
 					console.log('No user found to update.')
 				}
 			})
-			res.redirect('http://localhost:3000')
+			res.redirect('npchatbot-app://auth/success')
 		} catch (error) {
 			console.error('Error exchanging code for token:', error)
 			res.status(500).send('Error during authorization.')
@@ -152,6 +152,12 @@ const startServer = () => {
 		console.log(`Server is running on port ${PORT}`)
 	})
 }
+
+ipcMain.on('open-auth-url', () => {
+	shell.openExternal(
+		'https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=19evlkrdxmriyliiey2fhhhxd8kkl6&redirect_uri=http://localhost:5000/auth/twitch/callback&scope=chat:read+chat:edit&state=c3ab8aa609ea11e793ae92361f002671'
+	)
+})
 
 // IPC listener for starting the bot script
 ipcMain.on('startBotScript', async (event, arg) => {
@@ -267,13 +273,13 @@ ipcMain.on('submitUserData', async (event, arg) => {
 	console.log(arg)
 	console.log('------------------')
 
-	const isValidSeratoURL = await seratoURLValidityCheck(arg.seratoDisplayName)	
+	const isValidSeratoURL = await seratoURLValidityCheck(arg.seratoDisplayName)
 	const isValidTwitchURL = await twitchURLValidityCheck(arg.twitchChannelName)
 
-	console.log("----------------")
-	console.log("Valid Serato URL?: ", isValidSeratoURL)
-	console.log("Valid Twitch URL?: "), isValidTwitchURL
-	console.log("----------------")
+	console.log('----------------')
+	console.log('Valid Serato URL?: ', isValidSeratoURL)
+	console.log('Valid Twitch URL?: '), isValidTwitchURL
+	console.log('----------------')
 
 	if (isValidTwitchURL && isValidSeratoURL) {
 		try {
@@ -315,6 +321,10 @@ const createWindow = () => {
 
 // Electron app event handlers
 app.on('ready', () => {
+	protocol.registerHttpProtocol('npchatbot-app', (request, callback) => {
+		const url = request.url
+		mainWindow.webContents.send('auth-successful', url)
+	})
 	startServer()
 	if (isDev) {
 		startClient()

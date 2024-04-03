@@ -34,12 +34,12 @@ const MessagePanel: React.FC<MessagePanelProps> = ({
 					</a>
 				</div>
 			)}
-			{showTooltip === 'twitchOAuthKey' && (
+			{/* {showTooltip === 'twitchOAuthKey' && (
 				<div className='info-tooltip'>
 					Enter the OAuth key that you previously generated for your Twitch
 					channel here
 				</div>
-			)}
+			)} */}
 			{showTooltip === 'obsClearDisplayTime' && (
 				<div className='info-tooltip'>
 					Enter the duration (in seconds) for the OBS response to remain on screen

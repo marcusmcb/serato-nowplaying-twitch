@@ -10,7 +10,7 @@ const App = (): JSX.Element => {
 	const [formData, setFormData] = useState({
 		twitchChannelName: '',
 		twitchChatbotName: '',
-		twitchOAuthKey: '',
+		// twitchOAuthKey: '',
 		seratoDisplayName: '',
 		obsWebsocketAddress: '',
 		obsWebsocketPassword: '',
@@ -40,15 +40,16 @@ const App = (): JSX.Element => {
 
 				console.log('--- Saved User Data ---')
 				console.log(response.data)
+				console.log(Object.keys(response.data))
 				console.log('-----------------------')
 
 				if (response.data && Object.keys(response.data).length > 0) {
-					if (response.data.twitchAccessToken.length > 0) {
-						console.log('-- npChatbot is authorized --')
-						setIsAuthorized(true)
-					} else {
-						console.log('-- npChatbot has not been authorized --')
-					}
+					// if (response.data.twitchAccessToken.length > 0) {
+					// 	console.log('-- npChatbot is authorized --')
+					// 	setIsAuthorized(true)
+					// } else {
+					// 	console.log('-- npChatbot has not been authorized --')
+					// }
 					if (
 						response.data.obsWebsocketAddress &&
 						response.data.obsWebsocketAddress.startsWith('ws://')
@@ -56,6 +57,7 @@ const App = (): JSX.Element => {
 						response.data.obsWebsocketAddress =
 							response.data.obsWebsocketAddress.substring(5)
 					}
+					console.log("HERE")
 					setFormData(response.data)
 					setIsObsResponseEnabled(response.data.isObsResponseEnabled)
 					setIsIntervalEnabled(response.data.isIntervalEnabled)
@@ -70,6 +72,13 @@ const App = (): JSX.Element => {
 			ipcRenderer.removeAllListeners('getUserDataResponse')
 		}
 	}, [])
+
+	useEffect(() => {		
+		ipcRenderer.on('auth-successful', (event, url) => {			
+			console.log('Authorization was successful', url);			
+		});
+	}, []);
+	
 
 	interface BotProcessResponse {
 		success: boolean
@@ -178,14 +187,14 @@ const App = (): JSX.Element => {
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
-		setMessage("Updating...")
+		setMessage('Updating...')
 		console.log('--- Form Data Submitted ---')
 		console.log(formData)
 		console.log('---------------------------')
 		if (
 			!formData.twitchChannelName ||
 			!formData.twitchChatbotName ||
-			!formData.twitchOAuthKey ||
+			// !formData.twitchOAuthKey ||
 			!formData.seratoDisplayName
 		) {
 			setError('Please fill in all fields.')
