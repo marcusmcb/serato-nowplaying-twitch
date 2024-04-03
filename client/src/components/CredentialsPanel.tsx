@@ -5,7 +5,6 @@ type CredentialsPanelProps = {
 	formData: {
 		twitchChannelName: string
 		twitchChatbotName: string
-		// twitchOAuthKey: string
 		seratoDisplayName: string
 		obsWebsocketAddress?: string
 		obsWebsocketPassword?: string
@@ -70,7 +69,7 @@ const InputField: React.FC<{
 	showTooltip,
 	setShowTooltip,
 	hideSensitiveFields,
-	isObsResponseEnabled
+	isObsResponseEnabled,
 }) => (
 	<div className='form-field'>
 		<label htmlFor={fieldConfig.id}>{fieldConfig.label}</label>
@@ -87,7 +86,13 @@ const InputField: React.FC<{
 			}
 			onChange={handleInputChange}
 			placeholder={fieldConfig.placeholder}
-			className={!isObsResponseEnabled && (fieldConfig.name === 'obsWebsocketAddress' || fieldConfig.name === 'obsWebsocketPassword') ? 'muted-input' : ''}
+			className={
+				!isObsResponseEnabled &&
+				(fieldConfig.name === 'obsWebsocketAddress' ||
+					fieldConfig.name === 'obsWebsocketPassword')
+					? 'muted-input'
+					: ''
+			}
 		/>
 		<span
 			className={`question-icon ${

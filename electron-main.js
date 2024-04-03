@@ -15,7 +15,9 @@ require('electron-reload')(__dirname, {
 	electron: require(`${__dirname}/node_modules/electron`),
 })
 
-const { exchangeCodeForToken } = require('./auth/createAccessToken')
+const { exchangeCodeForToken, getRefreshToken, updateUserToken } = require('./auth/createAccessToken')
+const { returnRefreshTokenConfig } = require('./auth/accessTokenConfig')
+
 const {
 	seratoURLValidityCheck,
 	twitchURLValidityCheck,
@@ -193,6 +195,14 @@ ipcMain.on('startBotScript', async (event, arg) => {
 			error: 'Bot is already running.',
 		})
 		return
+	}
+
+	const currentAccessToken = await getRefreshToken(arg.twitchRefreshToken)
+	try {
+		await updateUserToken(currentAccessToken)
+	} catch (error) {
+		console.error('Failed to update user token: ', error)
+		return 
 	}
 
 	botProcess = spawn('node', [scriptPath])

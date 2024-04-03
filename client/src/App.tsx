@@ -10,7 +10,7 @@ const App = (): JSX.Element => {
 	const [formData, setFormData] = useState({
 		twitchChannelName: '',
 		twitchChatbotName: '',
-		// twitchOAuthKey: '',
+		twitchRefreshToken: '',		
 		seratoDisplayName: '',
 		obsWebsocketAddress: '',
 		obsWebsocketPassword: '',
@@ -39,8 +39,7 @@ const App = (): JSX.Element => {
 			ipcRenderer.once('getUserDataResponse', (response) => {
 
 				console.log('--- Saved User Data ---')
-				console.log(response.data)
-				console.log(Object.keys(response.data))
+				console.log(response.data)				
 				console.log('-----------------------')
 
 				if (response.data && Object.keys(response.data).length > 0) {
@@ -141,6 +140,7 @@ const App = (): JSX.Element => {
 				? formData.obsWebsocketPassword
 				: '',
 			isObsResponseEnabled: formData.isObsResponseEnabled,
+			twitchRefreshToken: formData.twitchRefreshToken
 		})
 		ipcRenderer.once('startBotResponse', (response) => {
 			if (response && response.success) {
@@ -193,8 +193,7 @@ const App = (): JSX.Element => {
 		console.log('---------------------------')
 		if (
 			!formData.twitchChannelName ||
-			!formData.twitchChatbotName ||
-			// !formData.twitchOAuthKey ||
+			!formData.twitchChatbotName ||			
 			!formData.seratoDisplayName
 		) {
 			setError('Please fill in all fields.')

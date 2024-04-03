@@ -3,8 +3,7 @@ import '../App.css'
 type PreferencesPanelProps = {
 	formData: {
 		twitchChannelName: string
-		twitchChatbotName: string
-		// twitchOAuthKey: string
+		twitchChatbotName: string		
 		seratoDisplayName: string
 		obsWebsocketAddress?: string
 		obsWebsocketPassword?: string
