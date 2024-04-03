@@ -26,7 +26,7 @@ const returnRefreshTokenConfig = (config, token) => {
 		},
 		identity: {
 			username: config.twitchChatbotName,
-			password: 'oauth:' + token.access_token,
+			password: 'oauth:' + token,
 		},
 		channels: [config.twitchChannelName],
 	}
