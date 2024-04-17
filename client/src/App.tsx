@@ -56,7 +56,10 @@ const App = (): JSX.Element => {
 						response.data.obsWebsocketAddress =
 							response.data.obsWebsocketAddress.substring(5)
 					}
-					console.log("HERE")
+					if (response.data.appAuthorizationCode.length > 0) {
+						console.log("is authorized")
+						setIsAuthorized(true)
+					}
 					setFormData(response.data)
 					setIsObsResponseEnabled(response.data.isObsResponseEnabled)
 					setIsIntervalEnabled(response.data.isIntervalEnabled)
