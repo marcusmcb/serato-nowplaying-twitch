@@ -15,6 +15,8 @@ const OBS_NOT_FOUND_ERROR = 'npChatbot could not connect to OBS. Make sure OBS i
 
 const OBS_DEFAULT_ERROR = 'Unable to connect to OBS'
 
+const INVALID_REFRESH_TOKEN = 'Unable to refresh authorization token'
+
 module.exports = {
   NO_LIVE_DATA_MESSAGE,
   ERROR_MESSAGE,
@@ -23,6 +25,7 @@ module.exports = {
   OBS_TIMEOUT_ERROR,
   OBS_SOCKET_ERROR,
   OBS_DEFAULT_ERROR,
-  OBS_NOT_FOUND_ERROR
+  OBS_NOT_FOUND_ERROR,
+  INVALID_REFRESH_TOKEN
 }
 

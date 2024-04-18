@@ -15,7 +15,11 @@ require('electron-reload')(__dirname, {
 	electron: require(`${__dirname}/node_modules/electron`),
 })
 
-const { exchangeCodeForToken, getRefreshToken, updateUserToken } = require('./auth/createAccessToken')
+const {
+	exchangeCodeForToken,
+	getRefreshToken,
+	updateUserToken,
+} = require('./auth/createAccessToken')
 const { returnRefreshTokenConfig } = require('./auth/accessTokenConfig')
 
 const {
@@ -164,13 +168,12 @@ ipcMain.on('open-auth-url', () => {
 // IPC listener for starting the bot script
 ipcMain.on('startBotScript', async (event, arg) => {
 	console.log('ARGS: ', arg)
-
+	let errorResponse = {
+		success: false,
+		error: null,
+	}
 	// validate local OBS connection if OBS responses are enabled
 	if (arg.isObsResponseEnabled === true) {
-		let errorResponse = {
-			success: false,
-			error: null,
-		}
 		try {
 			await obs.connect(
 				'ws://' + arg.obsWebsocketAddress,
@@ -198,11 +201,21 @@ ipcMain.on('startBotScript', async (event, arg) => {
 	}
 
 	const currentAccessToken = await getRefreshToken(arg.twitchRefreshToken)
-	try {
-		await updateUserToken(currentAccessToken)
-	} catch (error) {
-		console.error('Failed to update user token: ', error)
-		return 
+
+	console.log('CAT: ', currentAccessToken)
+
+	if (currentAccessToken.status === 400) {
+		errorResponse.error = errorHandler(currentAccessToken.message)
+		console.log('Error Response Obj: ', errorResponse)
+		event.reply('startBotResponse', errorResponse)
+		return
+	} else {
+		try {
+			await updateUserToken(currentAccessToken)
+		} catch (error) {
+			console.error('Failed to update user token: ', error)
+			return
+		}
 	}
 
 	botProcess = spawn('node', [scriptPath])

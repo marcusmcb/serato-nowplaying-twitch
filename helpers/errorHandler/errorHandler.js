@@ -5,9 +5,11 @@ const {
 	OBS_SOCKET_ERROR,
 	OBS_DEFAULT_ERROR,
 	OBS_NOT_FOUND_ERROR,
+	INVALID_REFRESH_TOKEN
 } = require('../../bot-assets/constants/constants')
 
 const errorHandler = (error) => {
+	console.log("Error Handler: ", error)
 	let errorResponse
 	const errorMessage = error.toString()
 	console.error('Failed to connect to OBS: ', errorMessage)
@@ -26,6 +28,9 @@ const errorHandler = (error) => {
 			break
 		case errorMessage.includes('getaddrinfo ENOTFOUND'):
 			errorResponse = OBS_NOT_FOUND_ERROR
+			break
+		case errorMessage.includes('Invalid refresh token'):
+			errorResponse = INVALID_REFRESH_TOKEN
 			break
 		default:
 			errorResponse = OBS_DEFAULT_ERROR
