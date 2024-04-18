@@ -40,3 +40,6 @@ const errorHandler = (error) => {
 }
 
 module.exports = errorHandler
+
+// update default for general catch all error
+// currently pointing to default OBS error
