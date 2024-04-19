@@ -217,8 +217,7 @@ const App = (): JSX.Element => {
 	}
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-		event.preventDefault()
-		setMessage('Updating...')
+		event.preventDefault()		
 		console.log('--- Form Data Submitted ---')
 		console.log(formData)
 		console.log('---------------------------')
@@ -228,10 +227,12 @@ const App = (): JSX.Element => {
 			!formData.seratoDisplayName
 		) {
 			setError('Please fill in all fields.')
+			setTimeout(() => {
+				setError('')
+			}, 3000)
 			return
-		}
-		setError('')
-
+		}		
+		setMessage('Updating...')
 		formData.obsWebsocketAddress = 'ws://' + formData.obsWebsocketAddress
 
 		if (isReportEnabled && formData.userEmailAddress === '') {
