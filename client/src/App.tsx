@@ -10,7 +10,7 @@ const App = (): JSX.Element => {
 	const [formData, setFormData] = useState({
 		twitchChannelName: '',
 		twitchChatbotName: '',
-		twitchRefreshToken: '',		
+		twitchRefreshToken: '',
 		seratoDisplayName: '',
 		obsWebsocketAddress: '',
 		obsWebsocketPassword: '',
@@ -30,16 +30,39 @@ const App = (): JSX.Element => {
 	const [showTooltip, setShowTooltip] = useState<string | null>(null)
 	const [isBotConnected, setIsBotConnected] = useState(false)
 	const [isAuthorized, setIsAuthorized] = useState(false)
+	const [isConnectionReady, setIsConnectionReady] = useState(false)
 	const ipcRenderer = window.electron.ipcRenderer
+
+	// hook for successful twitch auth callback
+	useEffect(() => {    
+    const socket = new WebSocket('ws://localhost:8080');    
+    socket.addEventListener('open', () => {
+      console.log('WebSocket is open now.');
+    });
+    
+    socket.addEventListener('message', (event) => {
+      console.log('Message from server: ', event.data);
+      setMessage(event.data);
+			setIsAuthorized(true)
+			setTimeout(() => {
+				setMessage("")
+			}, 5000)
+    });
+    socket.addEventListener('error', (event) => {
+      console.error('WebSocket error:', event);
+    });    
+    return () => {
+      socket.close();
+    };
+  }, []);
 
 	// hook to fetch saved user data
 	useEffect(() => {
 		if (ipcRenderer) {
 			ipcRenderer.send('getUserData', {})
 			ipcRenderer.once('getUserDataResponse', (response) => {
-
 				console.log('--- Saved User Data ---')
-				console.log(response.data)				
+				console.log(response.data)
 				console.log('-----------------------')
 
 				if (response.data && Object.keys(response.data).length > 0) {
@@ -57,8 +80,14 @@ const App = (): JSX.Element => {
 							response.data.obsWebsocketAddress.substring(5)
 					}
 					if (response.data.appAuthorizationCode.length > 0) {
-						console.log("is authorized")
+						console.log('is authorized')
 						setIsAuthorized(true)
+					}
+					if (!response.data.twitchChannelName || !response.data.twitchChatbotName || !response.data.seratoDisplayName ) {
+						console.log("no creds yet")
+						setIsConnectionReady(false)
+					} else {
+						setIsConnectionReady(true)
 					}
 					setFormData(response.data)
 					setIsObsResponseEnabled(response.data.isObsResponseEnabled)
@@ -75,12 +104,11 @@ const App = (): JSX.Element => {
 		}
 	}, [])
 
-	useEffect(() => {		
-		ipcRenderer.on('auth-successful', (event, url) => {			
-			console.log('Authorization was successful', url);			
-		});
-	}, []);
-	
+	useEffect(() => {
+		ipcRenderer.on('auth-successful', (event, url) => {
+			console.log('Authorization was successful', url)
+		})
+	}, [])	
 
 	interface BotProcessResponse {
 		success: boolean
@@ -143,7 +171,7 @@ const App = (): JSX.Element => {
 				? formData.obsWebsocketPassword
 				: '',
 			isObsResponseEnabled: formData.isObsResponseEnabled,
-			twitchRefreshToken: formData.twitchRefreshToken
+			twitchRefreshToken: formData.twitchRefreshToken,
 		})
 		ipcRenderer.once('startBotResponse', (response) => {
 			if (response && response.success) {
@@ -196,7 +224,7 @@ const App = (): JSX.Element => {
 		console.log('---------------------------')
 		if (
 			!formData.twitchChannelName ||
-			!formData.twitchChatbotName ||			
+			!formData.twitchChatbotName ||
 			!formData.seratoDisplayName
 		) {
 			setError('Please fill in all fields.')
@@ -288,6 +316,8 @@ const App = (): JSX.Element => {
 					handleConnect={handleConnect}
 					handleDisconnect={handleDisconnect}
 					isBotConnected={isBotConnected}
+					isAuthorized={isAuthorized}
+					isConnectionReady={isConnectionReady}
 				/>
 			</div>
 			<MessagePanel message={message} error={error} showTooltip={showTooltip} />

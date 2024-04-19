@@ -13,6 +13,8 @@ interface SessionPanelProps {
 	handleConnect: (event: React.MouseEvent<HTMLButtonElement>) => void
 	handleDisconnect: (event: React.MouseEvent<HTMLButtonElement>) => void
 	isBotConnected: boolean
+	isAuthorized: boolean
+	isConnectionReady: boolean
 }
 
 const SessionPanel: React.FC<SessionPanelProps> = (props) => {
@@ -63,7 +65,7 @@ const SessionPanel: React.FC<SessionPanelProps> = (props) => {
 					className='bot-control-button'
 					type='submit'
 					onClick={props.handleConnect}
-					disabled={props.isBotConnected}
+					disabled={props.isBotConnected || !props.isAuthorized || !props.isConnectionReady}
 				>
 					{!props.isBotConnected ? 'Connect' : 'Connected'}
 				</button>

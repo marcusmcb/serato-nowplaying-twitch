@@ -9,6 +9,8 @@ const isDev = require('electron-is-dev')
 const scriptPath = path.join(__dirname, './boot.js')
 const OBSWebSocket = require('obs-websocket-js').default
 const dotenv = require('dotenv')
+const WebSocket = require('ws')
+
 dotenv.config()
 
 require('electron-reload')(__dirname, {
@@ -43,6 +45,11 @@ let botProcess
 let serverInstance
 
 const obs = new OBSWebSocket()
+
+// socket connection for successful twitch auth
+// message to the client UI
+const wss = new WebSocket.Server({ port: 8080 })
+
 // const isDev = true
 
 server.get('/', (req, res) => {
@@ -92,12 +99,30 @@ server.get('/auth/twitch/callback', async (req, res) => {
 						}
 					)
 				} else {
-					// Handle case where user does not exist
-					// This might involve creating a new user or handling it as an error
-					console.log('No user found to update.')
+					db.users.insert(
+						{
+							twitchAccessToken: token.access_token,
+							twitchRefreshToken: token.refresh_token,
+							appAuthorizationCode: code,
+						},
+						(err, newDoc) => {
+							if (err) {
+								console.error('Error creating new user: ', err)
+								return res
+									.status(500)
+									.send('Error adding auth code to user file')
+							}
+							console.log('User Auth Data Updated: ', newDoc)
+						}
+					)
 				}
 			})
 			res.redirect('npchatbot-app://auth/success')
+			wss.clients.forEach(function each(client) {
+				if (client.readyState === WebSocket.OPEN) {
+					client.send('npChatbot successfully linked to your Twitch account')
+				}
+			})
 		} catch (error) {
 			console.error('Error exchanging code for token:', error)
 			res.status(500).send('Error during authorization.')
@@ -134,14 +159,18 @@ ipcMain.on('getUserData', (event, arg) => {
 			}
 		})
 	} else {
-		console.log('users.db does not exist yet.')
+		console.log('users.db was not found.')
 	}
 })
 
 // Start React client app (dev only)
 const startClient = () => {
 	if (isDev) {
+		console.log('**********************')
+		console.log('->')
 		console.log('Starting client app...')
+		console.log('->')
+		console.log('**********************')
 		spawn('npm', ['start'], {
 			cwd: path.join(__dirname, './client'),
 			stdio: 'ignore',
@@ -353,6 +382,7 @@ app.on('ready', () => {
 		startClient()
 	}
 	createWindow()
+
 	console.log('app loaded...')
 })
 

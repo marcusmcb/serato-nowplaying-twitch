@@ -4,6 +4,7 @@ preferences.json
 # nedb files
 preferences.db
 users.db
+_users.db
 
 # Logs
 logs
