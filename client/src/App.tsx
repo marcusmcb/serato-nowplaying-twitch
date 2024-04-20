@@ -34,27 +34,27 @@ const App = (): JSX.Element => {
 	const ipcRenderer = window.electron.ipcRenderer
 
 	// hook for successful twitch auth callback
-	useEffect(() => {    
-    const socket = new WebSocket('ws://localhost:8080');    
-    socket.addEventListener('open', () => {
-      console.log('WebSocket is open now.');
-    });
-    
-    socket.addEventListener('message', (event) => {
-      console.log('Message from server: ', event.data);
-      setMessage(event.data);
+	useEffect(() => {
+		const socket = new WebSocket('ws://localhost:8080')
+		socket.addEventListener('open', () => {
+			console.log('WebSocket is open now.')
+		})
+
+		socket.addEventListener('message', (event) => {
+			console.log('Message from server: ', event.data)
+			setMessage(event.data)
 			setIsAuthorized(true)
 			setTimeout(() => {
-				setMessage("")
+				setMessage('')
 			}, 5000)
-    });
-    socket.addEventListener('error', (event) => {
-      console.error('WebSocket error:', event);
-    });    
-    return () => {
-      socket.close();
-    };
-  }, []);
+		})
+		socket.addEventListener('error', (event) => {
+			console.error('WebSocket error:', event)
+		})
+		return () => {
+			socket.close()
+		}
+	}, [])
 
 	// hook to fetch saved user data
 	useEffect(() => {
@@ -66,12 +66,6 @@ const App = (): JSX.Element => {
 				console.log('-----------------------')
 
 				if (response.data && Object.keys(response.data).length > 0) {
-					// if (response.data.twitchAccessToken.length > 0) {
-					// 	console.log('-- npChatbot is authorized --')
-					// 	setIsAuthorized(true)
-					// } else {
-					// 	console.log('-- npChatbot has not been authorized --')
-					// }
 					if (
 						response.data.obsWebsocketAddress &&
 						response.data.obsWebsocketAddress.startsWith('ws://')
@@ -83,8 +77,12 @@ const App = (): JSX.Element => {
 						console.log('is authorized')
 						setIsAuthorized(true)
 					}
-					if (!response.data.twitchChannelName || !response.data.twitchChatbotName || !response.data.seratoDisplayName ) {
-						console.log("no creds yet")
+					if (
+						!response.data.twitchChannelName ||
+						!response.data.twitchChatbotName ||
+						!response.data.seratoDisplayName
+					) {
+						console.log('no creds yet')
 						setIsConnectionReady(false)
 					} else {
 						setIsConnectionReady(true)
@@ -108,7 +106,7 @@ const App = (): JSX.Element => {
 		ipcRenderer.on('auth-successful', (event, url) => {
 			console.log('Authorization was successful', url)
 		})
-	}, [])	
+	}, [])
 
 	interface BotProcessResponse {
 		success: boolean
@@ -217,7 +215,7 @@ const App = (): JSX.Element => {
 	}
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-		event.preventDefault()		
+		event.preventDefault()
 		console.log('--- Form Data Submitted ---')
 		console.log(formData)
 		console.log('---------------------------')
@@ -231,9 +229,12 @@ const App = (): JSX.Element => {
 				setError('')
 			}, 3000)
 			return
-		}		
+		}
 		setMessage('Updating...')
-		formData.obsWebsocketAddress = 'ws://' + formData.obsWebsocketAddress
+		console.log('OBS Websocket Address: ', formData.obsWebsocketAddress)
+		if (formData.obsWebsocketAddress !== '') {
+			formData.obsWebsocketAddress = 'ws://' + formData.obsWebsocketAddress
+		}
 
 		if (isReportEnabled && formData.userEmailAddress === '') {
 			setError('A valid email address is required for post-stream reporting.')
@@ -275,6 +276,7 @@ const App = (): JSX.Element => {
 				setMessage('')
 				setMessage(response.message)
 				setFormData(response.data)
+				setIsConnectionReady(true)
 			} else if (response && response.error) {
 				console.log('Update error: ', response.error)
 				setMessage('')

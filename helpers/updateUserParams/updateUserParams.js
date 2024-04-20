@@ -1,8 +1,8 @@
 const updateUserData = async (db, event, arg) => {
-	console.log("------------------------")
-	console.log("*** UPDATE USER DATA ***")
+	console.log('------------------------')
+	console.log('*** UPDATE USER DATA ***')
 	console.log(arg)
-	console.log("------------------------")
+	console.log('------------------------')
 	return new Promise((resolve, reject) => {
 		db.users.findOne({}, async (err, existingUser) => {
 			if (err) {
@@ -14,21 +14,27 @@ const updateUserData = async (db, event, arg) => {
 				console.log(
 					'No existing user found. Inserting new user or handling error.'
 				)
-				// Handle inserting a new user or returning an error here
 				return resolve({ error: 'No existing user found.' })
 			}
 
+			console.log('EXISTING USER: ', existingUser)
+
 			const updatedUser = { ...existingUser }
+
 			Object.keys(arg).forEach((key) => {
-				if (arg[key] !== existingUser[key]) {
-					updatedUser[key] = arg[key]
+				if (arg[key] !== '') {
+					if (arg[key] !== existingUser[key]) {
+						console.log(`Updating key: ${key} with value: ${arg[key]}`)
+						updatedUser[key] = arg[key]
+					}
+				} else {
+					console.log(
+						`Skipping update for key: ${key} as provided empty value.`
+					)
 				}
 			})
 
-			console.log("--------------------")
-			console.log("UPDATED USER: ")
-			console.log(updatedUser)
-			console.log("--------------------")
+			console.log('UPDATED USER: ', updatedUser)
 
 			try {
 				const numReplaced = await new Promise((resolve, reject) => {
@@ -47,7 +53,11 @@ const updateUserData = async (db, event, arg) => {
 				})
 
 				console.log(`Updated ${numReplaced} user(s) with new data.`)
-				resolve({ success: true, message: 'User data successfully updated', data: updatedUser })
+				resolve({
+					success: true,
+					message: 'User data successfully updated',
+					data: updatedUser,
+				})
 			} catch (error) {
 				console.error('Error updating the user:', error)
 				reject({ success: false, error: 'Error updating user' })

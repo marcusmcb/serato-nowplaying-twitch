@@ -66,8 +66,9 @@ server.get('/auth/twitch/callback', async (req, res) => {
 
 		try {
 			const token = await exchangeCodeForToken(code)
+			console.log("*******************")
 			console.log('Token:', token)
-
+			console.log("*******************")
 			// Update user data in the database
 			db.users.findOne({}, (err, user) => {
 				if (err) {
@@ -321,8 +322,10 @@ ipcMain.on('submitUserData', async (event, arg) => {
 	// if different, run the necessary validations on only
 	// the changed fields
 	console.log('------------------')
+	console.log("")
 	console.log('Received Form Data: ')
 	console.log(arg)
+	console.log("")
 	console.log('------------------')
 
 	const isValidSeratoURL = await seratoURLValidityCheck(arg.seratoDisplayName)
