@@ -59,7 +59,7 @@ const fieldsConfig: FieldConfig[] = [
 
 const InputField: React.FC<{
 	fieldConfig: FieldConfig
-	value: string | undefined
+	value: string | undefined 
 	handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void
 	showTooltip: string | null
 	setShowTooltip: (value: string | null) => void
@@ -67,7 +67,7 @@ const InputField: React.FC<{
 	isObsResponseEnabled: boolean
 }> = ({
 	fieldConfig,
-	value,
+	value = '',
 	handleInputChange,
 	showTooltip,
 	setShowTooltip,
@@ -85,7 +85,7 @@ const InputField: React.FC<{
 				(fieldConfig.name === 'obsWebsocketPassword' ||
 					fieldConfig.name === 'obsWebsocketAddress')
 					? '*'.repeat((value || '').length)
-					: value || ''
+					: value
 			}
 			onChange={handleInputChange}
 			placeholder={fieldConfig.placeholder}
