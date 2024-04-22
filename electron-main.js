@@ -382,7 +382,8 @@ app.on('ready', () => {
 	})
 	startServer()
 	if (isDev) {
-		startClient()
+		// startClient()
+		console.log("dev mode")
 	}
 	createWindow()
 
