@@ -87,7 +87,7 @@ const App = (): JSX.Element => {
 					} else {
 						setIsConnectionReady(true)
 					}
-					
+
 					setFormData(response.data)
 					setIsObsResponseEnabled(response.data.isObsResponseEnabled)
 					setIsIntervalEnabled(response.data.isIntervalEnabled)
@@ -234,12 +234,14 @@ const App = (): JSX.Element => {
 		setMessage('Updating...')
 		console.log('OBS Websocket Address: ', formData.obsWebsocketAddress)
 
-		if (formData.obsWebsocketAddress = "ws://undefined") {
-			formData.obsWebsocketAddress = ""	
+		if ((formData.obsWebsocketAddress = 'ws://undefined')) {
+			formData.obsWebsocketAddress = ''
 		}
 
-
-		if (formData.obsWebsocketAddress !== '' && formData.obsWebsocketAddress !== "ws://undefined") {
+		if (
+			formData.obsWebsocketAddress !== '' &&
+			formData.obsWebsocketAddress !== 'ws://undefined'
+		) {
 			formData.obsWebsocketAddress = 'ws://' + formData.obsWebsocketAddress
 		}
 
@@ -299,7 +301,7 @@ const App = (): JSX.Element => {
 
 	return (
 		<div className='App'>
-			<TitleBar isAuthorized={isAuthorized} />
+			<TitleBar isAuthorized={isAuthorized} isBotConnected={isBotConnected} />
 			<div className='app-container'>
 				<CredentialsPanel
 					formData={formData}
