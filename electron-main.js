@@ -367,7 +367,7 @@ const createWindow = () => {
 	})
 
 	const appURL = isDev
-		? 'http://localhost:3000'
+		? 'http://127.0.0.1:3000'
 		: `file://${path.join(__dirname, './client/build/index.html')}`
 	console.log('Loading URL: ', appURL)
 	mainWindow.loadURL(appURL)
@@ -384,9 +384,12 @@ app.on('ready', () => {
 	if (isDev) {
 		// startClient()
 		console.log("dev mode")
-	}
+	}	
+	// setTimeout(() => {
+	// 	console.log("creating window...")
+	// 	createWindow()
+	// }, 1000)
 	createWindow()
-
 	console.log('app loaded...')
 })
 

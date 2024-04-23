@@ -7,7 +7,7 @@
     "start": "BROWSER=none react-scripts start",
     "start-client": "npm start --prefix client",
     "start-electron": "electron .",
-    "dev": "concurrently --kill-others \"npm run start-client\" \"npm run start-electron\""
+    "dev": "concurrently --kill-others \"npm run start-client\" \"wait-on http://127.0.0.1:3000 && npm run start-electron\""
   },
   "keywords": [
     "twitch",
@@ -34,6 +34,7 @@
     "nodemon": "^3.0.1",
     "obs-websocket-js": "^5.0.3",
     "tmi.js": "^1.8.5",
+    "wait-on": "^7.2.0",
     "ws": "^8.16.0"
   },
   "engines": {
