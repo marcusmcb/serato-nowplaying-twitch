@@ -28,34 +28,34 @@ const SessionPanel: React.FC<SessionPanelProps> = (props) => {
 		setSeconds(0)
 	}
 
-	// useEffect(() => {
-	// 	let interval: NodeJS.Timeout
+	useEffect(() => {
+		let interval: NodeJS.Timeout
 
-	// 	if (props.isBotConnected) {
-	// 		interval = setInterval(() => {
-	// 			setSeconds((prevSeconds) => {
-	// 				if (prevSeconds === 59) {
-	// 					setMinutes((prevMinutes) => {
-	// 						if (prevMinutes === 59) {
-	// 							setHours((prevHours) => prevHours + 1)
-	// 							return 0
-	// 						}
-	// 						return prevMinutes + 1
-	// 					})
-	// 					return 0
-	// 				}
-	// 				return prevSeconds + 1
-	// 			})
-	// 		}, 1000)
-	// 	}
+		if (props.isBotConnected) {
+			interval = setInterval(() => {
+				setSeconds((prevSeconds) => {
+					if (prevSeconds === 59) {
+						setMinutes((prevMinutes) => {
+							if (prevMinutes === 59) {
+								setHours((prevHours) => prevHours + 1)
+								return 0
+							}
+							return prevMinutes + 1
+						})
+						return 0
+					}
+					return prevSeconds + 1
+				})
+			}, 1000)
+		}
 
-	// 	// Cleanup interval on unmount or when bot disconnects
-	// 	return () => {
-	// 		if (interval) {
-	// 			clearInterval(interval)
-	// 		}
-	// 	}
-	// }, [props.isBotConnected])
+		// Cleanup interval on unmount or when bot disconnects
+		return () => {
+			if (interval) {
+				clearInterval(interval)
+			}
+		}
+	}, [props.isBotConnected])
 
 	return (
 		<div className='app-container-column'>

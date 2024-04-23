@@ -7,7 +7,7 @@
     "start": "BROWSER=none react-scripts start",
     "start-client": "npm start --prefix client",
     "start-electron": "electron .",
-    "dev": "concurrently --kill-others \"npm run start-client\" \"wait-on http://127.0.0.1:3000 && npm run start-electron\""
+    "dev": "concurrently --kill-others \"npm run start-client\" \"npm run start-electron\""
   },
   "keywords": [
     "twitch",
