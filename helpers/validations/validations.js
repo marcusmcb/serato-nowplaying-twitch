@@ -23,24 +23,20 @@ const seratoURLValidityCheck = async (seratoDisplayName) => {
 }
 
 // helper method to validate Twitch URL
-const twitchURLValidityCheck = async (twitchDisplayName) => {
-	console.log('TWITCH VALIDITY CHECK: ', twitchDisplayName)
-	const url = `https://www.twitch.tv/${twitchDisplayName}`
-	console.log(url)
+const twitchURLValidityCheck = async (twitchDisplayName) => {	
+	const url = `https://www.twitch.tv/${twitchDisplayName}`	
 	try {
 		const response = await axios.get(url)
-		const pageContent = response.data
-
-		// Construct a regex pattern to search for the presence of the expected content attribute
-		// This regex accounts for potential variations in how the attribute might be formatted
+		const pageContent = response.data		
 		const pattern = new RegExp(
-			`content=["']twitch\\.tv/${twitchDisplayName}["']`,
+			`<meta[^>]*content=["']twitch\\.tv/${twitchDisplayName}["'][^>]*>`,
 			'i'
-		)
-
+		)		
 		// Use the regex to test the page content
 		const exists = pattern.test(pageContent)
-		console.log("Exists?: ", exists)
+		if (exists) {
+			console.log("*** TRUE ***")
+		}
 		// If the pattern is found, we can assume the channel exists
 		return exists
 	} catch (error) {
@@ -49,12 +45,13 @@ const twitchURLValidityCheck = async (twitchDisplayName) => {
 	}
 }
 
-const obsCredentialsCheck = async (obsWebsocketAddress, obsWebsocketPassword) => {
-
-}
+const obsCredentialsCheck = async (
+	obsWebsocketAddress,
+	obsWebsocketPassword
+) => {}
 
 module.exports = {
 	seratoURLValidityCheck: seratoURLValidityCheck,
 	twitchURLValidityCheck: twitchURLValidityCheck,
-	obsCredentialsCheck: obsCredentialsCheck
+	obsCredentialsCheck: obsCredentialsCheck,
 }
