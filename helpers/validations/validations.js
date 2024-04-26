@@ -23,22 +23,25 @@ const seratoURLValidityCheck = async (seratoDisplayName) => {
 }
 
 // helper method to validate Twitch URL
-const twitchURLValidityCheck = async (twitchDisplayName) => {	
-	const url = `https://www.twitch.tv/${twitchDisplayName}`	
+const twitchURLValidityCheck = async (twitchDisplayName) => {
+	const url = `https://www.twitch.tv/${twitchDisplayName}`
 	try {
 		const response = await axios.get(url)
-		const pageContent = response.data		
+		const pageContent = response.data
 		const pattern = new RegExp(
-			`<meta[^>]*content=["']twitch\\.tv/${twitchDisplayName}["'][^>]*>`,
+			`content=["']twitch\\.tv/${twitchDisplayName}["']`,
 			'i'
-		)		
+		)
 		// Use the regex to test the page content
 		const exists = pattern.test(pageContent)
 		if (exists) {
-			console.log("*** TRUE ***")
+			console.log('*** TRUE ***', exists)
+			return true
+		} else {
+			console.log('*** FALSE ***', exists)
+			return false
 		}
 		// If the pattern is found, we can assume the channel exists
-		return exists
 	} catch (error) {
 		console.error('Error checking Twitch channel by content:', error)
 		return false
