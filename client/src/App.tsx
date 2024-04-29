@@ -87,6 +87,9 @@ const App = (): JSX.Element => {
 						setIsConnectionReady(true)
 					}
 
+					response.data.seratoDisplayName =
+						response.data.seratoDisplayName.replaceAll('_', ' ')
+
 					setFormData(response.data)
 					setIsObsResponseEnabled(response.data.isObsResponseEnabled)
 					setIsIntervalEnabled(response.data.isIntervalEnabled)
@@ -273,6 +276,9 @@ const App = (): JSX.Element => {
 					response.data.obsWebsocketAddress =
 						response.data.obsWebsocketAddress.substring(5)
 				}
+
+				response.data.seratoDisplayName =
+					response.data.seratoDisplayName.replaceAll('_', ' ')
 				console.log(response)
 				setMessage('')
 				setMessage(response.message)

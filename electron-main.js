@@ -284,7 +284,17 @@ ipcMain.on('stopBotScript', async (event, arg) => {
 })
 
 ipcMain.on('submitUserData', async (event, arg) => {
-	const isValidSeratoURL = await seratoURLValidityCheck(arg.seratoDisplayName)
+	console.log("* * * * * * * * *")
+	console.log("Serato Display Name: ", arg.seratoDisplayName)
+	console.log("* * * * * * * * *")
+
+	const seratoDisplayName = arg.seratoDisplayName.replaceAll(" ", "_")
+	
+	console.log(seratoDisplayName)
+
+	arg.seratoDisplayName = seratoDisplayName
+
+	const isValidSeratoURL = await seratoURLValidityCheck(seratoDisplayName)
 	const isValidTwitchURL = await twitchURLValidityCheck(arg.twitchChannelName)
 
 	if (isValidTwitchURL && isValidSeratoURL) {
