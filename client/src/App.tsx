@@ -295,28 +295,30 @@ const App = (): JSX.Element => {
 		<div className='App'>
 			<TitleBar isAuthorized={isAuthorized} isBotConnected={isBotConnected} />
 			<div className='app-container'>
-				<CredentialsPanel
-					formData={formData}
-					handleInputChange={handleInputChange}
-					showTooltip={showTooltip}
-					setShowTooltip={setShowTooltip}
-					handleSubmit={handleSubmit}
-					isBotConnected={isBotConnected}
-					isObsResponseEnabled={isObsResponseEnabled}
-				/>
-				<PreferencesPanel
-					formData={formData}
-					isObsResponseEnabled={isObsResponseEnabled}
-					setIsObsResponseEnabled={setIsObsResponseEnabled}
-					isIntervalEnabled={isIntervalEnabled}
-					setIsIntervalEnabled={setIsIntervalEnabled}
-					isReportEnabled={isReportEnabled}
-					setIsReportEnabled={setIsReportEnabled}
-					handleInputChange={handleInputChange}
-					showTooltip={showTooltip}
-					setShowTooltip={setShowTooltip}
-					isBotConnected={isBotConnected}
-				/>
+				<div className='creds-prefs-panel'>
+					<CredentialsPanel
+						formData={formData}
+						handleInputChange={handleInputChange}
+						showTooltip={showTooltip}
+						setShowTooltip={setShowTooltip}
+						handleSubmit={handleSubmit}
+						isBotConnected={isBotConnected}
+						isObsResponseEnabled={isObsResponseEnabled}
+					/>
+					<PreferencesPanel
+						formData={formData}
+						isObsResponseEnabled={isObsResponseEnabled}
+						setIsObsResponseEnabled={setIsObsResponseEnabled}
+						isIntervalEnabled={isIntervalEnabled}
+						setIsIntervalEnabled={setIsIntervalEnabled}
+						isReportEnabled={isReportEnabled}
+						setIsReportEnabled={setIsReportEnabled}
+						handleInputChange={handleInputChange}
+						showTooltip={showTooltip}
+						setShowTooltip={setShowTooltip}
+						isBotConnected={isBotConnected}
+					/>
+				</div>
 				<SessionPanel
 					handleConnect={handleConnect}
 					handleDisconnect={handleDisconnect}

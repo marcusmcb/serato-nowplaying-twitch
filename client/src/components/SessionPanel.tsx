@@ -60,7 +60,7 @@ const SessionPanel: React.FC<SessionPanelProps> = (props) => {
 	return (
 		<div className='app-container-column'>
 			<div className='app-form-title start-chatbot'>Chatbot Controls:</div>
-			<div>
+			<div className='bot-control-button-panel'>
 				<button
 					className='bot-control-button'
 					type='submit'

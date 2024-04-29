@@ -23,14 +23,29 @@
 	color: var(--main-text-color);
 }
 
+.creds-prefs-panel {
+	display: flex;
+	flex-direction: row;
+}
+
 .app-container-column {
 	margin-right: 55px;
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1180px) {
 	.app-container {
 		flex-direction: column;
 	}
+}
+
+@media (max-width: 950px) {
+	.creds-prefs-panel {
+		flex-direction: column;
+	}
+}
+
+.bot-control-button-panel {
+	margin-top: 15px;
 }
 
 .app-title {
@@ -96,7 +111,7 @@ input {
 }
 
 button {
-	margin-top: 20px;
+	margin-bottom: 10px;
 	padding: 10px 20px;
 	border-radius: 5px;
 	border: none;
