@@ -315,6 +315,7 @@ const App = (): JSX.Element => {
 					handleInputChange={handleInputChange}
 					showTooltip={showTooltip}
 					setShowTooltip={setShowTooltip}
+					isBotConnected={isBotConnected}
 				/>
 				<SessionPanel
 					handleConnect={handleConnect}
