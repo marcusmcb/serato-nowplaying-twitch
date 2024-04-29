@@ -1,8 +1,4 @@
 const updateUserData = async (db, event, arg) => {
-	console.log('------------------------')
-	console.log('*** UPDATE USER DATA ***')
-	console.log(arg)
-	console.log('------------------------')
 	return new Promise((resolve, reject) => {
 		db.users.findOne({}, async (err, existingUser) => {
 			if (err) {
@@ -15,9 +11,7 @@ const updateUserData = async (db, event, arg) => {
 					'No existing user found. Inserting new user or handling error.'
 				)
 				return resolve({ error: 'No existing user found.' })
-			}
-
-			console.log('EXISTING USER: ', existingUser)
+			}		
 
 			const updatedUser = { ...existingUser }
 
@@ -32,9 +26,7 @@ const updateUserData = async (db, event, arg) => {
 						`Skipping update for key: ${key} as provided empty value.`
 					)
 				}
-			})
-
-			console.log('UPDATED USER: ', updatedUser)
+			})			
 
 			try {
 				const numReplaced = await new Promise((resolve, reject) => {

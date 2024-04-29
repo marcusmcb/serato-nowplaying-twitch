@@ -15,9 +15,6 @@ const returnAccessTokenConfig = (config) => {
 }
 
 const returnRefreshTokenConfig = (config, token) => {
-  console.log("* * * * * * *")
-  console.log(token)
-  console.log("* * * * * * *")
 	const connectWithRefreshTokenConfig = {
 		options: { debug: true },
 		connection: {

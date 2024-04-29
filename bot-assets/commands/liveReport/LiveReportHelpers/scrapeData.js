@@ -21,7 +21,7 @@ const scrapeData = async (url) => {
         playlistartist = $("span.playlist-dj-subtitle").text().trim();
       })
       .catch((error) => {
-        console.log(error);
+        console.log("Error scraping data from Serato Live URL: ", error);
         return error;
       });
   } catch (error) {

@@ -31,17 +31,16 @@ const twitchURLValidityCheck = async (twitchDisplayName) => {
 		const pattern = new RegExp(
 			`content=["']twitch\\.tv/${twitchDisplayName}["']`,
 			'i'
-		)
-		// Use the regex to test the page content
+		)		
 		const exists = pattern.test(pageContent)
-		if (exists) {
-			console.log('*** TRUE ***', exists)
+		// if the pattern is found, we can assume the channel exists
+		// the pattern is not returned with invalid Twitch URL
+		if (exists) {			
 			return true
 		} else {
-			console.log('*** FALSE ***', exists)
+			console.log("Twitch user page does not exist.")
 			return false
-		}
-		// If the pattern is found, we can assume the channel exists
+		}		
 	} catch (error) {
 		console.error('Error checking Twitch channel by content:', error)
 		return false

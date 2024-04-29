@@ -64,7 +64,6 @@ const App = (): JSX.Element => {
 				console.log('--- Saved User Data ---')
 				console.log(response.data)
 				console.log('-----------------------')
-
 				if (response.data && Object.keys(response.data).length > 0) {
 					if (
 						response.data.obsWebsocketAddress &&
@@ -74,7 +73,7 @@ const App = (): JSX.Element => {
 							response.data.obsWebsocketAddress.substring(5)
 					}
 					if (response.data.appAuthorizationCode.length > 0) {
-						console.log('is authorized')
+						console.log('npChatbot app is authorized with Twitch')
 						setIsAuthorized(true)
 					}
 					if (
@@ -82,7 +81,7 @@ const App = (): JSX.Element => {
 						!response.data.twitchChatbotName ||
 						!response.data.seratoDisplayName
 					) {
-						console.log('no creds yet')
+						console.log('No user credentials stored in npChatbot')
 						setIsConnectionReady(false)
 					} else {
 						setIsConnectionReady(true)
@@ -157,8 +156,6 @@ const App = (): JSX.Element => {
 	}
 
 	const handleConnect = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		console.log('FORM DATA: ')
-		console.log(formData)
 		setMessage('')
 		setMessage('Connecting to Twitch...')
 		ipcRenderer.send('startBotScript', {
@@ -191,7 +188,7 @@ const App = (): JSX.Element => {
 	const handleDisconnect = async (
 		event: React.MouseEvent<HTMLButtonElement>
 	) => {
-		console.log('disconnect event')
+		console.log('*** npChatbot disconnect event ***')
 		ipcRenderer.send('stopBotScript', {})
 		ipcRenderer.once('stopBotResponse', (response) => {
 			if (response && response.success) {
@@ -232,7 +229,6 @@ const App = (): JSX.Element => {
 			return
 		}
 		setMessage('Updating...')
-		console.log('OBS Websocket Address: ', formData.obsWebsocketAddress)
 
 		if ((formData.obsWebsocketAddress = 'ws://undefined')) {
 			formData.obsWebsocketAddress = ''
@@ -266,10 +262,6 @@ const App = (): JSX.Element => {
 			isIntervalEnabled,
 			isReportEnabled,
 		}
-
-		console.log('--- Form Data Submitted ---')
-		console.log(submitData)
-		console.log('---------------------------')
 
 		ipcRenderer.send('submitUserData', submitData)
 		ipcRenderer.once('userDataResponse', (response) => {

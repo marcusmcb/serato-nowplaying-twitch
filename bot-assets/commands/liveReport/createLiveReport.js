@@ -239,7 +239,7 @@ const createLiveReport = async (url) => {
 		}
 		return seratoLiveReport
 	} catch (err) {
-		console.log(err)
+		console.log("Error creating Serato Live report: ", err)
 	}
 }
 // FUTURE DEV NOTES

@@ -22,7 +22,6 @@ const {
 	getRefreshToken,
 	updateUserToken,
 } = require('./auth/createAccessToken')
-const { returnRefreshTokenConfig } = require('./auth/accessTokenConfig')
 
 const {
 	seratoURLValidityCheck,
@@ -50,8 +49,6 @@ const obs = new OBSWebSocket()
 // message to the client UI
 const wss = new WebSocket.Server({ port: 8080 })
 
-// const isDev = true
-
 server.get('/', (req, res) => {
 	res.send('NPChatbot is up and running')
 })
@@ -60,15 +57,8 @@ server.get('/auth/twitch/callback', async (req, res) => {
 	const { code, state } = req.query
 
 	if (code) {
-		// add initial setup logic to check for user.db file
-		// if present, update it with code from Twitch response
-		// else, create it and add as appAuthorizationCode
-
 		try {
 			const token = await exchangeCodeForToken(code)
-			console.log("*******************")
-			console.log('Token:', token)
-			console.log("*******************")
 			// Update user data in the database
 			db.users.findOne({}, (err, user) => {
 				if (err) {
@@ -152,7 +142,6 @@ ipcMain.on('getUserData', (event, arg) => {
 				})
 			} else {
 				console.log('users.db does not exist yet')
-				// res.status(404).send({ error: 'No user found.' })
 				event.reply('getUserDataResponse', {
 					success: false,
 					error: 'no user found',
@@ -164,28 +153,10 @@ ipcMain.on('getUserData', (event, arg) => {
 	}
 })
 
-// Start React client app (dev only)
-const startClient = () => {
-	if (isDev) {
-		console.log('**********************')
-		console.log('->')
-		console.log('Starting client app...')
-		console.log('->')
-		console.log('**********************')
-		spawn('npm', ['start'], {
-			cwd: path.join(__dirname, './client'),
-			stdio: 'ignore',
-			shell: true,
-			detached: true,
-			windowsHide: true,
-		})
-	}
-}
-
 // Start Express server
 const startServer = () => {
 	serverInstance = server.listen(PORT, () => {
-		console.log(`Server is running on port ${PORT}`)
+		console.log(`npChatbot Express server is running on port ${PORT}`)
 	})
 }
 
@@ -197,7 +168,6 @@ ipcMain.on('open-auth-url', () => {
 
 // IPC listener for starting the bot script
 ipcMain.on('startBotScript', async (event, arg) => {
-	console.log('ARGS: ', arg)
 	let errorResponse = {
 		success: false,
 		error: null,
@@ -214,7 +184,6 @@ ipcMain.on('startBotScript', async (event, arg) => {
 			console.log('OBS validatiion passed')
 			// add logic to remove obs object is properly returned
 		} catch (error) {
-			// format and return OBS connection error response to client app
 			errorResponse.error = errorHandler(error)
 			event.reply('startBotResponse', errorResponse)
 			return
@@ -231,8 +200,6 @@ ipcMain.on('startBotScript', async (event, arg) => {
 	}
 
 	const currentAccessToken = await getRefreshToken(arg.twitchRefreshToken)
-
-	console.log('CAT: ', currentAccessToken)
 
 	if (currentAccessToken.status === 400) {
 		errorResponse.error = errorHandler(currentAccessToken.message)
@@ -266,7 +233,7 @@ ipcMain.on('startBotScript', async (event, arg) => {
 			}
 			event.reply('startBotResponse', botResponse)
 		} else if (parsedMessage.toLowerCase().includes('error')) {
-			console.log('--- bot response error ---')
+			console.log('--- startBotResponse error ---')
 			const botResponse = {
 				success: false,
 				error: parsedMessage,
@@ -278,7 +245,7 @@ ipcMain.on('startBotScript', async (event, arg) => {
 
 	botProcess.stderr.on('data', (data) => {
 		if (data.includes('OBSWebSocketError')) {
-			console.log('OBS ERROR')
+			console.log('*** OBSWebSocketError ***')
 			const botResponse = {
 				success: false,
 				message:
@@ -317,32 +284,15 @@ ipcMain.on('stopBotScript', async (event, arg) => {
 })
 
 ipcMain.on('submitUserData', async (event, arg) => {
-	// add helper method to check submitted args against
-	// stored user preferences
-	// if different, run the necessary validations on only
-	// the changed fields
-	console.log('------------------')
-	console.log("")
-	console.log('Received Form Data: ')
-	console.log(arg)
-	console.log("")
-	console.log('------------------')
-
 	const isValidSeratoURL = await seratoURLValidityCheck(arg.seratoDisplayName)
 	const isValidTwitchURL = await twitchURLValidityCheck(arg.twitchChannelName)
-
-	console.log('----------------')
-	console.log('Valid Serato URL?: ', isValidSeratoURL)
-	console.log('Valid Twitch URL?: '), isValidTwitchURL
-	console.log('----------------')
 
 	if (isValidTwitchURL && isValidSeratoURL) {
 		try {
 			const data = await updateUserData(db, event, arg)
-			console.log('--- DATA ---', data)
 			event.reply('userDataResponse', data)
 		} catch (error) {
-			console.error(error)
+			console.error('User data update error: ', error)
 			event.reply('userDataResponse', error)
 		}
 	} else {
@@ -382,15 +332,10 @@ app.on('ready', () => {
 	})
 	startServer()
 	if (isDev) {
-		// startClient()
-		console.log("dev mode")
-	}	
-	// setTimeout(() => {
-	// 	console.log("creating window...")
-	// 	createWindow()
-	// }, 1000)
+		console.log('dev mode')
+	}
 	createWindow()
-	console.log('app loaded...')
+	console.log('npChatbot app has started successfully.')
 })
 
 app.on('before-quit', () => {

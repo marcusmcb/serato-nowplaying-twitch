@@ -39,7 +39,7 @@ const shortestTrackCommand = async (
 			}
 		}
 	} catch (error) {
-		console.log(error)
+		console.log("Shortest Track command error: ", error)
 		client.say(channel, ERROR_MESSAGE)
 	}
 }

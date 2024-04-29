@@ -167,7 +167,7 @@ const npCommands = async (channel, tags, args, client, obs, url, config) => {
 			client.say(channel, NP_OPTIONS)
 		}
 	} catch (error) {
-		console.log(error)
+		console.log("np Command error: ", error)
 		client.say(channel, ERROR_MESSAGE)
 	}
 }

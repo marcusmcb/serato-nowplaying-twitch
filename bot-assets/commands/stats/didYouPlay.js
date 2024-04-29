@@ -124,8 +124,7 @@ const dypCommand = async (channel, tags, args, client, obs, url, config) => {
 				}
 			}
 		} catch (error) {
-			console.log('DYP ERROR:')
-			console.log(error)
+			console.log('DYP command error: ', error)			
 			client.say(channel, ERROR_MESSAGE)
 		}
 	}

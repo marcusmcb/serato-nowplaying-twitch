@@ -55,7 +55,7 @@ const doublesCommand = async (
 			}
 		}
 	} catch (error) {
-		console.log(error)
+		console.log("Doubles command error: ", error)
 		client.say(channel, ERROR_MESSAGE)
 	}
 }

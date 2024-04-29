@@ -5,15 +5,10 @@ const {
 	urlCommandList,
 } = require('./bot-assets/command-list/commandList')
 const { obs, connectToOBS } = require('./obs/obsConnection')
-const {
-	returnAccessTokenConfig,
-	returnRefreshTokenConfig,
-} = require('./auth/accessTokenConfig')
-const { getRefreshToken, updateUserToken } = require('./auth/createAccessToken')
+const { returnRefreshTokenConfig } = require('./auth/accessTokenConfig')
 
 const initializeBot = async (config) => {
-
-	console.log("CONFIG: ", config)
+	console.log('CONFIG: ', config)
 	// const twitchOAuthKey = await decryptCredential(config.encryptedKey)
 	let userCommandHistory = {}
 	let urlCommandCooldown = false
@@ -29,8 +24,8 @@ const initializeBot = async (config) => {
 		config.twitchAccessToken
 	)
 
-	console.log("----------------------")
-	console.log("REFRESH TOKEN CONFIG: ")
+	console.log('----------------------')
+	console.log('REFRESH TOKEN CONFIG: ')
 	console.log(refreshTokenConfig)
 
 	const client = new tmi.Client(refreshTokenConfig)

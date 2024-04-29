@@ -2,9 +2,6 @@
 const OBSWebSocket = require('obs-websocket-js').default
 
 const connectToOBS = async (config) => {
-	// console.log('OBS enabled? ', config.isObsResponseEnabled)
-	// console.log('Address: ', config.obsWebsocketAddress)
-	// console.log('Password: ', config.obsWebsocketPassword)
 	if (config.isObsResponseEnabled === true) {
 		try {
 			await obs.connect(config.obsWebsocketAddress, config.obsWebsocketPassword)

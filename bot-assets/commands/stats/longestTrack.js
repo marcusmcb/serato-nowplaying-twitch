@@ -23,8 +23,7 @@ const longestTrackCommand = async (
 	config
 ) => {
 	try {
-		const reportData = await createLiveReport(url)
-		console.log(reportData.longest_track.time_since_played)
+		const reportData = await createLiveReport(url)		
 		if (reportData === undefined) {
 			client.say(
 				channel,
@@ -40,7 +39,7 @@ const longestTrackCommand = async (
 			}
 		}
 	} catch (error) {
-		console.log(error)
+		console.log("Longest Track command error: ", error)
 		client.say(channel, ERROR_MESSAGE)
 	}
 }
