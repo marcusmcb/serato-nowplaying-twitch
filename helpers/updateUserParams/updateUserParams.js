@@ -16,16 +16,17 @@ const updateUserData = async (db, event, arg) => {
 			const updatedUser = { ...existingUser }
 
 			Object.keys(arg).forEach((key) => {
-				if (arg[key] !== '') {
-					if (arg[key] !== existingUser[key]) {
-						console.log(`Updating key: ${key} with value: ${arg[key]}`)
-						updatedUser[key] = arg[key]
-					}
-				} else {
-					console.log(
-						`Skipping update for key: ${key} as provided empty value.`
-					)
-				}
+				// if (arg[key] !== '') {
+				// 	if (arg[key] !== existingUser[key]) {
+				// 		console.log(`Updating key: ${key} with value: ${arg[key]}`)
+				// 		updatedUser[key] = arg[key]
+				// 	}
+				// } else {
+				// 	console.log(
+				// 		`Skipping update for key: ${key} as provided empty value.`
+				// 	)
+				// }
+				updatedUser[key] = arg[key]
 			})			
 
 			try {
