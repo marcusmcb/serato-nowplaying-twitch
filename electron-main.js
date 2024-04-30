@@ -174,6 +174,7 @@ ipcMain.on('startBotScript', async (event, arg) => {
 	}
 	// validate local OBS connection if OBS responses are enabled
 	if (arg.isObsResponseEnabled === true) {
+		console.log(arg.obsWebsocketAddress)
 		try {
 			await obs.connect(
 				'ws://' + arg.obsWebsocketAddress,
@@ -318,7 +319,7 @@ ipcMain.on('submitUserData', async (event, arg) => {
 const createWindow = () => {
 	mainWindow = new BrowserWindow({
 		width: 1280,
-		height: 680,
+		height: 680,		
 		webPreferences: {
 			preload: path.join(__dirname, './scripts/preload.js'),
 			nodeIntegration: false,

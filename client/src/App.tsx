@@ -233,16 +233,16 @@ const App = (): JSX.Element => {
 		}
 		setMessage('Updating...')
 
-		if ((formData.obsWebsocketAddress = 'ws://undefined')) {
-			formData.obsWebsocketAddress = ''
-		}
+		// if ((formData.obsWebsocketAddress = 'ws://undefined')) {
+		// 	formData.obsWebsocketAddress = ''
+		// }
 
-		if (
-			formData.obsWebsocketAddress !== '' &&
-			formData.obsWebsocketAddress !== 'ws://undefined'
-		) {
-			formData.obsWebsocketAddress = 'ws://' + formData.obsWebsocketAddress
-		}
+		// if (
+		// 	formData.obsWebsocketAddress !== '' &&
+		// 	formData.obsWebsocketAddress !== 'ws://undefined'
+		// ) {
+		// 	formData.obsWebsocketAddress = 'ws://' + formData.obsWebsocketAddress
+		// }
 
 		if (isReportEnabled && formData.userEmailAddress === '') {
 			setError('A valid email address is required for post-stream reporting.')

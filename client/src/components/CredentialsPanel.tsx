@@ -133,7 +133,9 @@ const CredentialsPanel: React.FC<CredentialsPanelProps> = (props) => {
 				))}
 
 				<div className='button-row'>
-					<button disabled={props.isBotConnected} type='submit'>
+					<button disabled={props.isBotConnected} type='submit' onClick={() => {
+						console.log("PROPS: ", props.formData)
+					}}>
 						Update
 					</button>
 					<div className='toggle-field hide-sensitive-toggle'>
