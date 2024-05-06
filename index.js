@@ -16,8 +16,10 @@ const initializeBot = async (config) => {
 	const COMMAND_REPEAT_LIMIT = 5
 	const displayOBSMessage = config.isObsResponseEnabled
 
+	const seratoDisplayName = config.seratoDisplayName.replaceAll(" ", "_")
+
 	// const url = `https://serato.com/playlists/${config.seratoDisplayName}/3-1-2024`
-	const url = `https://serato.com/playlists/${config.seratoDisplayName}/live`
+	const url = `https://serato.com/playlists/${seratoDisplayName}/live`
 
 	const refreshTokenConfig = returnRefreshTokenConfig(
 		config,

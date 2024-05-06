@@ -86,10 +86,6 @@ const App = (): JSX.Element => {
 					} else {
 						setIsConnectionReady(true)
 					}
-
-					response.data.seratoDisplayName =
-						response.data.seratoDisplayName.replaceAll('_', ' ')
-
 					setFormData(response.data)
 					setIsObsResponseEnabled(response.data.isObsResponseEnabled)
 					setIsIntervalEnabled(response.data.isIntervalEnabled)
@@ -233,17 +229,6 @@ const App = (): JSX.Element => {
 		}
 		setMessage('Updating...')
 
-		// if ((formData.obsWebsocketAddress = 'ws://undefined')) {
-		// 	formData.obsWebsocketAddress = ''
-		// }
-
-		// if (
-		// 	formData.obsWebsocketAddress !== '' &&
-		// 	formData.obsWebsocketAddress !== 'ws://undefined'
-		// ) {
-		// 	formData.obsWebsocketAddress = 'ws://' + formData.obsWebsocketAddress
-		// }
-
 		if (isReportEnabled && formData.userEmailAddress === '') {
 			setError('A valid email address is required for post-stream reporting.')
 			return
@@ -276,10 +261,6 @@ const App = (): JSX.Element => {
 					response.data.obsWebsocketAddress =
 						response.data.obsWebsocketAddress.substring(5)
 				}
-
-				response.data.seratoDisplayName =
-					response.data.seratoDisplayName.replaceAll('_', ' ')
-				console.log(response)
 				setMessage('')
 				setMessage(response.message)
 				setFormData(response.data)

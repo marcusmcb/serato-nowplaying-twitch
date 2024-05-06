@@ -286,8 +286,8 @@ ipcMain.on('stopBotScript', async (event, arg) => {
 
 ipcMain.on('submitUserData', async (event, arg) => {
 	// replace white space with underscores in Serato URL string
-	const seratoDisplayName = arg.seratoDisplayName.replaceAll(" ", "_")
-	arg.seratoDisplayName = seratoDisplayName
+	// for validation check
+	const seratoDisplayName = arg.seratoDisplayName.replaceAll(" ", "_")	
 
 	const isValidSeratoURL = await seratoURLValidityCheck(seratoDisplayName)
 	const isValidTwitchURL = await twitchURLValidityCheck(arg.twitchChannelName)
