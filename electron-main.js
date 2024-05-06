@@ -32,6 +32,12 @@ const {
 } = require('./helpers/updateUserParams/updateUserParams')
 const errorHandler = require('./helpers/errorHandler/errorHandler')
 
+const {
+	INVALID_TWITCH_CHATBOT_URL,
+	INVALID_TWITCH_URL,
+	INVALID_SERATO_DISPLAY_NAME,
+} = require('./bot-assets/constants/constants')
+
 const server = express()
 const PORT = process.env.PORT || 5000
 server.use(bodyParser.json())
@@ -287,12 +293,15 @@ ipcMain.on('stopBotScript', async (event, arg) => {
 ipcMain.on('submitUserData', async (event, arg) => {
 	// replace white space with underscores in Serato URL string
 	// for validation check
-	const seratoDisplayName = arg.seratoDisplayName.replaceAll(" ", "_")	
+	const seratoDisplayName = arg.seratoDisplayName.replaceAll(' ', '_')
 
 	const isValidSeratoURL = await seratoURLValidityCheck(seratoDisplayName)
 	const isValidTwitchURL = await twitchURLValidityCheck(arg.twitchChannelName)
+	const isValidTwitchChatbotURL = await twitchURLValidityCheck(
+		arg.twitchChatbotName
+	)
 
-	if (isValidTwitchURL && isValidSeratoURL) {
+	if (isValidTwitchURL && isValidTwitchChatbotURL && isValidSeratoURL) {
 		try {
 			const data = await updateUserData(db, event, arg)
 			event.reply('userDataResponse', data)
@@ -300,12 +309,17 @@ ipcMain.on('submitUserData', async (event, arg) => {
 			console.error('User data update error: ', error)
 			event.reply('userDataResponse', error)
 		}
-	} else {
+	} else if (!isValidTwitchURL) {
+		event.reply('userDataResponse', { error: INVALID_TWITCH_URL })
 		// Handle invalid URLs
-		const errorMessage = isValidTwitchURL
-			? 'The Serato profile name given is invalid'
-			: 'The Twitch profile name given is invalid'
-		event.reply('userDataResponse', { error: errorMessage })
+		// const errorMessage = isValidTwitchURL
+		// 	? 'The Serato profile name given is invalid'
+		// 	: 'The Twitch profile name given is invalid'
+		// event.reply('userDataResponse', { error: errorMessage })
+	} else if (!isValidTwitchChatbotURL) {
+		event.reply('userDataResponse', { error: INVALID_TWITCH_CHATBOT_URL })
+	} else {
+		event.reply('userDataResponse', { error: INVALID_SERATO_DISPLAY_NAME })
 	}
 })
 
@@ -313,7 +327,7 @@ ipcMain.on('submitUserData', async (event, arg) => {
 const createWindow = () => {
 	mainWindow = new BrowserWindow({
 		width: 1280,
-		height: 680,		
+		height: 680,
 		webPreferences: {
 			preload: path.join(__dirname, './scripts/preload.js'),
 			nodeIntegration: false,

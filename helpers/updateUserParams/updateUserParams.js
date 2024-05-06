@@ -11,12 +11,11 @@ const updateUserData = async (db, event, arg) => {
 					'No existing user found. Inserting new user or handling error.'
 				)
 				return resolve({ error: 'No existing user found.' })
-			}		
+			}
 
 			const updatedUser = { ...existingUser }
 
 			Object.keys(arg).forEach((key) => {
-				console.log("KEY: ", key)
 				// if (arg[key] !== '') {
 				// 	if (arg[key] !== existingUser[key]) {
 				// 		console.log(`Updating key: ${key} with value: ${arg[key]}`)
@@ -28,7 +27,7 @@ const updateUserData = async (db, event, arg) => {
 				// 	)
 				// }
 				updatedUser[key] = arg[key]
-			})			
+			})
 
 			try {
 				const numReplaced = await new Promise((resolve, reject) => {

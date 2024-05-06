@@ -15,6 +15,12 @@ const OBS_NOT_FOUND_ERROR = 'npChatbot could not connect to OBS. Make sure OBS i
 
 const OBS_DEFAULT_ERROR = 'Unable to connect to OBS'
 
+const INVALID_TWITCH_URL = "The Twitch profile name given is invalid"
+
+const INVALID_TWITCH_CHATBOT_URL = "The Twitch chatbot profile name given is invalid"
+
+const INVALID_SERATO_DISPLAY_NAME = "The Serato profile name given is invalid"
+
 const INVALID_REFRESH_TOKEN = 'Unable to refresh authorization token'
 
 module.exports = {
@@ -26,6 +32,9 @@ module.exports = {
   OBS_SOCKET_ERROR,
   OBS_DEFAULT_ERROR,
   OBS_NOT_FOUND_ERROR,
-  INVALID_REFRESH_TOKEN
+  INVALID_REFRESH_TOKEN,
+  INVALID_TWITCH_CHATBOT_URL,
+  INVALID_TWITCH_URL,
+  INVALID_SERATO_DISPLAY_NAME
 }
 
