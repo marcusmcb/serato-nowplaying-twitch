@@ -65,13 +65,6 @@ const App = (): JSX.Element => {
 				console.log(response.data)
 				console.log('-----------------------')
 				if (response.data && Object.keys(response.data).length > 0) {
-					if (
-						response.data.obsWebsocketAddress &&
-						response.data.obsWebsocketAddress.startsWith('ws://')
-					) {
-						response.data.obsWebsocketAddress =
-							response.data.obsWebsocketAddress.substring(5)
-					}
 					if (response.data.appAuthorizationCode.length > 0) {
 						console.log('npChatbot app is authorized with Twitch')
 						setIsAuthorized(true)
@@ -254,13 +247,6 @@ const App = (): JSX.Element => {
 		ipcRenderer.send('submitUserData', submitData)
 		ipcRenderer.once('userDataResponse', (response) => {
 			if (response && response.success) {
-				if (
-					response.data.obsWebsocketAddress &&
-					response.data.obsWebsocketAddress.startsWith('ws://')
-				) {
-					response.data.obsWebsocketAddress =
-						response.data.obsWebsocketAddress.substring(5)
-				}
 				setMessage('')
 				setMessage(response.message)
 				setFormData(response.data)

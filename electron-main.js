@@ -4,7 +4,7 @@ const path = require('path')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const express = require('express')
-const { app, protocol, shell, BrowserWindow, ipcMain } = require('electron')
+const { app, protocol, shell, globalShortcut, BrowserWindow, ipcMain } = require('electron')
 const isDev = require('electron-is-dev')
 const scriptPath = path.join(__dirname, './boot.js')
 const OBSWebSocket = require('obs-websocket-js').default
@@ -138,10 +138,12 @@ ipcMain.on('getUserData', (event, arg) => {
 			if (err) {
 				console.error('Error fetching the user:', err)
 			} else if (user) {
-				console.log('--------------------')
-				console.log('Fetched User Data: ')
-				console.log(user)
-				console.log('--------------------')
+				// console.log('--------------------')
+				// console.log('Fetched User Data: ')
+				// console.log(user)
+				// console.log('--------------------')
+
+				console.log("*** getUserData called ***")
 
 				event.reply('getUserDataResponse', {
 					success: true,
@@ -350,6 +352,10 @@ app.on('ready', () => {
 		const url = request.url
 		mainWindow.webContents.send('auth-successful', url)
 	})
+	// globalShortcut.register('CommandOrControl+R', () => {
+	// 	const { webContents } = mainWindow
+	// 	webContents.reload()
+	// })
 	startServer()
 	if (isDev) {
 		console.log('dev mode')
