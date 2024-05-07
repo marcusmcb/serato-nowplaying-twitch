@@ -10,6 +10,7 @@ const scriptPath = path.join(__dirname, './boot.js')
 const OBSWebSocket = require('obs-websocket-js').default
 const dotenv = require('dotenv')
 const WebSocket = require('ws')
+// const isDev = false
 
 dotenv.config()
 
