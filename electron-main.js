@@ -5,12 +5,13 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const express = require('express')
 const { app, protocol, shell, globalShortcut, BrowserWindow, ipcMain } = require('electron')
-const isDev = require('electron-is-dev')
 const scriptPath = path.join(__dirname, './boot.js')
 const OBSWebSocket = require('obs-websocket-js').default
 const dotenv = require('dotenv')
 const WebSocket = require('ws')
-// const isDev = false
+
+// const isDev = require('electron-is-dev')
+const isDev = false
 
 dotenv.config()
 
