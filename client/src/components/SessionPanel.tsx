@@ -71,7 +71,7 @@ const SessionPanel: React.FC<SessionPanelProps> = (props) => {
 				</button>
 				<button
 					className='bot-control-button'
-					disabled={!props.isBotConnected}
+					// disabled={!props.isBotConnected}
 					type='submit'
 					onClick={(event) => {
 						resetUptime()

@@ -56,48 +56,65 @@ const App = (): JSX.Element => {
 		}
 	}, [])
 
-	// hook to fetch saved user data
 	useEffect(() => {
-		if (ipcRenderer) {
-			ipcRenderer.send('getUserData', {})
-			ipcRenderer.once('getUserDataResponse', (response) => {
-				console.log('--- Saved User Data ---')
-				console.log(response.data)
-				console.log('-----------------------')
-				if (response.data && Object.keys(response.data).length > 0) {
-					if (response.data.appAuthorizationCode.length > 0) {
-						console.log('npChatbot app is authorized with Twitch')
-						setIsAuthorized(true)
-					}
-					if (
-						!response.data.twitchChannelName ||
-						!response.data.twitchChatbotName ||
-						!response.data.seratoDisplayName
-					) {
-						console.log('No user credentials stored in npChatbot')
-						setIsConnectionReady(false)
-					} else {
-						setIsConnectionReady(true)
-					}
-					setFormData(response.data)
-					setIsObsResponseEnabled(response.data.isObsResponseEnabled)
-					setIsIntervalEnabled(response.data.isIntervalEnabled)
-					setIsReportEnabled(response.data.isReportEnabled)
-				} else if (response.error) {
-					console.log('USER CONFIG ERROR: ')
-					console.log(response.error)
-				}
-			})
+		const handleUserDataUpdate = (data: any) => {
+			console.log('--- Saved User Data ---')
+			console.log(data)
+			console.log('-----------------------')
+			if (data && Object.keys(data).length > 0) {
+				// Update the form data state with the fetched user data
+				setFormData(data)
+				// Update other relevant state variables based on the fetched data
+				setIsObsResponseEnabled(data.isObsResponseEnabled)
+				setIsIntervalEnabled(data.isIntervalEnabled)
+				setIsReportEnabled(data.isReportEnabled)
+				setIsAuthorized(!!data.appAuthorizationCode) // Check if app is authorized
+				setIsConnectionReady(
+					// Check if all necessary fields are filled for connection
+					!!data.twitchChannelName &&
+						!!data.twitchChatbotName &&
+						!!data.seratoDisplayName
+				)
+			} else if (data.error) {
+				console.log('USER CONFIG ERROR: ')
+				console.log(data.error)
+			}
 		}
-		return () => {
-			ipcRenderer.removeAllListeners('getUserDataResponse')
-		}
-	}, [])
 
-	useEffect(() => {
-		ipcRenderer.on('auth-successful', (event, url) => {
-			console.log('Authorization was successful', url)
-		})
+		const handleUserDataResponse = (response: any) => {
+			console.log('RESPONSE: ', response)
+			if (response && response.data) {
+				handleUserDataUpdate(response.data)
+			} else {
+				console.error(
+					'getUserDataResponse received invalid data: ',
+					response.error
+				)
+			}
+		}
+
+		if (ipcRenderer) {
+			const fetchData = () => {
+				ipcRenderer.send('getUserData', {})
+			}
+
+			ipcRenderer.once('getUserDataResponse', (response) => {
+				handleUserDataResponse(response)
+			})
+
+			ipcRenderer.on('userDataUpdated', (response) => {
+				console.log("--- userDataUpdated called from client ---")
+				handleUserDataUpdate(response)
+			})			
+			// Fetch initial user data
+			fetchData()
+			console.log("*** fetchData called ***")
+			// Cleanup listeners
+			return () => {
+				ipcRenderer.removeAllListeners('getUserDataResponse')
+				ipcRenderer.removeAllListeners('userDataUpdated')
+			}
+		}
 	}, [])
 
 	interface BotProcessResponse {
@@ -150,6 +167,7 @@ const App = (): JSX.Element => {
 	const handleConnect = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		setMessage('')
 		setMessage('Connecting to Twitch...')
+		console.log("*** sending startBotScript ***")
 		ipcRenderer.send('startBotScript', {
 			twitchChannelName: formData.twitchChannelName,
 			obsWebsocketAddress: formData.obsWebsocketAddress
@@ -161,10 +179,12 @@ const App = (): JSX.Element => {
 			isObsResponseEnabled: formData.isObsResponseEnabled,
 			twitchRefreshToken: formData.twitchRefreshToken,
 		})
-		ipcRenderer.once('startBotResponse', (response) => {
+		console.log("*** startBotScript sent; awaiting response ***")
+		ipcRenderer.on('startBotResponse', (response) => {
 			if (response && response.success) {
-				setMessage('npChatbot is connected to your Twitch chat')
-				setIsBotConnected(true)
+				console.log("--- successfully startBotResponse ---")
+				setMessage('npChatbot is connected to your Twitch chat')				
+				setIsBotConnected(true)				
 			} else if (response && response.error) {
 				console.error(response.error)
 				setMessage(response.error)

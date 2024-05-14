@@ -1,62 +1,47 @@
 const updateUserData = async (db, event, arg) => {
-	return new Promise((resolve, reject) => {
-		db.users.findOne({}, async (err, existingUser) => {
-			if (err) {
-				console.error('Error fetching the user:', err)
-				return reject({ error: 'ipcMain: no user found' })
-			}
+	try {
+		const existingUser = await db.users.findOne({})
+		if (!existingUser) {
+			console.log(
+				'No existing user found. Inserting new user or handling error.'
+			)
+			return { error: 'No existing user found.' }
+		}
 
-			if (!existingUser) {
-				console.log(
-					'No existing user found. Inserting new user or handling error.'
-				)
-				return resolve({ error: 'No existing user found.' })
-			}
+		// Create a new object with only the necessary properties
+		const updatedUser = {
+			twitchAccessToken: arg.twitchAccessToken,
+			twitchRefreshToken: arg.twitchRefreshToken,
+			appAuthorizationCode: arg.appAuthorizationCode,
+			twitchChannelName: arg.twitchChannelName,
+			twitchChatbotName: arg.twitchChatbotName,
+			seratoDisplayName: arg.seratoDisplayName,
+			isObsResponseEnabled: arg.isObsResponseEnabled,
+			isIntervalEnabled: arg.isIntervalEnabled,
+			isReportEnabled: arg.isReportEnabled,
+			intervalMessageDuration: arg.intervalMessageDuration,
+			obsWebsocketPassword: arg.obsWebsocketPassword,
+			obsWebsocketAddress: arg.obsWebsocketAddress,
+			obsClearDisplayTime: arg.obsClearDisplayTime,
+		}
 
-			const updatedUser = { ...existingUser }
+		// Perform the update operation
+		await db.users.update({ _id: existingUser._id }, { $set: updatedUser }, {})
 
-			Object.keys(arg).forEach((key) => {
-				// if (arg[key] !== '') {
-				// 	if (arg[key] !== existingUser[key]) {
-				// 		console.log(`Updating key: ${key} with value: ${arg[key]}`)
-				// 		updatedUser[key] = arg[key]
-				// 	}
-				// } else {
-				// 	console.log(
-				// 		`Skipping update for key: ${key} as provided empty value.`
-				// 	)
-				// }
-				updatedUser[key] = arg[key]
-			})
+		console.log(`Updated user with new data: ${JSON.stringify(updatedUser)}`)
 
-			try {
-				const numReplaced = await new Promise((resolve, reject) => {
-					db.users.update(
-						{ _id: existingUser._id },
-						{ $set: updatedUser },
-						{},
-						(err, numReplaced) => {
-							if (err) {
-								reject(err)
-							} else {
-								resolve(numReplaced)
-							}
-						}
-					)
-				})
+		// Emit 'userDataUpdated' event after successfully updating the user data
+		event.reply('userDataUpdated', updatedUser)
 
-				console.log(`Updated ${numReplaced} user(s) with new data.`)
-				resolve({
-					success: true,
-					message: 'User data successfully updated',
-					data: updatedUser,
-				})
-			} catch (error) {
-				console.error('Error updating the user:', error)
-				reject({ success: false, error: 'Error updating user' })
-			}
-		})
-	})
+		return {
+			success: true,
+			message: 'User data successfully updated',
+			data: updatedUser,
+		}
+	} catch (error) {
+		console.error('Error updating the user:', error)
+		return { success: false, error: 'Error updating user' }
+	}
 }
 
 module.exports = {

@@ -24,48 +24,45 @@ const getRefreshToken = async (refreshToken) => {
 		const response = await axios.post(`${process.env.TWITCH_AUTH_URL}`, params)
 		return response.data
 	} catch (error) {
-		console.log("REFRESH TOKEN ERROR: ", error.response.data)
+		console.log('REFRESH TOKEN ERROR: ', error.response.data)
 		return error.response.data
 	}
 }
 
-const updateUserToken = (token) => {
-	return new Promise((resolve, reject) => {
-		db.users.findOne({}, (err, user) => {
-			if (err) {
-				console.error('Error finding the user:', err)
-				reject('Database error.')
-				return
-			}
+const updateUserToken = async (db, event, token) => {
+	try {
+		const user = await db.users.findOne({})
+		if (!user) {
+			console.log('No existing user found.')
+			return { error: 'No existing user found.' }
+		}
 
-			if (user) {
-				db.users.update(
-					{ _id: user._id },
-					{
-						$set: {
-							twitchAccessToken: token.access_token,
-							twitchRefreshToken: token.refresh_token,
-						},
-					},
-					{},
-					(err, numReplaced) => {
-						if (err) {
-							console.error('Error updating the user:', err)
-							reject('Error updating the user.')
-						} else {
-							console.log(
-								`Updated ${numReplaced} user(s) with new Twitch token.`
-							)
-							resolve(`Updated ${numReplaced} user(s) with new Twitch token.`)
-						}
-					}
-				)
-			} else {
-				console.log('CREATE ACCESS TOKEN: No user found to update.')
-				resolve('No user found to update')
-			}
-		})
-	})
+		const updatedFields = {
+			twitchAccessToken: token.access_token,
+			twitchRefreshToken: token.refresh_token,
+		}
+
+		await db.users.update({ _id: user._id }, { $set: updatedFields }, {})
+
+		console.log(`Updated user with new token: ${JSON.stringify(updatedFields)}`)
+
+		// Fetch the updated user data after updating the token
+		const updatedUser = await db.users.findOne({ _id: user._id })
+
+		console.log('Updated user data:', updatedUser)
+
+		// Emit 'userDataUpdated' event after successfully updating the user data
+		event.reply('userDataUpdated', updatedUser)
+
+		return {
+			success: true,
+			message: 'User token successfully updated',
+			data: updatedUser,
+		}
+	} catch (error) {
+		console.error('Error updating the user token:', error)
+		return { success: false, error: 'Error updating user token' }
+	}
 }
 
 module.exports = { exchangeCodeForToken, getRefreshToken, updateUserToken }

@@ -4,7 +4,14 @@ const path = require('path')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const express = require('express')
-const { app, protocol, shell, globalShortcut, BrowserWindow, ipcMain } = require('electron')
+const {
+	app,
+	protocol,
+	shell,
+	globalShortcut,
+	BrowserWindow,
+	ipcMain,
+} = require('electron')
 const scriptPath = path.join(__dirname, './boot.js')
 const OBSWebSocket = require('obs-websocket-js').default
 const dotenv = require('dotenv')
@@ -93,7 +100,7 @@ server.get('/auth/twitch/callback', async (req, res) => {
 								return res.status(500).send('Database error during update.')
 							}
 							console.log(
-								`Updated ${numReplaced} user(s) with new Twitch token.`
+								`Updated ${numReplaced} user(s) with new Twitch app token.`
 							)
 						}
 					)
@@ -131,35 +138,52 @@ server.get('/auth/twitch/callback', async (req, res) => {
 	}
 })
 
-ipcMain.on('getUserData', (event, arg) => {
+ipcMain.on('getUserData', async (event, arg) => {
+	console.log('*** getUserData is called ***')
 	if (fs.existsSync('users.db')) {
-		console.log('users.db exists! Fetching the user information...')
-		let preloadPath = path.join(__dirname, './scripts/preload.js')
-		db.users.findOne({}, (err, user) => {
-			if (err) {
-				console.error('Error fetching the user:', err)
-			} else if (user) {
-				// console.log('--------------------')
-				// console.log('Fetched User Data: ')
+		// console.log('users.db exists! Fetching the user information...')
+		try {
+			const user = await new Promise((resolve, reject) => {
+				db.users.findOne({}, (err, user) => {
+					if (err) {
+						reject(err)
+					} else {
+						resolve(user)
+					}
+				})
+			})
+
+			if (user) {
 				// console.log(user)
-				// console.log('--------------------')
-
-				console.log("*** getUserData called ***")
-
-				event.reply('getUserDataResponse', {
+				console.log('*** user data is found ***')
+				const responseObject = {
 					success: true,
 					data: user,
-				})
+				}
+				// console.log("RESPONSE OBJECT: ")
+				// console.log(responseObject)
+				event.reply('getUserDataResponse', responseObject)
+				// event.reply('getUserDataResponse', { data: 'data'} )
 			} else {
-				console.log('users.db does not exist yet')
+				console.log('No user found in the database.')
 				event.reply('getUserDataResponse', {
 					success: false,
-					error: 'no user found',
+					error: 'No user found',
 				})
 			}
-		})
+		} catch (error) {
+			console.error('Error fetching user data:', error)
+			event.reply('getUserDataResponse', {
+				success: false,
+				error: 'Error fetching user data',
+			})
+		}
 	} else {
 		console.log('users.db was not found.')
+		event.reply('getUserDataResponse', {
+			success: false,
+			error: 'users.db was not found',
+		})
 	}
 })
 
@@ -210,22 +234,47 @@ ipcMain.on('startBotScript', async (event, arg) => {
 		return
 	}
 
-	const currentAccessToken = await getRefreshToken(arg.twitchRefreshToken)
-
-	if (currentAccessToken.status === 400) {
-		errorResponse.error = errorHandler(currentAccessToken.message)
-		console.log('Error Response Obj: ', errorResponse)
+	try {
+		const currentAccessToken = await getRefreshToken(arg.twitchRefreshToken)
+		if (currentAccessToken.status === 400) {
+			const errorResponse = {
+				success: false,
+				error: errorHandler(currentAccessToken.message),
+			}
+			event.reply('startBotResponse', errorResponse)
+			return
+		} else {
+			console.log('*** await updateUserToken ***')
+			await updateUserToken(db, event, currentAccessToken)			
+			console.log('*** updateUserToken COMPLETE ***')
+		}
+	} catch (error) {
+		console.error('Failed to update user token: ', error)
+		const errorResponse = {
+			success: false,
+			error: 'Failed to update user token.',
+		}
 		event.reply('startBotResponse', errorResponse)
 		return
-	} else {
-		try {
-			await updateUserToken(currentAccessToken)
-		} catch (error) {
-			console.error('Failed to update user token: ', error)
-			return
-		}
 	}
 
+	// const currentAccessToken = await getRefreshToken(arg.twitchRefreshToken)
+
+	// if (currentAccessToken.status === 400) {
+	// 	errorResponse.error = errorHandler(currentAccessToken.message)
+	// 	console.log('Error Response Obj: ', errorResponse)
+	// 	event.reply('startBotResponse', errorResponse)
+	// 	return
+	// } else {
+	// 	try {
+	// 		await updateUserToken(currentAccessToken)
+	// 	} catch (error) {
+	// 		console.error('Failed to update user token: ', error)
+	// 		return
+	// 	}
+	// }
+
+	console.log("--- loading bot process to spawn ---")
 	botProcess = spawn('node', [scriptPath])
 
 	botProcess.stdout.on('data', (data) => {
@@ -241,6 +290,7 @@ ipcMain.on('startBotScript', async (event, arg) => {
 			const botResponse = {
 				success: true,
 				message: parsedMessage,
+				data: arg
 			}
 			event.reply('startBotResponse', botResponse)
 		} else if (parsedMessage.toLowerCase().includes('error')) {
@@ -294,11 +344,16 @@ ipcMain.on('stopBotScript', async (event, arg) => {
 	}
 })
 
+ipcMain.on('userDataUpdated', () => {
+	// Emit an event to notify that the user data has been updated
+	mainWindow.webContents.send('userDataUpdated')
+})
+
 ipcMain.on('submitUserData', async (event, arg) => {
-	// replace white space with underscores in Serato URL string
-	// for validation check
+	// Replace white space with underscores in Serato URL string for validation check
 	const seratoDisplayName = arg.seratoDisplayName.replaceAll(' ', '_')
 
+	// Perform URL validity checks
 	const isValidSeratoURL = await seratoURLValidityCheck(seratoDisplayName)
 	const isValidTwitchURL = await twitchURLValidityCheck(arg.twitchChannelName)
 	const isValidTwitchChatbotURL = await twitchURLValidityCheck(
@@ -308,18 +363,17 @@ ipcMain.on('submitUserData', async (event, arg) => {
 	if (isValidTwitchURL && isValidTwitchChatbotURL && isValidSeratoURL) {
 		try {
 			const data = await updateUserData(db, event, arg)
+			// Emit an event to notify that the user data has been updated
+			mainWindow.webContents.send('userDataUpdated')
+			// Reply to the renderer process with success response
 			event.reply('userDataResponse', data)
 		} catch (error) {
 			console.error('User data update error: ', error)
+			// Reply to the renderer process with error response
 			event.reply('userDataResponse', error)
 		}
 	} else if (!isValidTwitchURL) {
 		event.reply('userDataResponse', { error: INVALID_TWITCH_URL })
-		// Handle invalid URLs
-		// const errorMessage = isValidTwitchURL
-		// 	? 'The Serato profile name given is invalid'
-		// 	: 'The Twitch profile name given is invalid'
-		// event.reply('userDataResponse', { error: errorMessage })
 	} else if (!isValidTwitchChatbotURL) {
 		event.reply('userDataResponse', { error: INVALID_TWITCH_CHATBOT_URL })
 	} else {
