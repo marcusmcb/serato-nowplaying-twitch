@@ -30,53 +30,26 @@ const getRefreshToken = async (refreshToken) => {
 }
 
 const updateUserToken = async (db, event, token) => {
+	console.log("TOKEN: ", token)
 	try {
 		const user = await db.users.findOne({})
+
 		if (!user) {
 			console.log('No existing user found.')
 			return { error: 'No existing user found.' }
 		}
 
-		const updatedUser = {
-			twitchAccessToken: token.access_token,
-			twitchRefreshToken: token.refresh_token,
-			appAuthorizationCode: user.appAuthorizationCode,
-			twitchChannelName: user.twitchChannelName,
-			twitchChatbotName: user.twitchChatbotName,
-			seratoDisplayName: user.seratoDisplayName,
-			isObsResponseEnabled: user.isObsResponseEnabled,
-			isIntervalEnabled: user.isIntervalEnabled,
-			isReportEnabled: user.isReportEnabled,
-			intervalMessageDuration: user.intervalMessageDuration,
-			obsWebsocketPassword: user.obsWebsocketPassword,
-			obsWebsocketAddress: user.obsWebsocketAddress,
-			obsClearDisplayTime: user.obsClearDisplayTime,
-		}
-
-		// const updatedUser = {
-		// 	twitchAccessToken: arg.twitchAccessToken,
-		// 	twitchRefreshToken: arg.twitchRefreshToken,
-		// 	appAuthorizationCode: arg.appAuthorizationCode,
-		// 	twitchChannelName: arg.twitchChannelName,
-		// 	twitchChatbotName: arg.twitchChatbotName,
-		// 	seratoDisplayName: arg.seratoDisplayName,
-		// 	isObsResponseEnabled: arg.isObsResponseEnabled,
-		// 	isIntervalEnabled: arg.isIntervalEnabled,
-		// 	isReportEnabled: arg.isReportEnabled,
-		// 	intervalMessageDuration: arg.intervalMessageDuration,
-		// 	obsWebsocketPassword: arg.obsWebsocketPassword,
-		// 	obsWebsocketAddress: arg.obsWebsocketAddress,
-		// 	obsClearDisplayTime: arg.obsClearDisplayTime,
-		// }
-
-		await db.users.update({ _id: user._id }, { $set: updatedUser }, {})
-
-		console.log(`Updated user with new token: ${JSON.stringify(updatedUser)}`)
+		// Update only the twitchAccessToken field
+		await db.users.update(
+			{ _id: user._id },
+			{ $set: { twitchAccessToken: token.access_token } },
+			{}
+		)
 
 		// Fetch the updated user data after updating the token
-		// const updatedUser = await db.users.findOne({ _id: user._id })
+		const updatedUser = await db.users.findOne({ _id: user._id })
 
-		// console.log('Updated user data:', updatedUser)
+		console.log(`Updated user with new token: ${JSON.stringify(updatedUser)}`)
 
 		// Emit 'userDataUpdated' event after successfully updating the user data
 		event.reply('userDataUpdated', updatedUser)
@@ -90,14 +63,6 @@ const updateUserToken = async (db, event, token) => {
 		console.error('Error updating the user token:', error)
 		return { success: false, error: 'Error updating user token' }
 	}
-}
-
-module.exports = {
-	updateUserToken: updateUserToken,
-}
-
-module.exports = {
-	updateUserToken: updateUserToken,
 }
 
 module.exports = { exchangeCodeForToken, getRefreshToken, updateUserToken }
