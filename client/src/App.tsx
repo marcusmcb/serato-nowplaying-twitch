@@ -266,6 +266,7 @@ const App = (): JSX.Element => {
 
 		ipcRenderer.send('submitUserData', submitData)
 		ipcRenderer.once('userDataResponse', (response) => {
+			console.log(response)
 			if (response && response.success) {
 				setMessage('')
 				setMessage(response.message)

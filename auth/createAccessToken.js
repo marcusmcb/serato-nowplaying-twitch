@@ -30,39 +30,76 @@ const getRefreshToken = async (refreshToken) => {
 }
 
 const updateUserToken = async (db, event, token) => {
-	console.log("TOKEN: ", token)
 	try {
-		const user = await db.users.findOne({})
+		db.users.findOne({}, (err, user) => {
+			if (err) {
+				console.log('USER LOOKUP FOR TOKEN ERROR: ', err)
+			} else if (user) {
+				try {
+					db.users.update(
+						{ _id: user._id },
+						{ $set: { twitchAccessToken: token.access_token } },
+						{}
+					)
 
-		if (!user) {
-			console.log('No existing user found.')
-			return { error: 'No existing user found.' }
-		}
-
-		// Update only the twitchAccessToken field
-		await db.users.update(
-			{ _id: user._id },
-			{ $set: { twitchAccessToken: token.access_token } },
-			{}
-		)
-
-		// Fetch the updated user data after updating the token
-		const updatedUser = await db.users.findOne({ _id: user._id })
-
-		console.log(`Updated user with new token: ${JSON.stringify(updatedUser)}`)
-
-		// Emit 'userDataUpdated' event after successfully updating the user data
-		event.reply('userDataUpdated', updatedUser)
-
-		return {
-			success: true,
-			message: 'User token successfully updated',
-			data: updatedUser,
-		}
+					// Fetch the updated user data after updating the token
+					db.users.findOne({ _id: user._id }, (err, user) => {
+						if (err) {
+							console.log('USER LOOKUP ERROR AFTER TOKEN UPDATE: ', err)
+						} else if (user) {
+							event.reply('userDataUpdated', user)
+							return {
+								success: true,
+								message: 'User token successfully updated',
+								data: user,
+							}
+						}
+					})
+				} catch (error) {
+					console.log('ERROR UPDATING TOKEN: ', error)
+				}
+			}
+		})
 	} catch (error) {
 		console.error('Error updating the user token:', error)
 		return { success: false, error: 'Error updating user token' }
 	}
 }
+
+// const updateUserToken = async (db, event, token) => {
+// 	console.log('TOKEN: ', token)
+// 	try {
+// 		const user = await db.users.findOne({})
+
+// 		if (!user) {
+// 			console.log('No existing user found.')
+// 			return { error: 'No existing user found.' }
+// 		}
+
+// 		// Update only the twitchAccessToken field
+// 		await db.users.update(
+// 			{ _id: user._id },
+// 			{ $set: { twitchAccessToken: token.access_token } },
+// 			{}
+// 		)
+
+// 		// Fetch the updated user data after updating the token
+// 		const updatedUser = await db.users.findOne({ _id: user._id })
+
+// 		console.log(`Updated user with new token: ${JSON.stringify(updatedUser)}`)
+
+// 		// Emit 'userDataUpdated' event after successfully updating the user data
+// 		event.reply('userDataUpdated', updatedUser)
+
+// 		return {
+// 			success: true,
+// 			message: 'User token successfully updated',
+// 			data: updatedUser,
+// 		}
+// 	} catch (error) {
+// 		console.error('Error updating the user token:', error)
+// 		return { success: false, error: 'Error updating user token' }
+// 	}
+// }
 
 module.exports = { exchangeCodeForToken, getRefreshToken, updateUserToken }

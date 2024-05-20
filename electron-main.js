@@ -17,8 +17,8 @@ const OBSWebSocket = require('obs-websocket-js').default
 const dotenv = require('dotenv')
 const WebSocket = require('ws')
 
-// const isDev = require('electron-is-dev')
-const isDev = false
+const isDev = require('electron-is-dev')
+// const isDev = false
 
 dotenv.config()
 
@@ -245,7 +245,7 @@ ipcMain.on('startBotScript', async (event, arg) => {
 			return
 		} else {
 			console.log('*** await updateUserToken ***')
-			await updateUserToken(db, event, currentAccessToken)			
+			await updateUserToken(db, event, currentAccessToken)
 			console.log('*** updateUserToken COMPLETE ***')
 		}
 	} catch (error) {
@@ -274,7 +274,7 @@ ipcMain.on('startBotScript', async (event, arg) => {
 	// 	}
 	// }
 
-	console.log("--- loading bot process to spawn ---")
+	console.log('--- loading bot process to spawn ---')
 	botProcess = spawn('node', [scriptPath])
 
 	botProcess.stdout.on('data', (data) => {
@@ -290,7 +290,7 @@ ipcMain.on('startBotScript', async (event, arg) => {
 			const botResponse = {
 				success: true,
 				message: parsedMessage,
-				data: arg
+				data: arg,
 			}
 			event.reply('startBotResponse', botResponse)
 		} else if (parsedMessage.toLowerCase().includes('error')) {
@@ -362,10 +362,10 @@ ipcMain.on('submitUserData', async (event, arg) => {
 
 	if (isValidTwitchURL && isValidTwitchChatbotURL && isValidSeratoURL) {
 		try {
-			console.log("ARG: ", arg)
+			console.log('ARG: ', arg)
 			const data = await updateUserData(db, event, arg)
 			// Emit an event to notify that the user data has been updated
-			console.log("DATA: ", data)
+			console.log('UPDATE USER DATA RESPONSE: ', data)
 			mainWindow.webContents.send('userDataUpdated')
 			// Reply to the renderer process with success response
 			event.reply('userDataResponse', data)
