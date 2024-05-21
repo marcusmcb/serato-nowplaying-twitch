@@ -139,6 +139,7 @@ server.get('/auth/twitch/callback', async (req, res) => {
 })
 
 ipcMain.on('getUserData', async (event, arg) => {
+	console.log("-----------------------------")
 	console.log('*** getUserData is called ***')
 	if (fs.existsSync('users.db')) {
 		// console.log('users.db exists! Fetching the user information...')
@@ -156,6 +157,7 @@ ipcMain.on('getUserData', async (event, arg) => {
 			if (user) {
 				// console.log(user)
 				console.log('*** user data is found ***')
+				console.log("-----------------------------")
 				const responseObject = {
 					success: true,
 					data: user,
@@ -362,10 +364,11 @@ ipcMain.on('submitUserData', async (event, arg) => {
 
 	if (isValidTwitchURL && isValidTwitchChatbotURL && isValidSeratoURL) {
 		try {
-			console.log('ARG: ', arg)
+			// console.log('ARG: ', arg)
 			const data = await updateUserData(db, event, arg)
+			console.log("--- await updateUserData complete ---")
 			// Emit an event to notify that the user data has been updated
-			console.log('UPDATE USER DATA RESPONSE: ', data)
+			// console.log('UPDATE USER DATA RESPONSE: ', data)
 			mainWindow.webContents.send('userDataUpdated')
 			// Reply to the renderer process with success response
 			event.reply('userDataResponse', data)
