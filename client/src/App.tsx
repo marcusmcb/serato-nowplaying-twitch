@@ -61,17 +61,26 @@ const App = (): JSX.Element => {
 			ipcRenderer.send('getUserData', {})
 			ipcRenderer.once('getUserDataResponse', (response) => {
 				if (response && Object.keys(response.data).length > 0) {
-					console.log("HAS VALUES")
+					console.log('HAS VALUES')
 					setFormData(response.data)
 					setIsObsResponseEnabled(response.data.isObsResponseEnabled)
 					setIsIntervalEnabled(response.data.isIntervalEnabled)
 					setIsReportEnabled(response.data.isReportEnabled)
-					setIsAuthorized(!!response.data.appAuthorizationCode)					
+					setIsAuthorized(!!response.data.appAuthorizationCode)
+					setIsConnectionReady(
+						// Check if all necessary fields are filled for connection
+						!!response.data.twitchChannelName &&
+							!!response.data.twitchChatbotName &&
+							!!response.data.seratoDisplayName
+					)
 				} else {
-					console.log("NO VALUES STORED")
+					console.log('NO VALUES STORED')
 				}
-				console.log("USER DATA? ")
+				console.log('USER DATA? ')
 				console.log(response.data)
+				return () => {
+					window.electron.ipcRenderer.removeAllListeners('getUserDataResponse')
+				}
 			})
 		}
 	}, [])
@@ -125,7 +134,7 @@ const App = (): JSX.Element => {
 	// 		ipcRenderer.on('userDataUpdated', (response) => {
 	// 			console.log("--- userDataUpdated called from client ---")
 	// 			handleUserDataUpdate(response)
-	// 		})			
+	// 		})
 	// 		// Fetch initial user data
 	// 		fetchData()
 	// 		console.log("*** fetchData called ***")
@@ -187,7 +196,7 @@ const App = (): JSX.Element => {
 	const handleConnect = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		setMessage('')
 		setMessage('Connecting to Twitch...')
-		console.log("*** sending startBotScript ***")
+		console.log('*** sending startBotScript ***')
 		ipcRenderer.send('startBotScript', {
 			twitchChannelName: formData.twitchChannelName,
 			obsWebsocketAddress: formData.obsWebsocketAddress
@@ -199,12 +208,12 @@ const App = (): JSX.Element => {
 			isObsResponseEnabled: formData.isObsResponseEnabled,
 			twitchRefreshToken: formData.twitchRefreshToken,
 		})
-		console.log("*** startBotScript sent; awaiting response ***")
+		console.log('*** startBotScript sent; awaiting response ***')
 		ipcRenderer.on('startBotResponse', (response) => {
 			if (response && response.success) {
-				console.log("--- successfully startBotResponse ---")
-				setMessage('npChatbot is connected to your Twitch chat')				
-				setIsBotConnected(true)				
+				console.log('--- successfully startBotResponse ---')
+				setMessage('npChatbot is connected to your Twitch chat')
+				setIsBotConnected(true)
 			} else if (response && response.error) {
 				console.error(response.error)
 				setMessage(response.error)
