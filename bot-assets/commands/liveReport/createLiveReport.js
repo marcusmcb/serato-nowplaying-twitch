@@ -5,7 +5,7 @@ const calculateAverageTime = require('../liveReport/LiveReportHelpers/calculateA
 const {
 	extractPlaylistName,
 	parseDateAndTime,
-	createPlaylistDate,	
+	createPlaylistDate,
 	formatTimeSincePlayedString,
 	calculateTimeDifference,
 	compareTimes,
@@ -97,8 +97,8 @@ const createLiveReport = async (url) => {
 		const longestTrackValue = Math.max(...msArray)
 		const remainingArray = removeLargestNumber(msArray)
 		const secondLongestTrackValue = Math.max(...remainingArray)
-    const actualAverage = calculateAverageMilliseconds(msArray)
-    const adjustedAverage = calculateAverageMilliseconds(remainingArray)
+		const actualAverage = calculateAverageMilliseconds(msArray)
+		const adjustedAverage = calculateAverageMilliseconds(remainingArray)
 
 
 		// console.log(longestTrackValue)
@@ -107,11 +107,11 @@ const createLiveReport = async (url) => {
 		// console.log(msArray)
 		// console.log(remainingArray)
 
-    // console.log(actualAverage)
-    // console.log(adjustedAverage)
+		// console.log(actualAverage)
+		// console.log(adjustedAverage)
 
 		// add method to calculate average time as MS for remainingArray
-		
+
 		// pass average time in MS from remaining array to
 		// isDoubleOrMore and update method to  check if
 		// longestTrackValue is more than double average time

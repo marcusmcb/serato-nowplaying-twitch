@@ -7,9 +7,7 @@ const {
 const { obs, connectToOBS } = require('./obs/obsConnection')
 const { returnRefreshTokenConfig } = require('./auth/accessTokenConfig')
 
-const initializeBot = async (config) => {
-	// console.log('CONFIG: ', config)
-	// const twitchOAuthKey = await decryptCredential(config.encryptedKey)
+const initializeBot = async (config) => {	
 	let userCommandHistory = {}
 	let urlCommandCooldown = false
 	const COOLDOWN_DURATION = 5000
@@ -18,17 +16,13 @@ const initializeBot = async (config) => {
 
 	const seratoDisplayName = config.seratoDisplayName.replaceAll(" ", "_")
 
-	// const url = `https://serato.com/playlists/${config.seratoDisplayName}/3-1-2024`
-	const url = `https://serato.com/playlists/${seratoDisplayName}/live`
+	const url = `https://serato.com/playlists/DJ_Marcus_McBride/5-25-2024`
+	// const url = `https://serato.com/playlists/${seratoDisplayName}/live`
 
 	const refreshTokenConfig = returnRefreshTokenConfig(
 		config,
 		config.twitchAccessToken
 	)
-
-	// console.log('----------------------')
-	// console.log('REFRESH TOKEN CONFIG: ')
-	// console.log(refreshTokenConfig)
 
 	const client = new tmi.Client(refreshTokenConfig)
 
