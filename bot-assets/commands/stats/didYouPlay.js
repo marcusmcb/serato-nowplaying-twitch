@@ -29,7 +29,7 @@ const dypCommand = async (channel, tags, args, client, obs, url, config) => {
 	if (args.length === 0) {
 		client.say(
 			channel,
-			`Add an artist's name after the command to see if ${tags.username} has played them yet in this stream.`
+			`Add an artist's name after the command to see if ${config.twitchChannelName} has played them yet in this stream.`
 		)
 	} else {
 		try {
@@ -70,13 +70,13 @@ const dypCommand = async (channel, tags, args, client, obs, url, config) => {
 				if (searchResults.length === 0) {
 					client.say(
 						channel,
-						`${tags.username} has not played '${searchItem}' so far in this stream.`
+						`${config.twitchChannelName} has not played '${searchItem}' so far in this stream.`
 					)
 					if (config.isObsResponseEnabled === true) {
 						obs.call('SetInputSettings', {
 							inputName: 'obs-chat-response',
 							inputSettings: {
-								text: `${tags.username} has not played\n'${searchItem}' so far in this stream.`,
+								text: `${config.twitchChannelName} has not played\n'${searchItem}' so far in this stream.`,
 							},
 						})
 						clearOBSResponse(obs, obsClearDisplayTime)
@@ -95,13 +95,13 @@ const dypCommand = async (channel, tags, args, client, obs, url, config) => {
 						// add lastSongPlayed logic check here
 						client.say(
 							channel,
-							`${tags.username} has played '${searchItem}' ${searchResults.length} time so far in this stream. The last '${searchTerm}' song was \n${lastSongPlayed}, played ${timeSincePlayed} ago.`
+							`${config.twitchChannelName} has played '${searchItem}' ${searchResults.length} time so far in this stream. The last '${searchTerm}' song was \n${lastSongPlayed}, played ${timeSincePlayed} ago.`
 						)
 						if (config.isObsResponseEnabled === true) {
 							obs.call('SetInputSettings', {
 								inputName: 'obs-chat-response',
 								inputSettings: {
-									text: `${tags.username} has played\n'${searchItem}' ${searchResults.length} time so far in this stream.\n\nThe last ${searchTerm} song was: \n${lastSongPlayed} \n* played ${timeSincePlayed} ago`,
+									text: `${config.twitchChannelName} has played\n'${searchItem}' ${searchResults.length} time so far in this stream.\n\nThe last ${searchTerm} song was: \n${lastSongPlayed} \n* played ${timeSincePlayed} ago`,
 								},
 							})
 							clearOBSResponse(obs, obsClearDisplayTime)
@@ -109,13 +109,13 @@ const dypCommand = async (channel, tags, args, client, obs, url, config) => {
 					} else {
 						client.say(
 							channel,
-							`${tags.username} has played '${searchItem}' ${searchResults.length} times so far in this stream. The last ${searchTerm} song played was \n${lastSongPlayed}, played ${timeSincePlayed} ago.`
+							`${config.twitchChannelName} has played '${searchItem}' ${searchResults.length} times so far in this stream. The last ${searchTerm} song played was \n${lastSongPlayed}, played ${timeSincePlayed} ago.`
 						)
 						if (config.isObsResponseEnabled === true) {
 							obs.call('SetInputSettings', {
 								inputName: 'obs-chat-response',
 								inputSettings: {
-									text: `${tags.username} has played\n'${searchItem}' ${searchResults.length} times so far in this stream.\n\nThe last ${searchTerm} song played was: \n${lastSongPlayed} \n* played ${timeSincePlayed} ago`,
+									text: `${config.twitchChannelName} has played\n'${searchItem}' ${searchResults.length} times so far in this stream.\n\nThe last ${searchTerm} song played was: \n${lastSongPlayed} \n* played ${timeSincePlayed} ago`,
 								},
 							})
 							clearOBSResponse(obs, obsClearDisplayTime)

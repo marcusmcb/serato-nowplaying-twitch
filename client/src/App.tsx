@@ -57,33 +57,38 @@ const App = (): JSX.Element => {
 	}, [])
 
 	useEffect(() => {
-		if (ipcRenderer) {
-			ipcRenderer.send('getUserData', {})
-			ipcRenderer.once('getUserDataResponse', (response) => {
+		const ipcRendererInstance = window.electron?.ipcRenderer;
+	
+		if (ipcRendererInstance) {
+			ipcRendererInstance.send('getUserData', {});
+			const handleGetUserDataResponse = (response: any) => {
 				if (response && Object.keys(response.data).length > 0) {
-					console.log('HAS VALUES')
-					setFormData(response.data)
-					setIsObsResponseEnabled(response.data.isObsResponseEnabled)
-					setIsIntervalEnabled(response.data.isIntervalEnabled)
-					setIsReportEnabled(response.data.isReportEnabled)
-					setIsAuthorized(!!response.data.appAuthorizationCode)
+					console.log('HAS VALUES');
+					setFormData(response.data);
+					setIsObsResponseEnabled(response.data.isObsResponseEnabled);
+					setIsIntervalEnabled(response.data.isIntervalEnabled);
+					setIsReportEnabled(response.data.isReportEnabled);
+					setIsAuthorized(!!response.data.appAuthorizationCode);
 					setIsConnectionReady(
 						// Check if all necessary fields are filled for connection
 						!!response.data.twitchChannelName &&
-							!!response.data.twitchChatbotName &&
-							!!response.data.seratoDisplayName
-					)
+						!!response.data.twitchChatbotName &&
+						!!response.data.seratoDisplayName
+					);
 				} else {
-					console.log('NO VALUES STORED')
+					console.log('NO VALUES STORED');
 				}
-				console.log('USER DATA? ')
-				console.log(response.data)
-				return () => {
-					window.electron.ipcRenderer.removeAllListeners('getUserDataResponse')
-				}
-			})
+				console.log('USER DATA? ');
+				console.log(response.data);
+			};
+	
+			ipcRendererInstance.once('getUserDataResponse', handleGetUserDataResponse);
+	
+			return () => {
+				ipcRendererInstance.removeAllListeners('getUserDataResponse');
+			};
 		}
-	}, [])
+	}, []);
 
 	// useEffect(() => {
 	// 	const handleUserDataUpdate = (data: any) => {

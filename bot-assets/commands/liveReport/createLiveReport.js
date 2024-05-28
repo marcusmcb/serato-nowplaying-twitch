@@ -237,13 +237,13 @@ const createLiveReport = async (url) => {
 			playlist_title: playlistTitle,
 			track_array: tracksPlayed,
 		}
-		console.log("---------------")
-		console.log("")
-		console.log("Serato Playlist Report: ")
-		console.log("")
-		console.log(seratoLiveReport)
-		console.log("")
-		console.log("---------------")
+		// console.log("---------------")
+		// console.log("")
+		// console.log("Serato Playlist Report: ")
+		// console.log("")
+		// console.log(seratoLiveReport)
+		// console.log("")
+		// console.log("---------------")
 		return seratoLiveReport
 	} catch (err) {
 		console.log("Error creating Serato Live report: ", err)

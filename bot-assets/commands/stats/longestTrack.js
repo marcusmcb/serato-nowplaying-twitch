@@ -3,7 +3,7 @@ const clearOBSResponse = require('../../../obs/obsHelpers/obsHelpers')
 const { NO_LIVE_DATA_MESSAGE, ERROR_MESSAGE } = require('../../constants/constants')
 
 const displayLongestTrackMessage = (obs, tags, reportData, config) => {
-	let message = `Longest song in ${tags.username}'s set so far : \n\n${reportData.longest_track.name}\n${reportData.longest_track.length_value} (played ${reportData.longest_track.time_since_played_string})`
+	let message = `Longest song in ${config.twitchChannelName}'s set so far : \n\n${reportData.longest_track.name}\n${reportData.longest_track.length_value} (played ${reportData.longest_track.time_since_played_string})`
 	obs.call('SetInputSettings', {
 		inputName: 'obs-chat-response',
 		inputSettings: {
@@ -32,7 +32,7 @@ const longestTrackCommand = async (
 		} else {
 			client.say(
 				channel,
-				`The longest song in ${tags.username}'s set (so far) is ${reportData.longest_track.name} (${reportData.longest_track.length_value}), played ${reportData.longest_track.time_since_played_string}.`
+				`The longest song in ${config.twitchChannelName}'s set (so far) is ${reportData.longest_track.name} (${reportData.longest_track.length_value}), played ${reportData.longest_track.time_since_played_string}.`
 			)
 			if (config.isObsResponseEnabled === true) {
 				displayLongestTrackMessage(obs, tags, reportData, config)

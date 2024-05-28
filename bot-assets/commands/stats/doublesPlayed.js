@@ -27,7 +27,7 @@ const doublesCommand = async (
 				obs.call('SetInputSettings', {
 					inputName: 'obs-chat-response',
 					inputSettings: {
-						text: `${tags.username} has not rocked doubles so far in this set.`,
+						text: `${config.twitchChannelName} has not rocked doubles so far in this set.`,
 					},
 				})
 				clearOBSResponse(obs, config.obsClearDisplayTime)
@@ -43,7 +43,7 @@ const doublesCommand = async (
 				obs.call('SetInputSettings', {
 					inputName: 'obs-chat-response',
 					inputSettings: {
-						text: `${tags.username} has rocked doubles\n${
+						text: `${config.twitchChannelName} has rocked doubles\n${
 							reportData.doubles_played.length
 						} time(s) so far in this set.\n\nLast song he played doubles with:\n${
 							reportData.doubles_played[reportData.doubles_played.length - 1]

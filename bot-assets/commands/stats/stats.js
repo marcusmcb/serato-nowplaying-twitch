@@ -14,7 +14,7 @@ const displayStatsMessage = (obs, tags, reportData, config, trendIndicator) => {
 	let differenceParsed = parseFloat(reportData.average_change.difference)
 		.toString()
 		.slice(0, -1)
-	const message = `${tags.username} has played ${
+	const message = `${config.twitchChannelName} has played ${
 		reportData.total_tracks_played
 	} songs so far\nin this stream at an average of ${
 		reportData.average_track_length
@@ -32,6 +32,7 @@ const displayStatsMessage = (obs, tags, reportData, config, trendIndicator) => {
 }
 
 const statsCommand = async (channel, tags, args, client, obs, url, config) => {
+	console.log(tags['display-name'])
 	try {
 		const reportData = await createLiveReport(url)
 		if (reportData === undefined) {
@@ -42,7 +43,7 @@ const statsCommand = async (channel, tags, args, client, obs, url, config) => {
 			return
 		}
 
-		sendChatMessage(client, channel, tags.username, reportData)
+		sendChatMessage(client, channel, config.twitchChannelName, reportData)
 
 		if (config.isObsResponseEnabled === true) {
 			if (reportData.average_change.isLarger) {

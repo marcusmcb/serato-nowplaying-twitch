@@ -79,11 +79,11 @@ const handleStart = (
 	tags
 ) => {
 	const firstTrackPlayed = reportData.track_log[0]
-	const message = `${tags.username} kicked off this stream with ${firstTrackPlayed.trackId}`
+	const message = `${config.twitchChannelName} kicked off this stream with ${firstTrackPlayed.trackId}`
 	client.say(channel, message)
 	updateOBSWithText(
 		obs,
-		`${tags.username} kicked off this stream with :\n${firstTrackPlayed.trackId}`,
+		`${config.twitchChannelName} kicked off this stream with :\n${firstTrackPlayed.trackId}`,
 		obsClearDisplayTime,
 		config
 	)
@@ -105,30 +105,30 @@ const handleVibeCheck = (
 	)
 	if (hours > 0) {
 		if (hours > 1) {
-			const message = `${tags.username} played "${vibeCheckSelection.trackId}" ${hours} hours & ${minutes} minutes ago in this stream.`
+			const message = `${config.twitchChannelName} played "${vibeCheckSelection.trackId}" ${hours} hours & ${minutes} minutes ago in this stream.`
 			client.say(channel, message)
 			updateOBSWithText(
 				obs,
-				`vibecheck:\n\n${tags.username} played\n"${vibeCheckSelection.trackId}"\n${hours} hours & ${minutes} minutes ago in this stream.`,
+				`vibecheck:\n\n${config.twitchChannelName} played\n"${vibeCheckSelection.trackId}"\n${hours} hours & ${minutes} minutes ago in this stream.`,
 				obsClearDisplayTime,
 				config
 			)
 		} else {
-			const message = `${tags.username} played "${vibeCheckSelection.trackId}" ${hours} hour & ${minutes} minutes ago in this stream.`
+			const message = `${config.twitchChannelName} played "${vibeCheckSelection.trackId}" ${hours} hour & ${minutes} minutes ago in this stream.`
 			client.say(channel, message)
 			updateOBSWithText(
 				obs,
-				`vibecheck:\n\n${tags.username} played\n"${vibeCheckSelection.trackId}"\n${hours} hour & ${minutes} minutes ago in this stream.`,
+				`vibecheck:\n\n${config.twitchChannelName} played\n"${vibeCheckSelection.trackId}"\n${hours} hour & ${minutes} minutes ago in this stream.`,
 				obsClearDisplayTime,
 				config
 			)
 		}
 	} else {
-		const message = `${tags.username} played "${vibeCheckSelection.trackId}" ${minutes} minutes ago in this stream.`
+		const message = `${config.twitchChannelName} played "${vibeCheckSelection.trackId}" ${minutes} minutes ago in this stream.`
 		client.say(channel, message)
 		updateOBSWithText(
 			obs,
-			`vibe check:\n\n${tags.username} played\n"${vibeCheckSelection.trackId}"\n${minutes} minutes ago in this stream.`,
+			`vibe check:\n\n${config.twitchChannelName} played\n"${vibeCheckSelection.trackId}"\n${minutes} minutes ago in this stream.`,
 			obsClearDisplayTime,
 			config
 		)
@@ -144,6 +144,10 @@ const COMMAND_MAP = {
 }
 
 const npCommands = async (channel, tags, args, client, obs, url, config) => {
+	console.log('npCommands')
+	console.log(tags['display-name'])
+	console.log(config)
+	console.log(channel)
 	const obsClearDisplayTime = config.obsClearDisplayTime	
 	try {
 		const reportData = await createLiveReport(url)
