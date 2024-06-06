@@ -55,7 +55,7 @@ const App = (): JSX.Element => {
 			socket.close()
 		}
 	}, [])
-
+	
 	useEffect(() => {
 		const ipcRendererInstance = window.electron?.ipcRenderer;
 	
@@ -78,7 +78,7 @@ const App = (): JSX.Element => {
 				} else {
 					console.log('NO VALUES STORED');
 				}
-				console.log('USER DATA? ');
+				console.log('USER DATA: ');
 				console.log(response.data);
 			};
 	

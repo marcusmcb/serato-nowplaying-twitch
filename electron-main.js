@@ -24,6 +24,7 @@ dotenv.config()
 
 require('electron-reload')(__dirname, {
 	electron: require(`${__dirname}/node_modules/electron`),
+	ignored: /node_modules|[\/\\]\.|users\.db/,
 })
 
 const {
@@ -139,7 +140,7 @@ server.get('/auth/twitch/callback', async (req, res) => {
 })
 
 ipcMain.on('getUserData', async (event, arg) => {
-	console.log("-----------------------------")
+	console.log('-----------------------------')
 	console.log('*** getUserData is called ***')
 	if (fs.existsSync('users.db')) {
 		// console.log('users.db exists! Fetching the user information...')
@@ -157,7 +158,7 @@ ipcMain.on('getUserData', async (event, arg) => {
 			if (user) {
 				// console.log(user)
 				console.log('*** user data is found ***')
-				console.log("-----------------------------")
+				console.log('-----------------------------')
 				const responseObject = {
 					success: true,
 					data: user,
@@ -366,7 +367,7 @@ ipcMain.on('submitUserData', async (event, arg) => {
 		try {
 			// console.log('ARG: ', arg)
 			const data = await updateUserData(db, event, arg)
-			console.log("--- await updateUserData complete ---")
+			console.log('--- await updateUserData complete ---')
 			// Emit an event to notify that the user data has been updated
 			// console.log('UPDATE USER DATA RESPONSE: ', data)
 			mainWindow.webContents.send('userDataUpdated')
