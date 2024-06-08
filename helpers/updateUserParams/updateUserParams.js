@@ -44,13 +44,11 @@ const updateUserData = async (db, event, arg) => {
 					}
 				}
 			)
-		})
-
-		// console.log(`Updated user with new data: ${JSON.stringify(updatedUser)}`)
-		console.log("------------------------")
-		console.log("UPDATED USER: ")
-		console.log(updatedUser)
-		console.log("------------------------")
+		})		
+		// console.log("------------------------")
+		// console.log("UPDATED USER: ")
+		// console.log(updatedUser)
+		// console.log("------------------------")
 		console.log("--- user data update is complete ---")
 		event.reply('userDataUpdated', updatedUser)
 

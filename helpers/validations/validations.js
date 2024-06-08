@@ -24,6 +24,11 @@ const seratoURLValidityCheck = async (seratoDisplayName) => {
 
 // helper method to validate Twitch URL
 const twitchURLValidityCheck = async (twitchDisplayName) => {
+	
+	console.log("-----------------")
+	console.log("twitchDisplayName: ", twitchDisplayName)
+	console.log("-----------------")
+
 	const url = `https://www.twitch.tv/${twitchDisplayName}`
 	try {
 		const response = await axios.get(url)
@@ -35,7 +40,8 @@ const twitchURLValidityCheck = async (twitchDisplayName) => {
 		const exists = pattern.test(pageContent)
 		// if the pattern is found, we can assume the channel exists
 		// the pattern is not returned with invalid Twitch URL
-		if (exists) {			
+		if (exists) {		
+			console.log("Twitch user page exists.")	
 			return true
 		} else {
 			console.log("Twitch user page does not exist.")

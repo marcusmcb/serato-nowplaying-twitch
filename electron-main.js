@@ -142,8 +142,7 @@ server.get('/auth/twitch/callback', async (req, res) => {
 ipcMain.on('getUserData', async (event, arg) => {
 	console.log('-----------------------------')
 	console.log('*** getUserData is called ***')
-	if (fs.existsSync('users.db')) {
-		// console.log('users.db exists! Fetching the user information...')
+	if (fs.existsSync('users.db')) {		
 		try {
 			const user = await new Promise((resolve, reject) => {
 				db.users.findOne({}, (err, user) => {
@@ -155,18 +154,13 @@ ipcMain.on('getUserData', async (event, arg) => {
 				})
 			})
 
-			if (user) {
-				// console.log(user)
-				console.log('*** user data is found ***')
-				console.log('-----------------------------')
+			if (user) {				
+				console.log('*** user data is found ***')				
 				const responseObject = {
 					success: true,
 					data: user,
-				}
-				// console.log("RESPONSE OBJECT: ")
-				// console.log(responseObject)
-				event.reply('getUserDataResponse', responseObject)
-				// event.reply('getUserDataResponse', { data: 'data'} )
+				}				
+				event.reply('getUserDataResponse', responseObject)				
 			} else {
 				console.log('No user found in the database.')
 				event.reply('getUserDataResponse', {
@@ -220,7 +214,7 @@ ipcMain.on('startBotScript', async (event, arg) => {
 			console.log('Connected to OBS properly')
 			await obs.disconnect()
 			console.log('OBS validatiion passed')
-			// add logic to remove obs object is properly returned
+			// add logic to remove obs object once it's validated
 		} catch (error) {
 			errorResponse.error = errorHandler(error)
 			event.reply('startBotResponse', errorResponse)
@@ -259,23 +253,7 @@ ipcMain.on('startBotScript', async (event, arg) => {
 		}
 		event.reply('startBotResponse', errorResponse)
 		return
-	}
-
-	// const currentAccessToken = await getRefreshToken(arg.twitchRefreshToken)
-
-	// if (currentAccessToken.status === 400) {
-	// 	errorResponse.error = errorHandler(currentAccessToken.message)
-	// 	console.log('Error Response Obj: ', errorResponse)
-	// 	event.reply('startBotResponse', errorResponse)
-	// 	return
-	// } else {
-	// 	try {
-	// 		await updateUserToken(currentAccessToken)
-	// 	} catch (error) {
-	// 		console.error('Failed to update user token: ', error)
-	// 		return
-	// 	}
-	// }
+	}	
 
 	console.log('--- loading bot process to spawn ---')
 	botProcess = spawn('node', [scriptPath])
@@ -353,6 +331,10 @@ ipcMain.on('userDataUpdated', () => {
 })
 
 ipcMain.on('submitUserData', async (event, arg) => {
+	console.log("*****************")
+	console.log("submitUserData ARGS: ")
+	console.log(arg)
+	console.log("*****************")
 	// Replace white space with underscores in Serato URL string for validation check
 	const seratoDisplayName = arg.seratoDisplayName.replaceAll(' ', '_')
 
@@ -363,19 +345,17 @@ ipcMain.on('submitUserData', async (event, arg) => {
 		arg.twitchChatbotName
 	)
 
+	console.log("isValidSeratoURL: ", isValidSeratoURL)
+	console.log("isValidTwitchURL: ", isValidTwitchURL)
+
 	if (isValidTwitchURL && isValidTwitchChatbotURL && isValidSeratoURL) {
 		try {
-			// console.log('ARG: ', arg)
 			const data = await updateUserData(db, event, arg)
 			console.log('--- await updateUserData complete ---')
-			// Emit an event to notify that the user data has been updated
-			// console.log('UPDATE USER DATA RESPONSE: ', data)
 			mainWindow.webContents.send('userDataUpdated')
-			// Reply to the renderer process with success response
 			event.reply('userDataResponse', data)
 		} catch (error) {
 			console.error('User data update error: ', error)
-			// Reply to the renderer process with error response
 			event.reply('userDataResponse', error)
 		}
 	} else if (!isValidTwitchURL) {
@@ -395,7 +375,7 @@ const createWindow = () => {
 		webPreferences: {
 			preload: path.join(__dirname, './scripts/preload.js'),
 			nodeIntegration: false,
-			contextIsolation: true, // Set to true in production
+			contextIsolation: true, 
 		},
 	})
 
@@ -407,7 +387,6 @@ const createWindow = () => {
 	mainWindow.webContents.openDevTools()
 }
 
-// Electron app event handlers
 app.on('ready', () => {
 	protocol.registerHttpProtocol('npchatbot-app', (request, callback) => {
 		const url = request.url
