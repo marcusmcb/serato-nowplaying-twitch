@@ -37,7 +37,10 @@ const twitchURLValidityCheck = async (twitchDisplayName) => {
 			`content=["']twitch\\.tv/${twitchDisplayName}["']`,
 			'i'
 		)		
+		console.log("pattern: ", pattern)
+		console.log("-----------------")
 		const exists = pattern.test(pageContent)
+		console.log("exists? : ", exists)
 		// if the pattern is found, we can assume the channel exists
 		// the pattern is not returned with invalid Twitch URL
 		if (exists) {		
