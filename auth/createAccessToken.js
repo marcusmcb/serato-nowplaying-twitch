@@ -22,6 +22,8 @@ const getRefreshToken = async (refreshToken) => {
 
 	try {
 		const response = await axios.post(`${process.env.TWITCH_AUTH_URL}`, params)
+		console.log("TOKEN DATA: ")
+		console.log(response.data)
 		return response.data
 	} catch (error) {
 		console.log('REFRESH TOKEN ERROR: ', error.response.data)

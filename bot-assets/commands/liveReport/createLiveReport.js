@@ -104,8 +104,8 @@ const createLiveReport = async (url) => {
 		// console.log(longestTrackValue)
 		// console.log(secondLongestTrackValue)
 
-		// console.log(msArray)
-		// console.log(remainingArray)
+		console.log(msArray)
+		console.log(remainingArray)
 
 		// console.log(actualAverage)
 		// console.log(adjustedAverage)
@@ -129,7 +129,46 @@ const createLiveReport = async (url) => {
 			previousAverageTrackLength
 		)
 
+		// * * * * * * * * * * * * * * * 
+
+		// determine best method to account for track length outliers
+		// that are either abnormally long or short
+
+		// * * * * * * * * * * * * * * * 
+
+		// longest track length behavior explained:
+
+		// this is a quirk of the live playlist feature in Serato that
+		// occurs when the current track playing is stopped and another
+		// track is not immediately played thereafter.  Serato's live
+		// playlist does not account for this, logging only the time that
+		// each track begins playing.  if another track is not played
+		// after the current one (ex, the DJ stops the music to speak
+		// on mic) the "gap time" in the live playlist is simply added
+		// to whichever song the DJ last played before the pause/break
+
+		// this behavior results in an average track length that isn't
+		// entirely accurate when used in the !stats command.  to account
+		// for this, a helper method should be added to make the correct
+		// determination for which averaging method should be used
+
+		// * * * * * * * * * * * * * * * 
+
+		// shortest track length behavior explained:
+
+		// by default any track with a length of less than 30 seconds
+		// should be discarded when calculating the average track length
+		// for the set (detailed reasoning explained in comments below)
+
+		// * * * * * * * * * * * * * * * 
+
 		// longest track played
+
+		// if lengthy track outliers are present in the playlist data,
+		// use an alternate array of timeDiffs with the outlier
+		// values removed when setting "max" value below
+		// (likewise for the maxIndex value)
+
 		let longestSeconds
 		let max = Math.max(...timeDiffs)
 		let maxIndex = timeDiffs.indexOf(max)
@@ -146,7 +185,23 @@ const createLiveReport = async (url) => {
 			longestSeconds = tempLongestSeconds
 		}
 
-		// shortest track played
+		// * * * * * * * * * * * * * * * 
+
+		// shortest track played logic
+
+		// set a cutoff value to qualify a track as "played"
+		// to account for live playlist errors that occur when
+		// a DJ momentarily plays a portion of a track (cut sesssions, etc)
+		// without playing it in full thereafter
+
+		// any tracks below the cutoff length should be removed
+		// from the timeDiffs array and used to calculate the
+		// shorest track played below
+
+		// add cutoff length as a dynamic value that can be set
+		// by the user in the UI with a default value of 30 seconds
+		// which will be used in dev/testing
+
 		let shortestSeconds
 		let min = Math.min(...timeDiffs)
 		let minIndex = timeDiffs.indexOf(min)

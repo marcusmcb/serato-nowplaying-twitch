@@ -33,6 +33,9 @@ const twitchURLValidityCheck = async (twitchDisplayName) => {
 	try {
 		const response = await axios.get(url)
 		const pageContent = response.data
+		// console.log("PAGE CONTENT: ")
+		// console.log(pageContent)
+		// console.log("* * * * * * * * * * * * * * *")
 		const pattern = new RegExp(
 			`content=["']twitch\\.tv/${twitchDisplayName}["']`,
 			'i'

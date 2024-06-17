@@ -16,13 +16,16 @@ const initializeBot = async (config) => {
 
 	const seratoDisplayName = config.seratoDisplayName.replaceAll(" ", "_")
 
-	const url = `https://serato.com/playlists/DJ_Marcus_McBride/5-25-2024`
+	const url = `https://serato.com/playlists/${seratoDisplayName}/6-13-2024`
 	// const url = `https://serato.com/playlists/${seratoDisplayName}/live`
 
 	const refreshTokenConfig = returnRefreshTokenConfig(
 		config,
 		config.twitchAccessToken
 	)
+
+	console.log("REFRESH TOKEN CONFIG: ")
+	console.log(refreshTokenConfig)
 
 	const client = new tmi.Client(refreshTokenConfig)
 
