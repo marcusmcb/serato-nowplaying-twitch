@@ -17,8 +17,8 @@ const OBSWebSocket = require('obs-websocket-js').default
 const dotenv = require('dotenv')
 const WebSocket = require('ws')
 
-const isDev = require('electron-is-dev')
-// const isDev = false
+// const isDev = require('electron-is-dev')
+const isDev = false
 
 dotenv.config()
 
