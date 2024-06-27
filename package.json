@@ -12,7 +12,7 @@
 		"pack": "npm run build:react && electron-builder --em.main=build/electron-main.js",
 		"dist": "npm run build:react && electron-builder"
 	},
-  "homepage": "./",
+	"homepage": "./",
 	"keywords": [
 		"twitch",
 		"serato",
@@ -29,17 +29,14 @@
 		"cheerio": "^1.0.0-rc.12",
 		"concurrently": "^8.2.0",
 		"cors": "^2.8.5",
-		"crypto": "^1.0.1",
 		"dotenv": "^16.3.1",
 		"electron-reload": "^2.0.0-alpha.1",
 		"express": "^4.18.2",
-		"keytar": "^7.9.0",
 		"nedb": "^1.8.0",
 		"nodemon": "^3.0.1",
 		"obs-websocket-js": "^5.0.3",
 		"react-scripts": "^5.0.1",
 		"tmi.js": "^1.8.5",
-		"wait-on": "^7.2.0",
 		"ws": "^8.16.0"
 	},
 	"engines": {
@@ -48,7 +45,6 @@
 	},
 	"devDependencies": {
 		"electron": "^26.6.10",
-		"electron-builder": "^24.13.3",
 		"electron-is-dev": "^2.0.0"
 	},
 	"build": {
@@ -63,13 +59,13 @@
 			"package.json",
 			"!node_modules",
 			"node_modules/**/*",
-      "./scripts/**/*",
-      "./auth/**/*",
-      "./utils/**/*",
-      "./bot-assets/**/*",
-      "./helpers/**/*",
-      "./obs/**/*",
-      "./types/**/*"
+			"./scripts/**/*",
+			"./auth/**/*",
+			"./utils/**/*",
+			"./bot-assets/**/*",
+			"./helpers/**/*",
+			"./obs/**/*",
+			"./types/**/*"
 		],
 		"extraResources": [
 			"assets/**/*"
