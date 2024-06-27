@@ -9,8 +9,10 @@
 		"start-electron": "electron .",
 		"dev": "concurrently --kill-others \"npm run start-client\" \"npm run start-electron\"",
 		"build:react": "cd client && npm run build && node ../utils/fix-paths.js",
-		"pack": "npm run build:react && electron-builder --em.main=build/electron-main.js",
-		"dist": "npm run build:react && electron-builder"
+		"package": "npm run build:react && electron-forge package",
+		"make": "npm run build:react && electron-forge make",
+		"publish": "electron-forge publish",
+		"lint": "echo \"No linting configured\""
 	},
 	"homepage": "./",
 	"keywords": [
@@ -29,8 +31,8 @@
 		"cheerio": "^1.0.0-rc.12",
 		"concurrently": "^8.2.0",
 		"cors": "^2.8.5",
-		"dotenv": "^16.3.1",
-		"electron-reload": "^2.0.0-alpha.1",
+		"dotenv": "^16.3.1",		
+		"electron-squirrel-startup": "^1.0.1",
 		"express": "^4.18.2",
 		"nedb": "^1.8.0",
 		"nodemon": "^3.0.1",
@@ -44,38 +46,45 @@
 		"npm": "9.x"
 	},
 	"devDependencies": {
+		"@electron-forge/cli": "^7.4.0",
+		"@electron-forge/maker-deb": "^7.4.0",
+		"@electron-forge/maker-rpm": "^7.4.0",
+		"@electron-forge/maker-squirrel": "^7.4.0",
+		"@electron-forge/maker-zip": "^7.4.0",
+		"@electron-forge/plugin-auto-unpack-natives": "^7.4.0",
+		"@electron-forge/plugin-fuses": "^7.4.0",
+		"@electron/fuses": "^1.8.0",
 		"electron": "^26.6.10",
+    "electron-reload": "^2.0.0-alpha.1",
 		"electron-is-dev": "^2.0.0"
 	},
-	"build": {
-		"appId": "npChatbot",
-		"productName": "npChatbot",
-		"directories": {
-			"buildResources": "assets"
-		},
-		"files": [
-			"client/build/**/*",
-			"./electron-main.js",
-			"package.json",
-			"!node_modules",
-			"node_modules/**/*",
-			"./scripts/**/*",
-			"./auth/**/*",
-			"./utils/**/*",
-			"./bot-assets/**/*",
-			"./helpers/**/*",
-			"./obs/**/*",
-			"./types/**/*"
-		],
-		"extraResources": [
-			"assets/**/*"
-		],
-		"win": {
-			"target": "nsis"
-		},
-		"nsis": {
-			"oneClick": false,
-			"allowToChangeInstallationDirectory": true
+	"config": {
+		"forge": {
+			"packagerConfig": {
+				"icon": "path/to/icon"
+			},
+			"makers": [
+				{
+					"name": "@electron-forge/maker-squirrel",
+					"config": {
+						"name": "serato_nowplaying_twitch"
+					}
+				},
+				{
+					"name": "@electron-forge/maker-zip",
+					"platforms": [
+						"darwin"
+					]
+				},
+				{
+					"name": "@electron-forge/maker-deb",
+					"config": {}
+				},
+				{
+					"name": "@electron-forge/maker-rpm",
+					"config": {}
+				}
+			]
 		}
 	}
 }
