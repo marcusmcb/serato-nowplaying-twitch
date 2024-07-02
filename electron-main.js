@@ -17,15 +17,15 @@ const OBSWebSocket = require('obs-websocket-js').default
 const dotenv = require('dotenv')
 const WebSocket = require('ws')
 
-// const isDev = require('electron-is-dev')
-const isDev = false
+const isDev = require('electron-is-dev')
+// const isDev = false
 
 dotenv.config()
 
-require('electron-reload')(__dirname, {
-	electron: require(`${__dirname}/node_modules/electron`),
-	ignored: /node_modules|[\/\\]\.|users\.db/,
-})
+// require('electron-reload')(__dirname, {
+// 	electron: require(`${__dirname}/node_modules/electron`),
+// 	ignored: /node_modules|[\/\\]\.|users\.db/,
+// })
 
 const {
 	exchangeCodeForToken,
