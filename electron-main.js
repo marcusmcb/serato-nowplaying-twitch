@@ -73,8 +73,17 @@ server.get('/auth/twitch/callback', async (req, res) => {
 	const { code, state } = req.query
 
 	if (code) {
+		console.log('*********************')
+		console.log('AUTH CALLBACK CODE: ')
+		console.log(code)
+		console.log('*********************')
 		try {
 			const token = await exchangeCodeForToken(code)
+			console.log('*********************')
+			console.log('TOKEN: ')
+			console.log(token)
+			console.log('*********************')
+
 			// Update user data in the database
 			db.users.findOne({}, (err, user) => {
 				if (err) {
@@ -83,6 +92,10 @@ server.get('/auth/twitch/callback', async (req, res) => {
 				}
 
 				if (user) {
+					console.log('*********************')
+					console.log('USER: ')
+					console.log(user)
+					console.log('*********************')
 					// Update the existing user
 					db.users.update(
 						{ _id: user._id },
@@ -119,7 +132,9 @@ server.get('/auth/twitch/callback', async (req, res) => {
 									.status(500)
 									.send('Error adding auth code to user file')
 							}
+							console.log('*********************')
 							console.log('User Auth Data Updated: ', newDoc)
+							console.log('*********************')
 						}
 					)
 				}
@@ -142,7 +157,7 @@ server.get('/auth/twitch/callback', async (req, res) => {
 ipcMain.on('getUserData', async (event, arg) => {
 	console.log('-----------------------------')
 	console.log('*** getUserData is called ***')
-	if (fs.existsSync('users.db')) {		
+	if (fs.existsSync('users.db')) {
 		try {
 			const user = await new Promise((resolve, reject) => {
 				db.users.findOne({}, (err, user) => {
@@ -154,13 +169,13 @@ ipcMain.on('getUserData', async (event, arg) => {
 				})
 			})
 
-			if (user) {				
-				console.log('*** user data is found ***')				
+			if (user) {
+				console.log('*** user data is found ***')
 				const responseObject = {
 					success: true,
 					data: user,
-				}				
-				event.reply('getUserDataResponse', responseObject)				
+				}
+				event.reply('getUserDataResponse', responseObject)
 			} else {
 				console.log('No user found in the database.')
 				event.reply('getUserDataResponse', {
@@ -253,7 +268,7 @@ ipcMain.on('startBotScript', async (event, arg) => {
 		}
 		event.reply('startBotResponse', errorResponse)
 		return
-	}	
+	}
 
 	console.log('--- loading bot process to spawn ---')
 	botProcess = spawn('node', [scriptPath])
@@ -331,10 +346,10 @@ ipcMain.on('userDataUpdated', () => {
 })
 
 ipcMain.on('submitUserData', async (event, arg) => {
-	console.log("*****************")
-	console.log("submitUserData ARGS: ")
+	console.log('*****************')
+	console.log('submitUserData ARGS: ')
 	console.log(arg)
-	console.log("*****************")
+	console.log('*****************')
 	// Replace white space with underscores in Serato URL string for validation check
 	const seratoDisplayName = arg.seratoDisplayName.replaceAll(' ', '_')
 
@@ -345,8 +360,8 @@ ipcMain.on('submitUserData', async (event, arg) => {
 		arg.twitchChatbotName
 	)
 
-	console.log("isValidSeratoURL: ", isValidSeratoURL)
-	console.log("isValidTwitchURL: ", isValidTwitchURL)
+	console.log('isValidSeratoURL: ', isValidSeratoURL)
+	console.log('isValidTwitchURL: ', isValidTwitchURL)
 
 	if (isValidTwitchURL && isValidTwitchChatbotURL && isValidSeratoURL) {
 		try {
@@ -375,7 +390,7 @@ const createWindow = () => {
 		webPreferences: {
 			preload: path.join(__dirname, './scripts/preload.js'),
 			nodeIntegration: false,
-			contextIsolation: true, 
+			contextIsolation: true,
 		},
 	})
 
