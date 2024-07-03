@@ -442,3 +442,21 @@ app.on('activate', () => {
 		createWindow()
 	}
 })
+
+// *** Tests for executable ***
+//
+// use event.reply('botProcessResponse', message) to log back end
+// event data to Electron's browser window in the packaged
+// executable version for debugging and testing
+//
+// start from the initial Twitch auth process
+// and test/verify code is returned and initial
+// token data is set 
+//
+// add logging to confirm user preferences and configuration
+// updates are properly persisted to the NEDB users.db file
+//
+// review moving user data storage to Electron Store from NEDB
+//
+// main issue: user data is not being stored/called properly
+// in the executable version of the app at the moment

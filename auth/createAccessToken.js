@@ -31,7 +31,7 @@ const getRefreshToken = async (refreshToken) => {
 	}
 }
 
-const updateUserToken = async (db, event, token) => {
+const updateUserToken = async (db, event, token) => {	
 	try {
 		db.users.findOne({}, (err, user) => {
 			if (err) {
