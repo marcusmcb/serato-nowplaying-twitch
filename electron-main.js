@@ -22,10 +22,10 @@ const isDev = require('electron-is-dev')
 
 dotenv.config()
 
-// require('electron-reload')(__dirname, {
-// 	electron: require(`${__dirname}/node_modules/electron`),
-// 	ignored: /node_modules|[\/\\]\.|users\.db/,
-// })
+require('electron-reload')(__dirname, {
+	electron: require(`${__dirname}/node_modules/electron`),
+	ignored: /node_modules|[\/\\]\.|users\.db/,
+})
 
 const {
 	exchangeCodeForToken,
@@ -157,6 +157,7 @@ server.get('/auth/twitch/callback', async (req, res) => {
 ipcMain.on('getUserData', async (event, arg) => {
 	console.log('-----------------------------')
 	console.log('*** getUserData is called ***')
+	event.reply('botProcessResponse', '*** getUserData is called ***')
 	if (fs.existsSync('users.db')) {
 		try {
 			const user = await new Promise((resolve, reject) => {
@@ -214,6 +215,7 @@ ipcMain.on('open-auth-url', () => {
 
 // IPC listener for starting the bot script
 ipcMain.on('startBotScript', async (event, arg) => {
+	event.reply('botProcessResponse', '*** startBotScript called ***')
 	let errorResponse = {
 		success: false,
 		error: null,
@@ -321,6 +323,7 @@ ipcMain.on('startBotScript', async (event, arg) => {
 })
 
 ipcMain.on('stopBotScript', async (event, arg) => {
+	event.reply('botProcessResponse', '*** stopBotScript called ***')
 	if (botProcess) {
 		botProcess.on('exit', () => {
 			console.log('botProcess has exited.')
@@ -346,6 +349,7 @@ ipcMain.on('userDataUpdated', () => {
 })
 
 ipcMain.on('submitUserData', async (event, arg) => {
+	event.reply('botProcessResponse', '*** submitUserData called ***')
 	console.log('*****************')
 	console.log('submitUserData ARGS: ')
 	console.log(arg)

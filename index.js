@@ -16,8 +16,8 @@ const initializeBot = async (config) => {
 
 	const seratoDisplayName = config.seratoDisplayName.replaceAll(" ", "_")
 
-	const url = `https://serato.com/playlists/${seratoDisplayName}/6-13-2024`
-	// const url = `https://serato.com/playlists/${seratoDisplayName}/live`
+	// const url = `https://serato.com/playlists/${seratoDisplayName}/6-13-2024`
+	const url = `https://serato.com/playlists/${seratoDisplayName}/live`
 
 	const refreshTokenConfig = returnRefreshTokenConfig(
 		config,

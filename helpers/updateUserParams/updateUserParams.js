@@ -1,4 +1,5 @@
 const updateUserData = async (db, event, arg) => {
+	event.reply('botProcessResponse', '*** Update user data called ***')
 	try {
 		const user = await new Promise((resolve, reject) => {
 			db.users.findOne({ _id: arg._id }, (err, user) => {
@@ -44,12 +45,12 @@ const updateUserData = async (db, event, arg) => {
 					}
 				}
 			)
-		})		
+		})
 		// console.log("------------------------")
 		// console.log("UPDATED USER: ")
 		// console.log(updatedUser)
 		// console.log("------------------------")
-		console.log("--- user data update is complete ---")
+		console.log('--- user data update is complete ---')
 		event.reply('userDataUpdated', updatedUser)
 
 		return {

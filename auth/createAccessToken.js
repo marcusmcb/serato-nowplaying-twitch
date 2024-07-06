@@ -32,6 +32,7 @@ const getRefreshToken = async (refreshToken) => {
 }
 
 const updateUserToken = async (db, event, token) => {	
+	event.reply('botProcessResponse', '*** Update user token called ***')
 	try {
 		db.users.findOne({}, (err, user) => {
 			if (err) {
