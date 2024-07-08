@@ -19,9 +19,9 @@ const updateUserData = async (db, event, arg) => {
 
 		const updatedUser = {
 			_id: arg._id,
-			twitchAccessToken: arg.twitchAccessToken,
-			twitchRefreshToken: arg.twitchRefreshToken,
-			appAuthorizationCode: arg.appAuthorizationCode,
+			twitchAccessToken: user.twitchAccessToken,
+			twitchRefreshToken: user.twitchRefreshToken,
+			appAuthorizationCode: user.appAuthorizationCode,
 			twitchChannelName: arg.twitchChannelName,
 			twitchChatbotName: arg.twitchChatbotName,
 			seratoDisplayName: arg.seratoDisplayName,

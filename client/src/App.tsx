@@ -56,40 +56,40 @@ const App = (): JSX.Element => {
 			socket.close()
 		}
 	}, [])
-	
+
 	useEffect(() => {
-		const ipcRendererInstance = window.electron?.ipcRenderer;
-	
+		const ipcRendererInstance = window.electron?.ipcRenderer
+
 		if (ipcRendererInstance) {
-			ipcRendererInstance.send('getUserData', {});
+			ipcRendererInstance.send('getUserData', {})
 			const handleGetUserDataResponse = (response: any) => {
 				if (response && Object.keys(response.data).length > 0) {
-					console.log('HAS VALUES');
-					setFormData(response.data);
-					setIsObsResponseEnabled(response.data.isObsResponseEnabled);
-					setIsIntervalEnabled(response.data.isIntervalEnabled);
-					setIsReportEnabled(response.data.isReportEnabled);
-					setIsAuthorized(!!response.data.appAuthorizationCode);
+					console.log('HAS VALUES')
+					setFormData(response.data)
+					setIsObsResponseEnabled(response.data.isObsResponseEnabled)
+					setIsIntervalEnabled(response.data.isIntervalEnabled)
+					setIsReportEnabled(response.data.isReportEnabled)
+					setIsAuthorized(!!response.data.appAuthorizationCode)
 					setIsConnectionReady(
 						// Check if all necessary fields are filled for connection
 						!!response.data.twitchChannelName &&
-						!!response.data.twitchChatbotName &&
-						!!response.data.seratoDisplayName
-					);
+							!!response.data.twitchChatbotName &&
+							!!response.data.seratoDisplayName
+					)
 				} else {
-					console.log('NO VALUES STORED');
+					console.log('NO VALUES STORED')
 				}
-				console.log('USER DATA: ');
-				console.log(response.data);
-			};
-	
-			ipcRendererInstance.once('getUserDataResponse', handleGetUserDataResponse);
-	
+				console.log('USER DATA: ')
+				console.log(response.data)
+			}
+
+			ipcRendererInstance.once('getUserDataResponse', handleGetUserDataResponse)
+
 			return () => {
-				ipcRendererInstance.removeAllListeners('getUserDataResponse');
-			};
+				ipcRendererInstance.removeAllListeners('getUserDataResponse')
+			}
 		}
-	}, []);
+	}, [])
 
 	// useEffect(() => {
 	// 	const handleUserDataUpdate = (data: any) => {
@@ -157,6 +157,23 @@ const App = (): JSX.Element => {
 		message?: any
 		error?: string
 	}
+
+	interface AuthSuccess {
+		_id: string
+	}
+
+	// effect hook to initially set user id in state
+	// once the app has been authorized via Twitch
+	useEffect(() => {
+		const handleAuthSuccess = (response: AuthSuccess) => {
+			console.log('Auth success:', response)
+			setFormData((prevFormData) => ({ ...prevFormData, _id: response._id }))
+		}
+		window.electron.ipcRenderer.on('auth-successful', handleAuthSuccess)
+		return () => {
+			window.electron.ipcRenderer.removeAllListeners('authSuccess')
+		}
+	}, [])
 
 	// hook to handle error messages from bot process
 	useEffect(() => {

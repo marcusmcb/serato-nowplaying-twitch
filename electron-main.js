@@ -132,6 +132,7 @@ server.get('/auth/twitch/callback', async (req, res) => {
 									.status(500)
 									.send('Error adding auth code to user file')
 							}
+							mainWindow.webContents.send('auth-successful', { _id: newDoc._id })
 							console.log('*********************')
 							console.log('User Auth Data Updated: ', newDoc)
 							console.log('*********************')
@@ -370,6 +371,8 @@ ipcMain.on('submitUserData', async (event, arg) => {
 
 	if (isValidTwitchURL && isValidTwitchChatbotURL && isValidSeratoURL) {
 		try {
+			console.log('updateUserData DB info: ')
+			console.log(db.users)
 			const data = await updateUserData(db, event, arg)
 			console.log('--- await updateUserData complete ---')
 			mainWindow.webContents.send('userDataUpdated')
