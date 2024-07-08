@@ -8,6 +8,7 @@ import './App.css'
 
 const App = (): JSX.Element => {
 	const [formData, setFormData] = useState({
+		_id: '',
 		twitchChannelName: '',
 		twitchChatbotName: '',
 		twitchRefreshToken: '',

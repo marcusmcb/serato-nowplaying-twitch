@@ -86,10 +86,10 @@ server.get('/auth/twitch/callback', async (req, res) => {
 
 			// Update user data in the database
 			db.users.findOne({}, (err, user) => {
-				if (err) {
-					console.error('Error finding the user:', err)
-					return res.status(500).send('Database error.')
-				}
+				// if (err) {
+				// 	console.error('Error finding the user:', err)
+				// 	return res.status(500).send('Database error.')
+				// }
 
 				if (user) {
 					console.log('*********************')
@@ -216,6 +216,7 @@ ipcMain.on('open-auth-url', () => {
 // IPC listener for starting the bot script
 ipcMain.on('startBotScript', async (event, arg) => {
 	event.reply('botProcessResponse', '*** startBotScript called ***')
+	console.log("ARGS: ", arg)
 	let errorResponse = {
 		success: false,
 		error: null,
