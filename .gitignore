@@ -80,6 +80,10 @@ typings/
 .env
 .env.test
 
+# http cert files
+/server.cert
+/server.key
+
 users.db
 preferences.db
 /out

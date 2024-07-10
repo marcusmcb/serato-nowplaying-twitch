@@ -1,9 +1,5 @@
 import '../App.css'
 
-// add logic to handle any errors returned
-// during the initial app authorization
-// on the app's client UI
-
 const ipcRenderer = window.electron.ipcRenderer
 
 interface TitleBarProps {
@@ -11,10 +7,14 @@ interface TitleBarProps {
 	isBotConnected: boolean
 }
 
-const TitleBar = ({ isAuthorized, isBotConnected }: TitleBarProps): JSX.Element => {
+const TitleBar = ({
+	isAuthorized,
+	isBotConnected,
+}: TitleBarProps): JSX.Element => {
 	const handleAuthClick = () => {
 		ipcRenderer.send('open-auth-url')
 	}
+
 	return (
 		<div>
 			<div className='app-title'>npChatbot App</div>

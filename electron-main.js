@@ -1,6 +1,7 @@
 const fs = require('fs')
 const { spawn } = require('child_process')
 const path = require('path')
+const https = require('https')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const express = require('express')
@@ -16,16 +17,17 @@ const scriptPath = path.join(__dirname, './boot.js')
 const OBSWebSocket = require('obs-websocket-js').default
 const dotenv = require('dotenv')
 const WebSocket = require('ws')
+const { URL } = require('url')
 
 const isDev = require('electron-is-dev')
-// const isDev = false
+// const isDev = false;
 
 dotenv.config()
 
-require('electron-reload')(__dirname, {
-	electron: require(`${__dirname}/node_modules/electron`),
-	ignored: /node_modules|[\/\\]\.|users\.db/,
-})
+// require('electron-reload')(__dirname, {
+// 	electron: require(`${__dirname}/node_modules/electron`),
+// 	ignored: /node_modules|[\/\\]\.|users\.db/,
+// });
 
 const {
 	exchangeCodeForToken,
@@ -52,6 +54,11 @@ const server = express()
 const PORT = process.env.PORT || 5000
 server.use(bodyParser.json())
 server.use(cors())
+
+const options = {
+	key: fs.readFileSync(path.join(__dirname, 'server.key')),
+	cert: fs.readFileSync(path.join(__dirname, 'server.cert')),
+}
 
 const db = require('./database')
 
@@ -86,10 +93,10 @@ server.get('/auth/twitch/callback', async (req, res) => {
 
 			// Update user data in the database
 			db.users.findOne({}, (err, user) => {
-				// if (err) {
-				// 	console.error('Error finding the user:', err)
-				// 	return res.status(500).send('Database error.')
-				// }
+				if (err) {
+					console.error('Error finding the user:', err)
+					return res.status(500).send('Database error.')
+				}
 
 				if (user) {
 					console.log('*********************')
@@ -106,7 +113,6 @@ server.get('/auth/twitch/callback', async (req, res) => {
 								appAuthorizationCode: code,
 							},
 						},
-
 						{},
 						(err, numReplaced) => {
 							if (err) {
@@ -132,7 +138,9 @@ server.get('/auth/twitch/callback', async (req, res) => {
 									.status(500)
 									.send('Error adding auth code to user file')
 							}
-							mainWindow.webContents.send('auth-successful', { _id: newDoc._id })
+							mainWindow.webContents.send('auth-successful', {
+								_id: newDoc._id,
+							})
 							console.log('*********************')
 							console.log('User Auth Data Updated: ', newDoc)
 							console.log('*********************')
@@ -148,11 +156,21 @@ server.get('/auth/twitch/callback', async (req, res) => {
 			})
 		} catch (error) {
 			console.error('Error exchanging code for token:', error)
-			res.status(500).send('Error during authorization.')
+			wss.clients.forEach(function each(client) {
+				if (client.readyState === WebSocket.OPEN) {
+					client.send(`Error during authorization: ${error}`)
+				}
+			})
+			res.status(500).send(`Error during authorization: ${error}`)
 		}
 	} else {
 		res.status(400).send('No code received from Twitch.')
 	}
+})
+
+ipcMain.on('open-auth-url', () => {
+	const authUrl = `https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=19evlkrdxmriyliiey2fhhhxd8kkl6&redirect_uri=https://localhost:5000/auth/twitch/callback&scope=chat:read+chat:edit&state=c3ab8aa609ea11e793ae92361f002671`
+	shell.openExternal(authUrl)
 })
 
 ipcMain.on('getUserData', async (event, arg) => {
@@ -201,23 +219,17 @@ ipcMain.on('getUserData', async (event, arg) => {
 	}
 })
 
-// Start Express server
+// Start HTTPS server
 const startServer = () => {
-	serverInstance = server.listen(PORT, () => {
-		console.log(`npChatbot Express server is running on port ${PORT}`)
+	serverInstance = https.createServer(options, server).listen(PORT, () => {
+		console.log(`npChatbot HTTPS server is running on port ${PORT}`)
 	})
 }
-
-ipcMain.on('open-auth-url', () => {
-	shell.openExternal(
-		'https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=19evlkrdxmriyliiey2fhhhxd8kkl6&redirect_uri=http://localhost:5000/auth/twitch/callback&scope=chat:read+chat:edit&state=c3ab8aa609ea11e793ae92361f002671'
-	)
-})
 
 // IPC listener for starting the bot script
 ipcMain.on('startBotScript', async (event, arg) => {
 	event.reply('botProcessResponse', '*** startBotScript called ***')
-	console.log("ARGS: ", arg)
+	console.log('ARGS: ', arg)
 	let errorResponse = {
 		success: false,
 		error: null,
@@ -411,18 +423,89 @@ const createWindow = () => {
 }
 
 app.on('ready', () => {
-	protocol.registerHttpProtocol('npchatbot-app', (request, callback) => {
-		const url = request.url
-		mainWindow.webContents.send('auth-successful', url)
+	protocol.registerHttpProtocol('npchatbot-app', async (request, callback) => {
+		const url = new URL(request.url)
+		const code = url.searchParams.get('code')
+
+		if (code) {
+			console.log('*********************')
+			console.log('AUTH CALLBACK CODE: ')
+			console.log(code)
+			console.log('*********************')
+			try {
+				const token = await exchangeCodeForToken(code)
+				console.log('*********************')
+				console.log('TOKEN: ')
+				console.log(token)
+				console.log('*********************')
+
+				// Update user data in the database
+				db.users.findOne({}, (err, user) => {
+					if (err) {
+						console.error('Error finding the user:', err)
+						return
+					}
+
+					if (user) {
+						console.log('*********************')
+						console.log('USER: ')
+						console.log(user)
+						console.log('*********************')
+						// Update the existing user
+						db.users.update(
+							{ _id: user._id },
+							{
+								$set: {
+									twitchAccessToken: token.access_token,
+									twitchRefreshToken: token.refresh_token,
+									appAuthorizationCode: code,
+								},
+							},
+							{},
+							(err, numReplaced) => {
+								if (err) {
+									console.error('Error updating the user:', err)
+									return
+								}
+								console.log(
+									`Updated ${numReplaced} user(s) with new Twitch app token.`
+								)
+							}
+						)
+					} else {
+						db.users.insert(
+							{
+								twitchAccessToken: token.access_token,
+								twitchRefreshToken: token.refresh_token,
+								appAuthorizationCode: code,
+							},
+							(err, newDoc) => {
+								if (err) {
+									console.error('Error creating new user: ', err)
+									return
+								}
+								mainWindow.webContents.send('auth-successful', {
+									_id: newDoc._id,
+								})
+								console.log('*********************')
+								console.log('User Auth Data Updated: ', newDoc)
+								console.log('*********************')
+							}
+						)
+					}
+				})
+			} catch (error) {
+				console.error('Error exchanging code for token:', error)
+			}
+		}
 	})
-	// globalShortcut.register('CommandOrControl+R', () => {
-	// 	const { webContents } = mainWindow
-	// 	webContents.reload()
-	// })
+
 	startServer()
+
 	if (isDev) {
 		console.log('dev mode')
 	}
+
 	createWindow()
 	console.log('npChatbot app has started successfully.')
 })
@@ -450,21 +533,3 @@ app.on('activate', () => {
 		createWindow()
 	}
 })
-
-// *** Tests for executable ***
-//
-// use event.reply('botProcessResponse', message) to log back end
-// event data to Electron's browser window in the packaged
-// executable version for debugging and testing
-//
-// start from the initial Twitch auth process
-// and test/verify code is returned and initial
-// token data is set 
-//
-// add logging to confirm user preferences and configuration
-// updates are properly persisted to the NEDB users.db file
-//
-// review moving user data storage to Electron Store from NEDB
-//
-// main issue: user data is not being stored/called properly
-// in the executable version of the app at the moment
