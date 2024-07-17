@@ -145,7 +145,7 @@ const initAuthToken = async (code) => {
 			}
 
 			if (user) {
-				logToFile('User found:', user)
+				logToFile(`User found: ${JSON.stringify(user)}`)
 				db.users.update(
 					{ _id: user._id },
 					{
