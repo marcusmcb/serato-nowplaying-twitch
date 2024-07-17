@@ -22,7 +22,7 @@ const getRefreshToken = async (refreshToken) => {
 
 	try {
 		const response = await axios.post(`${process.env.TWITCH_AUTH_URL}`, params)
-		console.log("TOKEN DATA: ")
+		console.log('TOKEN DATA: ')
 		console.log(response.data)
 		return response.data
 	} catch (error) {
@@ -31,7 +31,7 @@ const getRefreshToken = async (refreshToken) => {
 	}
 }
 
-const updateUserToken = async (db, event, token) => {	
+const updateUserToken = async (db, event, token) => {
 	event.reply('botProcessResponse', '*** Update user token called ***')
 	try {
 		db.users.findOne({}, (err, user) => {

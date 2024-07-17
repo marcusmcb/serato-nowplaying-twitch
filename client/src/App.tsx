@@ -162,6 +162,19 @@ const App = (): JSX.Element => {
 		_id: string
 	}
 
+	// FOR TESTING ONLY
+	// effect hook to check if auth code 
+	// returned from Twitch in packaged version
+	useEffect(() => {
+		const handleAuthCode = (response: any) => {
+			console.log('Auth code:', response)
+		}
+		window.electron.ipcRenderer.on('auth-code', handleAuthCode)
+		return () => {
+			window.electron.ipcRenderer.removeAllListeners('auth-code')
+		}
+	}, [])
+
 	// effect hook to initially set user id in state
 	// once the app has been authorized via Twitch
 	useEffect(() => {
