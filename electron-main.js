@@ -23,12 +23,18 @@ const { URL } = require('url')
 // const isDev = require('electron-is-dev')
 const isDev = false
 
-dotenv.config()
-
 // require('electron-reload')(__dirname, {
 // 	electron: require(`${__dirname}/node_modules/electron`),
 // 	ignored: /node_modules|[\/\\]\.|users\.db/,
 // })
+
+dotenv.config()
+
+let mainWindow
+let botProcess
+let serverInstance
+let authWindow
+let authCode
 
 const {
 	// exchangeCodeForToken,
@@ -62,16 +68,9 @@ const options = {
 }
 
 const db = require('./database')
-const logFilePath = path.join(__dirname, 'auth.log')
-
-let mainWindow
-let botProcess
-let serverInstance
-let authWindow
-let authCode
+const logFilePath = path.join(__dirname, 'application.log')
 
 const obs = new OBSWebSocket()
-
 const wss = new WebSocket.Server({ port: 8080 })
 
 // Logging function
@@ -89,6 +88,7 @@ logToFile(`TWITCH_CLIENT_ID: ${process.env.TWITCH_CLIENT_ID}`)
 logToFile(`TWITCH_CLIENT_SECRET: ${process.env.TWITCH_CLIENT_SECRET}`)
 logToFile(`TWITCH_AUTH_REDIRECT_URL: ${process.env.TWITCH_AUTH_REDIRECT_URL}`)
 logToFile(`TWITCH_AUTH_URL: ${process.env.TWITCH_AUTH_URL}`)
+logToFile(`* * * * * * * * * * * * * * * * * * *`)
 
 const exchangeCodeForToken = async (code) => {
 	mainWindow.webContents.send('auth-code', { exchangeCodeForToken: code })
@@ -108,21 +108,26 @@ const exchangeCodeForToken = async (code) => {
 	logToFile(
 		`redirect_uri: ${JSON.stringify(process.env.TWITCH_AUTH_REDIRECT_URL)}`
 	)
+	logToFile(`* * * * * * * * * * * * * * * * * * *`)
 
 	try {
 		const response = await axios.post(`${process.env.TWITCH_AUTH_URL}`, params)
 		if (response.data) {
 			mainWindow.webContents.send('auth-code', { exchanged_token: response })
 			logToFile(`Token exchange successful: ${JSON.stringify(response.data)}`)
+			logToFile(`* * * * * * * * * * * * * * * * * * *`)
 			return response.data
 		} else {
 			mainWindow.webContents.send('auth-code', { foo_error: response })
-			logToFile(`Token exchange error: ${JSON.stringify(response)}`)			
+			logToFile(`Token exchange error: ${JSON.stringify(response)}`)
+			logToFile(`* * * * * * * * * * * * * * * * * * *`)
 		}
 	} catch (error) {
 		console.error('Error exchanging code for token:', error)
+		logToFile(`* * * * * * * * * * * * * * * * * * *`)
 		mainWindow.webContents.send('auth-code', { exchange_token_error: error })
 		logToFile(`Error exchanging code for token: ${error}`)
+		logToFile(`* * * * * * * * * * * * * * * * * * *`)
 	}
 }
 
@@ -131,21 +136,26 @@ const initAuthToken = async (code) => {
 	try {
 		const token = await exchangeCodeForToken(code)
 		if (token) {
-			logToFile(`exchangeCodeForToken result successful: ${JSON.stringify(token)}`)
+			logToFile(
+				`exchangeCodeForToken result successful: ${JSON.stringify(token)}`
+			)
+			logToFile(`* * * * * * * * * * * * * * * * * * *`)
 		} else {
 			logToFile(`exchangeCodeForToken result error: ${JSON.stringify(token)}`)
+			logToFile(`* * * * * * * * * * * * * * * * * * *`)
 		}
-		
 
 		db.users.findOne({}, (err, user) => {
 			if (err) {
 				console.error('Error finding the user:', err)
 				logToFile('Error finding the user:', err)
+				logToFile(`* * * * * * * * * * * * * * * * * * *`)
 				return res.status(500).send('Database error.')
 			}
 
 			if (user) {
 				logToFile(`User found: ${JSON.stringify(user)}`)
+				logToFile(`* * * * * * * * * * * * * * * * * * *`)
 				db.users.update(
 					{ _id: user._id },
 					{
@@ -160,9 +170,13 @@ const initAuthToken = async (code) => {
 						if (err) {
 							console.error('Error updating the user:', err)
 							logToFile('Update Error updating the user:', err)
+							logToFile(`* * * * * * * * * * * * * * * * * * *`)
 							return res.status(500).send('Database error during update.')
 						}
-						logToFile(`Updated ${numReplaced} user(s) with new Twitch app token.`)
+						logToFile(
+							`Updated ${numReplaced} user(s) with new Twitch app token.`
+						)
+						logToFile(`* * * * * * * * * * * * * * * * * * *`)
 						console.log(
 							`Updated ${numReplaced} user(s) with new Twitch app token.`
 						)
@@ -179,6 +193,7 @@ const initAuthToken = async (code) => {
 						if (err) {
 							console.error('Error creating new user: ', err)
 							logToFile('Insert Error creating new user: ', err)
+							logToFile(`* * * * * * * * * * * * * * * * * * *`)
 							return res.status(500).send('Error adding auth code to user file')
 						}
 						mainWindow.webContents.send('auth-successful', {
