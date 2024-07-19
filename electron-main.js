@@ -7,10 +7,7 @@ const cors = require('cors')
 const express = require('express')
 const axios = require('axios')
 const {
-	app,
-	protocol,
-	shell,
-	globalShortcut,
+	app,	
 	BrowserWindow,
 	ipcMain,
 } = require('electron')
@@ -114,7 +111,7 @@ const exchangeCodeForToken = async (code) => {
 	try {
 		const response = await axios.post(`${process.env.TWITCH_AUTH_URL}`, params)
 		if (response.data) {
-			mainWindow.webContents.send('auth-code', { exchanged_token: response })
+			mainWindow.webContents.send('auth-code', { exchanged_token: response.data })
 			logToFile(`Token exchange successful: ${JSON.stringify(response.data)}`)
 			logToFile(`* * * * * * * * * * * * * * * * * * *`)
 			return response.data
@@ -223,93 +220,9 @@ server.get('/', (req, res) => {
 	res.send('NPChatbot is up and running')
 })
 
-server.get('/auth/twitch/callback', async (req, res) => {
-	console.log('This should not be getting logged.')
-	const { code, state } = req.query
-
-	if (code) {
-		mainWindow.webContents.send('auth-code', { auth_code: code })
-
-		try {
-			const token = await exchangeCodeForToken(code)
-			mainWindow.webContents.send('auth-code', { exchanged_token: token })
-
-			db.users.findOne({}, (err, user) => {
-				if (err) {
-					console.error('Error finding the user:', err)
-					return res.status(500).send('Database error.')
-				}
-
-				if (user) {
-					db.users.update(
-						{ _id: user._id },
-						{
-							$set: {
-								twitchAccessToken: token.access_token,
-								twitchRefreshToken: token.refresh_token,
-								appAuthorizationCode: code,
-							},
-						},
-						{},
-						(err, numReplaced) => {
-							if (err) {
-								console.error('Error updating the user:', err)
-								return res.status(500).send('Database error during update.')
-							}
-							console.log(
-								`Updated ${numReplaced} user(s) with new Twitch app token.`
-							)
-						}
-					)
-				} else {
-					db.users.insert(
-						{
-							twitchAccessToken: token.access_token,
-							twitchRefreshToken: token.refresh_token,
-							appAuthorizationCode: code,
-						},
-						(err, newDoc) => {
-							if (err) {
-								console.error('Error creating new user: ', err)
-								return res
-									.status(500)
-									.send('Error adding auth code to user file')
-							}
-							mainWindow.webContents.send('auth-successful', {
-								_id: newDoc._id,
-							})
-						}
-					)
-				}
-			})
-
-			res.send('Authorization successful. You can close this window.')
-			wss.clients.forEach(function each(client) {
-				if (client.readyState === WebSocket.OPEN) {
-					client.send('npChatbot successfully linked to your Twitch account')
-				}
-			})
-
-			if (authWindow) {
-				authWindow.close()
-			}
-		} catch (error) {
-			console.error('Error exchanging code for token:', error)
-			wss.clients.forEach(function each(client) {
-				if (client.readyState === WebSocket.OPEN) {
-					client.send(`Error during authorization 01: ${error}`)
-				}
-			})
-			res.status(500).send(`Error during authorization 02: ${error}`)
-		}
-	} else {
-		res.status(400).send('No code received from Twitch.')
-	}
-})
-
 ipcMain.on('open-auth-url', async (event, arg) => {
-	const clientId = '19evlkrdxmriyliiey2fhhhxd8kkl6'
-	const redirectUri = 'https://localhost:5000/auth/twitch/callback'
+	const clientId = process.env.TWITCH_CLIENT_ID
+	const redirectUri = process.env.TWITCH_AUTH_REDIRECT_URL
 	const authUrl = `https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=chat:read+chat:edit&state=c3ab8aa609ea11e793ae92361f002671`
 
 	authWindow = new BrowserWindow({
@@ -579,13 +492,13 @@ const createWindow = () => {
 }
 
 app.on('ready', () => {
-	protocol.registerHttpProtocol('npchatbot-app', (request, callback) => {
-		const url = new URL(request.url)
-		const code = url.searchParams.get('code')
-		if (code) {
-			mainWindow.webContents.send('auth-code', { auth_code: code })
-		}
-	})
+	// protocol.registerHttpProtocol('npchatbot-app', (request, callback) => {
+	// 	const url = new URL(request.url)
+	// 	const code = url.searchParams.get('code')
+	// 	if (code) {
+	// 		mainWindow.webContents.send('auth-code', { auth_code: code })
+	// 	}
+	// })
 
 	startServer()
 	createWindow()
