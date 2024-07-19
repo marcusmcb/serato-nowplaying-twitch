@@ -35,6 +35,7 @@ let botProcess
 let serverInstance
 let authWindow
 let authCode
+let authError
 
 const {
 	// exchangeCodeForToken,
@@ -323,22 +324,51 @@ ipcMain.on('open-auth-url', async (event, arg) => {
 	authWindow.loadURL(authUrl)
 
 	authWindow.webContents.on('will-navigate', async (event, url) => {
-		const urlObj = new URL(url)
+		authError = false
+		console.log('URL:', url)
+		const urlObj = new URL(url)		
 		const code = urlObj.searchParams.get('code')
+		const error = urlObj.searchParams.get('error')
 		if (code) {
-			console.log('CODE:', code)
+			console.log("CODE: ", code)
 			authCode = code
-			console.log('AUTHCODE: ', authCode)
-			mainWindow.webContents.send('auth-code', { auth_code: code })
+			authWindow.close()
+		} else if (error) {
+			console.log("ERROR: ", error)
+			authError = true
 			authWindow.close()
 		}
+		// if (code) {
+		// 	console.log('CODE:', code)
+		// 	authCode = code
+		// 	console.log('AUTHCODE: ', authCode)
+		// 	mainWindow.webContents.send('auth-code', { auth_code: code })
+		// 	authWindow.close()
+		// } else {
+		// 	authError = true
+		// 	console.log('NO CODE HERE FRIEND')
+		// 	authWindow.close()
+		// }
 	})
 
 	authWindow.on('closed', () => {
 		mainWindow.webContents.send('auth-code', { auth_code_on_close: authCode })
 		console.log('AUTHCODE ON CLOSE: ', authCode)
-		initAuthToken(authCode)
-		authWindow = null
+		if (authError) {
+			console.log('NO AUTH CODE RETURNED: ', authError)
+			authWindow = null
+		} else if (authCode !== undefined) { 			
+			console.log("AUTH CODE: ", authCode)
+			initAuthToken(authCode)
+			authWindow = null
+		}
+		// if (authError) {
+		// 	console.log('NO AUTH CODE RETURNED')
+		// 	authWindow = null
+		// } else {
+		// 	initAuthToken(authCode)
+		// 	authWindow = null
+		// }
 	})
 })
 
