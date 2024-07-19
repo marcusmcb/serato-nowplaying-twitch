@@ -116,6 +116,11 @@ ipcMain.on('open-auth-url', async (event, arg) => {
 		console.log('AUTHCODE ON CLOSE: ', authCode)
 		if (authError) {
 			console.log('NO AUTH CODE RETURNED: ', authError)
+			wss.clients.forEach(function each(client) {
+				if (client.readyState === WebSocket.OPEN) {
+					client.send('npChatbot authorization with Twitch was cancelled.')
+				}
+			})
 			authWindow = null
 		} else if (authCode !== undefined) {
 			console.log('AUTH CODE: ', authCode)

@@ -44,7 +44,9 @@ const App = (): JSX.Element => {
 		socket.addEventListener('message', (event) => {
 			console.log('Message from server: ', event.data)
 			setMessage(event.data)
-			setIsAuthorized(true)
+			if (event.data !== 'npChatbot authorization with Twitch was cancelled.') {
+				setIsAuthorized(true)
+			}
 			setTimeout(() => {
 				setMessage('')
 			}, 5000)
@@ -89,7 +91,7 @@ const App = (): JSX.Element => {
 				ipcRendererInstance.removeAllListeners('getUserDataResponse')
 			}
 		}
-	}, [])	
+	}, [])
 
 	interface BotProcessResponse {
 		success: boolean
@@ -102,7 +104,7 @@ const App = (): JSX.Element => {
 	}
 
 	// FOR TESTING ONLY
-	// effect hook to check if auth code 
+	// effect hook to check if auth code
 	// returned from Twitch in packaged version
 	useEffect(() => {
 		const handleAuthCode = (response: any) => {
