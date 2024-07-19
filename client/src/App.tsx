@@ -89,68 +89,7 @@ const App = (): JSX.Element => {
 				ipcRendererInstance.removeAllListeners('getUserDataResponse')
 			}
 		}
-	}, [])
-
-	// useEffect(() => {
-	// 	const handleUserDataUpdate = (data: any) => {
-	// 		console.log('--- Saved User Data ---')
-	// 		console.log(data)
-	// 		console.log('-----------------------')
-	// 		if (data && Object.keys(data).length > 0) {
-	// 			// Update the form data state with the fetched user data
-	// 			setFormData(data)
-	// 			// Update other relevant state variables based on the fetched data
-	// 			setIsObsResponseEnabled(data.isObsResponseEnabled)
-	// 			setIsIntervalEnabled(data.isIntervalEnabled)
-	// 			setIsReportEnabled(data.isReportEnabled)
-	// 			setIsAuthorized(!!data.appAuthorizationCode) // Check if app is authorized
-	// 			setIsConnectionReady(
-	// 				// Check if all necessary fields are filled for connection
-	// 				!!data.twitchChannelName &&
-	// 					!!data.twitchChatbotName &&
-	// 					!!data.seratoDisplayName
-	// 			)
-	// 		} else if (data.error) {
-	// 			console.log('USER CONFIG ERROR: ')
-	// 			console.log(data.error)
-	// 		}
-	// 	}
-
-	// 	const handleUserDataResponse = (response: any) => {
-	// 		console.log('RESPONSE: ', response)
-	// 		if (response && response.data) {
-	// 			handleUserDataUpdate(response.data)
-	// 		} else {
-	// 			console.error(
-	// 				'getUserDataResponse received invalid data: ',
-	// 				response.error
-	// 			)
-	// 		}
-	// 	}
-
-	// 	if (ipcRenderer) {
-	// 		const fetchData = () => {
-	// 			ipcRenderer.send('getUserData', {})
-	// 		}
-
-	// 		ipcRenderer.once('getUserDataResponse', (response) => {
-	// 			handleUserDataResponse(response)
-	// 		})
-
-	// 		ipcRenderer.on('userDataUpdated', (response) => {
-	// 			console.log("--- userDataUpdated called from client ---")
-	// 			handleUserDataUpdate(response)
-	// 		})
-	// 		// Fetch initial user data
-	// 		fetchData()
-	// 		console.log("*** fetchData called ***")
-	// 		// Cleanup listeners
-	// 		return () => {
-	// 			ipcRenderer.removeAllListeners('getUserDataResponse')
-	// 			ipcRenderer.removeAllListeners('userDataUpdated')
-	// 		}
-	// 	}
-	// }, [])
+	}, [])	
 
 	interface BotProcessResponse {
 		success: boolean

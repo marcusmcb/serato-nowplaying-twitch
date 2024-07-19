@@ -6,11 +6,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const express = require('express')
 const axios = require('axios')
-const {
-	app,	
-	BrowserWindow,
-	ipcMain,
-} = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
 const scriptPath = path.join(__dirname, './boot.js')
 const OBSWebSocket = require('obs-websocket-js').default
 const dotenv = require('dotenv')
@@ -25,7 +21,9 @@ const isDev = false
 // 	ignored: /node_modules|[\/\\]\.|users\.db/,
 // })
 
-dotenv.config()
+// dotenv.config()
+const envPath = path.join(__dirname, '.env')
+dotenv.config({ path: envPath })
 
 let mainWindow
 let botProcess
@@ -35,9 +33,9 @@ let authCode
 let authError
 
 const {
-	// exchangeCodeForToken,
 	getRefreshToken,
 	updateUserToken,
+	initAuthToken,
 } = require('./auth/createAccessToken')
 
 const {
@@ -66,155 +64,15 @@ const options = {
 }
 
 const db = require('./database')
-const logFilePath = path.join(__dirname, 'application.log')
-
 const obs = new OBSWebSocket()
 const wss = new WebSocket.Server({ port: 8080 })
 
-// Logging function
-const logToFile = (message) => {
-	const timestamp = new Date().toISOString()
-	const logMessage = `${timestamp} - ${message}\n`
-	fs.appendFileSync(logFilePath, logMessage, 'utf8')
-}
-
-const envPath = path.join(__dirname, '.env')
-logToFile(`Loading .env file from: ${envPath}`)
-dotenv.config({ path: envPath })
-
-logToFile(`TWITCH_CLIENT_ID: ${process.env.TWITCH_CLIENT_ID}`)
-logToFile(`TWITCH_CLIENT_SECRET: ${process.env.TWITCH_CLIENT_SECRET}`)
-logToFile(`TWITCH_AUTH_REDIRECT_URL: ${process.env.TWITCH_AUTH_REDIRECT_URL}`)
-logToFile(`TWITCH_AUTH_URL: ${process.env.TWITCH_AUTH_URL}`)
-logToFile(`* * * * * * * * * * * * * * * * * * *`)
-
-const exchangeCodeForToken = async (code) => {
-	mainWindow.webContents.send('auth-code', { exchangeCodeForToken: code })
-	logToFile(`exchangeCodeForToken called with code: ${code}`)
-
-	const params = new URLSearchParams()
-	params.append('client_id', `${process.env.TWITCH_CLIENT_ID}`)
-	params.append('client_secret', `${process.env.TWITCH_CLIENT_SECRET}`)
-	params.append('code', code)
-	params.append('grant_type', 'authorization_code')
-	params.append('redirect_uri', `${process.env.TWITCH_AUTH_REDIRECT_URL}`)
-	logToFile(`client_id: ${JSON.stringify(process.env.TWITCH_CLIENT_ID)}`)
-	logToFile(
-		`client_secret: ${JSON.stringify(process.env.TWITCH_CLIENT_SECRET)}`
-	)
-	logToFile(`code: ${JSON.stringify(code)}`)
-	logToFile(
-		`redirect_uri: ${JSON.stringify(process.env.TWITCH_AUTH_REDIRECT_URL)}`
-	)
-	logToFile(`* * * * * * * * * * * * * * * * * * *`)
-
-	try {
-		const response = await axios.post(`${process.env.TWITCH_AUTH_URL}`, params)
-		if (response.data) {
-			mainWindow.webContents.send('auth-code', { exchanged_token: response.data })
-			logToFile(`Token exchange successful: ${JSON.stringify(response.data)}`)
-			logToFile(`* * * * * * * * * * * * * * * * * * *`)
-			return response.data
-		} else {
-			mainWindow.webContents.send('auth-code', { foo_error: response })
-			logToFile(`Token exchange error: ${JSON.stringify(response)}`)
-			logToFile(`* * * * * * * * * * * * * * * * * * *`)
-		}
-	} catch (error) {
-		console.error('Error exchanging code for token:', error)
-		logToFile(`* * * * * * * * * * * * * * * * * * *`)
-		mainWindow.webContents.send('auth-code', { exchange_token_error: error })
-		logToFile(`Error exchanging code for token: ${error}`)
-		logToFile(`* * * * * * * * * * * * * * * * * * *`)
-	}
-}
-
-const initAuthToken = async (code) => {
-	mainWindow.webContents.send('auth-code', { initAuthToken: code })
-	try {
-		const token = await exchangeCodeForToken(code)
-		if (token) {
-			logToFile(
-				`exchangeCodeForToken result successful: ${JSON.stringify(token)}`
-			)
-			logToFile(`* * * * * * * * * * * * * * * * * * *`)
-		} else {
-			logToFile(`exchangeCodeForToken result error: ${JSON.stringify(token)}`)
-			logToFile(`* * * * * * * * * * * * * * * * * * *`)
-		}
-
-		db.users.findOne({}, (err, user) => {
-			if (err) {
-				console.error('Error finding the user:', err)
-				logToFile('Error finding the user:', err)
-				logToFile(`* * * * * * * * * * * * * * * * * * *`)
-				return res.status(500).send('Database error.')
-			}
-
-			if (user) {
-				logToFile(`User found: ${JSON.stringify(user)}`)
-				logToFile(`* * * * * * * * * * * * * * * * * * *`)
-				db.users.update(
-					{ _id: user._id },
-					{
-						$set: {
-							twitchAccessToken: token.access_token,
-							twitchRefreshToken: token.refresh_token,
-							appAuthorizationCode: code,
-						},
-					},
-					{},
-					(err, numReplaced) => {
-						if (err) {
-							console.error('Error updating the user:', err)
-							logToFile('Update Error updating the user:', err)
-							logToFile(`* * * * * * * * * * * * * * * * * * *`)
-							return res.status(500).send('Database error during update.')
-						}
-						logToFile(
-							`Updated ${numReplaced} user(s) with new Twitch app token.`
-						)
-						logToFile(`* * * * * * * * * * * * * * * * * * *`)
-						console.log(
-							`Updated ${numReplaced} user(s) with new Twitch app token.`
-						)
-					}
-				)
-			} else {
-				db.users.insert(
-					{
-						twitchAccessToken: token.access_token,
-						twitchRefreshToken: token.refresh_token,
-						appAuthorizationCode: code,
-					},
-					(err, newDoc) => {
-						if (err) {
-							console.error('Error creating new user: ', err)
-							logToFile('Insert Error creating new user: ', err)
-							logToFile(`* * * * * * * * * * * * * * * * * * *`)
-							return res.status(500).send('Error adding auth code to user file')
-						}
-						mainWindow.webContents.send('auth-successful', {
-							_id: newDoc._id,
-						})
-					}
-				)
-			}
-		})
-		wss.clients.forEach(function each(client) {
-			if (client.readyState === WebSocket.OPEN) {
-				client.send('npChatbot successfully linked to your Twitch account')
-			}
-		})
-	} catch (error) {
-		console.error('Error exchanging code for token:', error)
-		wss.clients.forEach(function each(client) {
-			if (client.readyState === WebSocket.OPEN) {
-				client.send(`Error during authorization 01: ${error}`)
-			}
-		})
-	}
-}
+// logToFile(`Loading .env file from: ${envPath}`)
+// logToFile(`TWITCH_CLIENT_ID: ${process.env.TWITCH_CLIENT_ID}`)
+// logToFile(`TWITCH_CLIENT_SECRET: ${process.env.TWITCH_CLIENT_SECRET}`)
+// logToFile(`TWITCH_AUTH_REDIRECT_URL: ${process.env.TWITCH_AUTH_REDIRECT_URL}`)
+// logToFile(`TWITCH_AUTH_URL: ${process.env.TWITCH_AUTH_URL}`)
+// logToFile(`* * * * * * * * * * * * * * * * * * *`)
 
 server.get('/', (req, res) => {
 	res.send('NPChatbot is up and running')
@@ -239,29 +97,18 @@ ipcMain.on('open-auth-url', async (event, arg) => {
 	authWindow.webContents.on('will-navigate', async (event, url) => {
 		authError = false
 		console.log('URL:', url)
-		const urlObj = new URL(url)		
+		const urlObj = new URL(url)
 		const code = urlObj.searchParams.get('code')
 		const error = urlObj.searchParams.get('error')
 		if (code) {
-			console.log("CODE: ", code)
+			console.log('CODE: ', code)
 			authCode = code
 			authWindow.close()
 		} else if (error) {
-			console.log("ERROR: ", error)
+			console.log('ERROR: ', error)
 			authError = true
 			authWindow.close()
 		}
-		// if (code) {
-		// 	console.log('CODE:', code)
-		// 	authCode = code
-		// 	console.log('AUTHCODE: ', authCode)
-		// 	mainWindow.webContents.send('auth-code', { auth_code: code })
-		// 	authWindow.close()
-		// } else {
-		// 	authError = true
-		// 	console.log('NO CODE HERE FRIEND')
-		// 	authWindow.close()
-		// }
 	})
 
 	authWindow.on('closed', () => {
@@ -270,18 +117,11 @@ ipcMain.on('open-auth-url', async (event, arg) => {
 		if (authError) {
 			console.log('NO AUTH CODE RETURNED: ', authError)
 			authWindow = null
-		} else if (authCode !== undefined) { 			
-			console.log("AUTH CODE: ", authCode)
-			initAuthToken(authCode)
+		} else if (authCode !== undefined) {
+			console.log('AUTH CODE: ', authCode)
+			initAuthToken(authCode, wss, mainWindow)
 			authWindow = null
 		}
-		// if (authError) {
-		// 	console.log('NO AUTH CODE RETURNED')
-		// 	authWindow = null
-		// } else {
-		// 	initAuthToken(authCode)
-		// 	authWindow = null
-		// }
 	})
 })
 
@@ -448,7 +288,6 @@ ipcMain.on('userDataUpdated', () => {
 
 ipcMain.on('submitUserData', async (event, arg) => {
 	const seratoDisplayName = arg.seratoDisplayName.replaceAll(' ', '_')
-
 	const isValidSeratoURL = await seratoURLValidityCheck(seratoDisplayName)
 	const isValidTwitchURL = await twitchURLValidityCheck(arg.twitchChannelName)
 	const isValidTwitchChatbotURL = await twitchURLValidityCheck(
@@ -492,14 +331,6 @@ const createWindow = () => {
 }
 
 app.on('ready', () => {
-	// protocol.registerHttpProtocol('npchatbot-app', (request, callback) => {
-	// 	const url = new URL(request.url)
-	// 	const code = url.searchParams.get('code')
-	// 	if (code) {
-	// 		mainWindow.webContents.send('auth-code', { auth_code: code })
-	// 	}
-	// })
-
 	startServer()
 	createWindow()
 })
