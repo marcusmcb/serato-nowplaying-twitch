@@ -13,8 +13,8 @@ const dotenv = require('dotenv')
 const WebSocket = require('ws')
 const { URL } = require('url')
 
-// const isDev = require('electron-is-dev')
-const isDev = false
+const isDev = require('electron-is-dev')
+// const isDev = false
 
 // require('electron-reload')(__dirname, {
 // 	electron: require(`${__dirname}/node_modules/electron`),

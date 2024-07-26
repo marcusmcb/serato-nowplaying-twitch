@@ -12,14 +12,24 @@ const TitleBar = ({
 	isBotConnected,
 }: TitleBarProps): JSX.Element => {
 	const handleAuthClick = () => {
-		ipcRenderer.send('open-auth-url')
+		if (!isAuthorized) {
+			ipcRenderer.send('open-auth-url')
+		} else {
+			console.log("Already authorized")
+		}		
 	}
 
 	return (
 		<div>
 			<div className='app-title'>npChatbot App</div>
-			<button onClick={handleAuthClick} disabled={isBotConnected}>
-				{isAuthorized ? 'Reauthorize' : 'Connect with Twitch'}
+			<button
+				onClick={handleAuthClick}
+				disabled={isBotConnected}
+				className={
+					isAuthorized ? 'auth-button-authorized' : 'auth-button-default'
+				}
+			>
+				{isAuthorized ? 'Authorized' : 'Authorize'}
 			</button>
 		</div>
 	)

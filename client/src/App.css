@@ -126,6 +126,24 @@ button:disabled:hover {
 	color: black;
 }
 
+.auth-button-default {	
+	border: var(--session-info-label-color) 2px solid;
+}
+
+.auth-button-default:hover {
+	background-color: var(--session-info-label-color) !important;
+	color: black;
+}
+
+.auth-button-authorized {
+	border: var(--success-color) 2px solid;
+}
+
+.auth-button-authorized:hover {
+	background-color: var(--success-color) !important;
+	color: black;
+}
+
 .toggle-field {
 	display: flex;
 	align-items: center;
