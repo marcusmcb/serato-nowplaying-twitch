@@ -291,12 +291,21 @@ ipcMain.on('userDataUpdated', () => {
 })
 
 ipcMain.on('submitUserData', async (event, arg) => {
+	console.log("****************************")
+	console.log("USER DATA SUBMITTED: ")
+	console.log(arg.twitchChannelName)
+	console.log(arg.twitchChatbotName)
+	console.log(arg.seratoDisplayName)
+	console.log("****************************")
 	const seratoDisplayName = arg.seratoDisplayName.replaceAll(' ', '_')
 	const isValidSeratoURL = await seratoURLValidityCheck(seratoDisplayName)
+	console.log("SERATO URL VALIDITY: ", isValidSeratoURL)
 	const isValidTwitchURL = await twitchURLValidityCheck(arg.twitchChannelName)
+	console.log("TWITCH URL VALIDITY: ", isValidTwitchURL)
 	const isValidTwitchChatbotURL = await twitchURLValidityCheck(
 		arg.twitchChatbotName
 	)
+	console.log("TWITCH CHATBOT URL VALIDITY: ", isValidTwitchChatbotURL)
 
 	if (isValidTwitchURL && isValidTwitchChatbotURL && isValidSeratoURL) {
 		try {
