@@ -5,8 +5,7 @@ const https = require('https')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const express = require('express')
-const axios = require('axios')
-const { app, BrowserWindow, ipcMain } = require('electron')
+const { app, BrowserWindow, ipcMain, shell } = require('electron')
 const scriptPath = path.join(__dirname, './boot.js')
 const OBSWebSocket = require('obs-websocket-js').default
 const dotenv = require('dotenv')
@@ -315,6 +314,10 @@ ipcMain.on('submitUserData', async (event, arg) => {
 	} else {
 		event.reply('userDataResponse', { error: INVALID_SERATO_DISPLAY_NAME })
 	}
+})
+
+ipcMain.on('open-auth-settings', (event, url) => {
+	shell.openExternal(url)
 })
 
 const createWindow = () => {
