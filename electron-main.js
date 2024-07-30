@@ -12,7 +12,7 @@ const dotenv = require('dotenv')
 const WebSocket = require('ws')
 const { URL } = require('url')
 
-const isDev = require('electron-is-dev')
+// const isDev = require('electron-is-dev')
 // const isDev = false
 
 // require('electron-reload')(__dirname, {
@@ -61,6 +61,9 @@ const options = {
 	key: fs.readFileSync(path.join(__dirname, './server.key')),
 	cert: fs.readFileSync(path.join(__dirname, './server.cert')),
 }
+
+const isDev = true
+process.env.NODE_ENV = isDev ? 'development' : 'production'
 
 const db = require('./database')
 const obs = new OBSWebSocket()
@@ -130,7 +133,7 @@ ipcMain.on('open-auth-url', async (event, arg) => {
 })
 
 ipcMain.on('getUserData', async (event, arg) => {
-	if (fs.existsSync('users.db')) {
+	if (fs.existsSync(db.users.filename)) {
 		try {
 			const user = await new Promise((resolve, reject) => {
 				db.users.findOne({}, (err, user) => {
@@ -291,21 +294,21 @@ ipcMain.on('userDataUpdated', () => {
 })
 
 ipcMain.on('submitUserData', async (event, arg) => {
-	console.log("****************************")
-	console.log("USER DATA SUBMITTED: ")
+	console.log('****************************')
+	console.log('USER DATA SUBMITTED: ')
 	console.log(arg.twitchChannelName)
 	console.log(arg.twitchChatbotName)
 	console.log(arg.seratoDisplayName)
-	console.log("****************************")
+	console.log('****************************')
 	const seratoDisplayName = arg.seratoDisplayName.replaceAll(' ', '_')
 	const isValidSeratoURL = await seratoURLValidityCheck(seratoDisplayName)
-	console.log("SERATO URL VALIDITY: ", isValidSeratoURL)
+	console.log('SERATO URL VALIDITY: ', isValidSeratoURL)
 	const isValidTwitchURL = await twitchURLValidityCheck(arg.twitchChannelName)
-	console.log("TWITCH URL VALIDITY: ", isValidTwitchURL)
+	console.log('TWITCH URL VALIDITY: ', isValidTwitchURL)
 	const isValidTwitchChatbotURL = await twitchURLValidityCheck(
 		arg.twitchChatbotName
 	)
-	console.log("TWITCH CHATBOT URL VALIDITY: ", isValidTwitchChatbotURL)
+	console.log('TWITCH CHATBOT URL VALIDITY: ', isValidTwitchChatbotURL)
 
 	if (isValidTwitchURL && isValidTwitchChatbotURL && isValidSeratoURL) {
 		try {
