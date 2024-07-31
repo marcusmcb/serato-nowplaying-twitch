@@ -11,6 +11,7 @@ const OBSWebSocket = require('obs-websocket-js').default
 const dotenv = require('dotenv')
 const WebSocket = require('ws')
 const { URL } = require('url')
+const logToFile = require('./scripts/logger')
 
 // const isDev = require('electron-is-dev')
 // const isDev = false
@@ -62,7 +63,8 @@ const options = {
 	cert: fs.readFileSync(path.join(__dirname, './server.cert')),
 }
 
-const isDev = true
+// const isDev = process.env.NODE_ENV === 'development' ? true : false
+const isDev = false
 process.env.NODE_ENV = isDev ? 'development' : 'production'
 
 const db = require('./database')
@@ -181,6 +183,8 @@ const startServer = () => {
 
 // IPC listener for starting the bot script
 ipcMain.on('startBotScript', async (event, arg) => {
+	logToFile("startBotScript CALLED")
+	logToFile("*******************************")
 	let errorResponse = {
 		success: false,
 		error: null,
@@ -219,7 +223,9 @@ ipcMain.on('startBotScript', async (event, arg) => {
 			event.reply('startBotResponse', errorResponse)
 			return
 		} else {
-			await updateUserToken(db, event, currentAccessToken)
+			await updateUserToken(db, event, currentAccessToken)			
+			logToFile('User token successfully updated')
+			logToFile("*******************************")
 		}
 	} catch (error) {
 		const errorResponse = {
@@ -230,10 +236,18 @@ ipcMain.on('startBotScript', async (event, arg) => {
 		return
 	}
 
+	logToFile('Spawning bot script')
+	logToFile("*******************************")
+
 	botProcess = spawn('node', [scriptPath])
+
+	if (botProcess) {
+		console.log('*** npChatBot PROCESS SPAWNED ***')
+	}
 
 	botProcess.stdout.on('data', (data) => {
 		console.log('DATA: ', data.toString())
+		logToFile(`stdout: IPC --> ${data}`)
 		const parsedMessage = data.toString().trim()
 		if (
 			parsedMessage
@@ -265,6 +279,7 @@ ipcMain.on('startBotScript', async (event, arg) => {
 			}
 			event.reply('botProcessResponse', botResponse)
 		}
+		logToFile(`BOT ERROR stderr: IPC --> ${data}`)
 		console.error(`stderr: IPC --> ${data}`)
 	})
 })

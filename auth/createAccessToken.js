@@ -50,7 +50,7 @@ const initAuthToken = async (code, wss, mainWindow) => {
 	// mainWindow.webContents.send('auth-code', { initAuthToken: code })
 	try {
 		const token = await exchangeCodeForToken(code)
-		if (token) {			
+		if (token) {
 			logToFile(
 				`exchangeCodeForToken result successful: ${JSON.stringify(token)}`
 			)
@@ -143,10 +143,12 @@ const getRefreshToken = async (refreshToken) => {
 
 	try {
 		const response = await axios.post(`${process.env.TWITCH_AUTH_URL}`, params)
+		logToFile(`REFRESH TOKEN DATA: ${JSON.stringify(response.data)}`)
 		console.log('TOKEN DATA: ')
 		console.log(response.data)
 		return response.data
 	} catch (error) {
+		logToFile(`REFRESH TOKEN ERROR: ${error.response.data}`)
 		console.log('REFRESH TOKEN ERROR: ', error.response.data)
 		return error.response.data
 	}
@@ -157,8 +159,10 @@ const updateUserToken = async (db, event, token) => {
 	try {
 		db.users.findOne({}, (err, user) => {
 			if (err) {
+				logToFile(`USER LOOKUP FOR TOKEN ERROR: ${JSON.stringify(err)}`)
 				console.log('USER LOOKUP FOR TOKEN ERROR: ', err)
 			} else if (user) {
+				logToFile(`USER FOUND FOR TOKEN UPDATE: ${JSON.stringify(user)}`)
 				try {
 					db.users.update(
 						{ _id: user._id },
@@ -169,8 +173,14 @@ const updateUserToken = async (db, event, token) => {
 					// Fetch the updated user data after updating the token
 					db.users.findOne({ _id: user._id }, (err, user) => {
 						if (err) {
+							logToFile(
+								`USER LOOKUP ERROR AFTER TOKEN UPDATE: ${JSON.stringify(err)}`
+							)
+							logToFile("*******************************")
 							console.log('USER LOOKUP ERROR AFTER TOKEN UPDATE: ', err)
 						} else if (user) {
+							logToFile(`USER DATA AFTER TOKEN UPDATE: ${JSON.stringify(user)}`)
+							logToFile("*******************************")
 							event.reply('userDataUpdated', user)
 							return {
 								success: true,
@@ -180,11 +190,15 @@ const updateUserToken = async (db, event, token) => {
 						}
 					})
 				} catch (error) {
+					logToFile(`ERROR UPDATING TOKEN: ${JSON.stringify(error)}`)
+					logToFile("*******************************")
 					console.log('ERROR UPDATING TOKEN: ', error)
 				}
 			}
 		})
 	} catch (error) {
+		logToFile(`ERROR UPDATING TOKEN: ${JSON.stringify(error)}`)
+		logToFile("*******************************")
 		console.error('Error updating the user token:', error)
 		return { success: false, error: 'Error updating user token' }
 	}

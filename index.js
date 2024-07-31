@@ -6,6 +6,7 @@ const {
 } = require('./bot-assets/command-list/commandList')
 const { obs, connectToOBS } = require('./obs/obsConnection')
 const { returnRefreshTokenConfig } = require('./auth/accessTokenConfig')
+const logToFile = require('./scripts/logger')
 
 const initializeBot = async (config) => {	
 	let userCommandHistory = {}
@@ -26,12 +27,16 @@ const initializeBot = async (config) => {
 
 	console.log("REFRESH TOKEN CONFIG: ")
 	console.log(refreshTokenConfig)
+	logToFile(`REFRESH TOKEN CONFIG: ${JSON.stringify(refreshTokenConfig)}`)	
+	logToFile("*******************************")
 
 	const client = new tmi.Client(refreshTokenConfig)
 
 	try {
 		client.connect()
 	} catch (error) {
+		logToFile(`TWITCH CONNECTION ERROR: ${error}`)
+		logToFile("*******************************")
 		console.error('TWITCH CONNECTION ERROR: ', error)
 	}
 
