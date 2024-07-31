@@ -10,6 +10,6 @@ loadConfigurations()
 	})
 	.catch((err) => {
 		logToFile(`Error loading configurations: ${err}`)
-		logToFile("*******************************")
+		logToFile('*******************************')
 		console.error('Error loading configurations:', err)
 	})

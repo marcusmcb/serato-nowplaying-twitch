@@ -183,14 +183,14 @@ const startServer = () => {
 
 // IPC listener for starting the bot script
 ipcMain.on('startBotScript', async (event, arg) => {
-	logToFile("startBotScript CALLED")
-	logToFile("*******************************")
+	logToFile('startBotScript CALLED')
+	logToFile('*******************************')
 	let errorResponse = {
 		success: false,
 		error: null,
 	}
 
-	// validate local OBS connection if OBS responses are enabled
+	// Validate local OBS connection if OBS responses are enabled
 	if (arg.isObsResponseEnabled === true) {
 		try {
 			await obs.connect(
@@ -223,9 +223,9 @@ ipcMain.on('startBotScript', async (event, arg) => {
 			event.reply('startBotResponse', errorResponse)
 			return
 		} else {
-			await updateUserToken(db, event, currentAccessToken)			
+			await updateUserToken(db, event, currentAccessToken)
 			logToFile('User token successfully updated')
-			logToFile("*******************************")
+			logToFile('*******************************')
 		}
 	} catch (error) {
 		const errorResponse = {
@@ -237,9 +237,14 @@ ipcMain.on('startBotScript', async (event, arg) => {
 	}
 
 	logToFile('Spawning bot script')
-	logToFile("*******************************")
+	logToFile('*******************************')
 
-	botProcess = spawn('node', [scriptPath])
+	const botEnv = {
+		...process.env,
+		DB_PATH: db.users.filename,
+		USER_DATA_PATH: app.getPath('userData'),
+	}
+	botProcess = spawn('node', [scriptPath], { env: botEnv })
 
 	if (botProcess) {
 		console.log('*** npChatBot PROCESS SPAWNED ***')

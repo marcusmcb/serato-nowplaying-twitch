@@ -1,21 +1,17 @@
 const fs = require('fs')
 const path = require('path')
-const { app } = require('electron')
 
-let logFilePath
+const userDataPath = process.env.USER_DATA_PATH || path.join(__dirname, 'logs')
 
-if (process.env.NODE_ENV === 'development') {
-	logFilePath = path.join(__dirname, '../application.log')
-} else {
-	const userDataPath = app.getPath('userData')
-	logFilePath = path.join(userDataPath, 'application.log')
+if (!fs.existsSync(userDataPath)) {
+	fs.mkdirSync(userDataPath)
 }
 
-// Logging function
+const logFilePath = path.join(userDataPath, 'auth.log')
+
 const logToFile = (message) => {
-	const timestamp = new Date().toISOString()
-	const logMessage = `${timestamp} - ${message}\n`
-	fs.appendFileSync(logFilePath, logMessage, 'utf8')
+	const logMessage = `${new Date().toISOString()} - ${message}\n`
+	fs.appendFileSync(logFilePath, logMessage)
 }
 
 module.exports = logToFile
