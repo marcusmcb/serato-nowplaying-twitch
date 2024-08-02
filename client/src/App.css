@@ -126,6 +126,18 @@ button:disabled:hover {
 	color: black;
 }
 
+.top-panel {
+	display: flex;
+}
+
+.top-panel > *:first-child {
+	flex: 1;
+}
+
+.top-panel > *:nth-child(2) {
+	flex: 2;
+}
+
 .auth-button-default {
 	border: var(--session-info-label-color) 2px solid;
 }
@@ -240,6 +252,7 @@ button:disabled:hover {
 
 .message-panel {
 	height: 100px;
+	margin-left: 50px;
 }
 
 .success-message {
