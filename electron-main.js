@@ -6,31 +6,12 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const express = require('express')
 const { app, BrowserWindow, ipcMain, shell } = require('electron')
-const scriptPath = path.join(__dirname, './boot.js')
 const OBSWebSocket = require('obs-websocket-js').default
 const dotenv = require('dotenv')
 const WebSocket = require('ws')
 const { URL } = require('url')
 const logToFile = require('./scripts/logger')
-
-// const isDev = require('electron-is-dev')
-// const isDev = false
-
-// require('electron-reload')(__dirname, {
-// 	electron: require(`${__dirname}/node_modules/electron`),
-// 	ignored: /node_modules|[\/\\]\.|users\.db/,
-// })
-
-// dotenv.config()
-const envPath = path.join(__dirname, '.env')
-dotenv.config({ path: envPath })
-
-let mainWindow
-let botProcess
-let serverInstance
-let authWindow
-let authCode
-let authError
+const scriptPath = path.join(__dirname, './boot.js')
 
 const {
 	getRefreshToken,
@@ -53,18 +34,32 @@ const {
 	INVALID_SERATO_DISPLAY_NAME,
 } = require('./bot-assets/constants/constants')
 
-const server = express()
-const PORT = process.env.PORT || 5000
-server.use(bodyParser.json())
-server.use(cors())
-
 const options = {
 	key: fs.readFileSync(path.join(__dirname, './server.key')),
 	cert: fs.readFileSync(path.join(__dirname, './server.cert')),
 }
 
-// const isDev = process.env.NODE_ENV === 'development' ? true : false
-const isDev = false
+const envPath = path.join(__dirname, '.env')
+dotenv.config({ path: envPath })
+
+// require('electron-reload')(__dirname, {
+// 	electron: require(`${__dirname}/node_modules/electron`),
+// 	ignored: /node_modules|[\/\\]\.|users\.db/,
+// })
+
+let mainWindow
+let botProcess
+let serverInstance
+let authWindow
+let authCode
+let authError
+
+const server = express()
+const PORT = process.env.PORT || 5000
+server.use(bodyParser.json())
+server.use(cors())
+
+const isDev = true
 process.env.NODE_ENV = isDev ? 'development' : 'production'
 
 const db = require('./database')
@@ -82,6 +77,7 @@ server.get('/', (req, res) => {
 	res.send('NPChatbot is up and running')
 })
 
+// ipc handler for opening the Twitch auth window and response
 ipcMain.on('open-auth-url', async (event, arg) => {
 	const clientId = process.env.TWITCH_CLIENT_ID
 	const redirectUri = process.env.TWITCH_AUTH_REDIRECT_URL
@@ -134,6 +130,7 @@ ipcMain.on('open-auth-url', async (event, arg) => {
 	})
 })
 
+// ipc method to fetch user data on app load
 ipcMain.on('getUserData', async (event, arg) => {
 	if (fs.existsSync(db.users.filename)) {
 		try {
@@ -174,14 +171,14 @@ ipcMain.on('getUserData', async (event, arg) => {
 	}
 })
 
-// Start HTTPS server
+// start HTTPS server
 const startServer = () => {
 	serverInstance = https.createServer(options, server).listen(PORT, () => {
 		console.log(`npChatbot HTTPS server is running on port ${PORT}`)
 	})
 }
 
-// IPC listener for starting the bot script
+// ipc method for starting the bot script
 ipcMain.on('startBotScript', async (event, arg) => {
 	logToFile('startBotScript CALLED')
 	logToFile('*******************************')
@@ -190,7 +187,7 @@ ipcMain.on('startBotScript', async (event, arg) => {
 		error: null,
 	}
 
-	// Validate local OBS connection if OBS responses are enabled
+	// validate local OBS connection if OBS responses are enabled
 	if (arg.isObsResponseEnabled === true) {
 		try {
 			await obs.connect(
@@ -289,6 +286,7 @@ ipcMain.on('startBotScript', async (event, arg) => {
 	})
 })
 
+// ipc method for terminating the npChatbot script
 ipcMain.on('stopBotScript', async (event, arg) => {
 	if (botProcess) {
 		botProcess.on('exit', () => {
@@ -309,10 +307,12 @@ ipcMain.on('stopBotScript', async (event, arg) => {
 	}
 })
 
+// ipc method to notify client when user data is udpated
 ipcMain.on('userDataUpdated', () => {
 	mainWindow.webContents.send('userDataUpdated')
 })
 
+// ipc method to handler user data/preference updates
 ipcMain.on('submitUserData', async (event, arg) => {
 	console.log('****************************')
 	console.log('USER DATA SUBMITTED: ')
@@ -348,6 +348,9 @@ ipcMain.on('submitUserData', async (event, arg) => {
 	}
 })
 
+// ipc method to handle npChatbot disconnection from Twitch
+// add method to clear users.db file if user opts to fully
+// remove the app from their Twitch configuration
 ipcMain.on('open-auth-settings', (event, url) => {
 	shell.openExternal(url)
 })
