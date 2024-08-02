@@ -1,4 +1,5 @@
 import '../App.css'
+import tooltipTexts from './tooltips/tooltipTexts'
 
 interface MessagePanelProps {
 	message: string
@@ -18,53 +19,42 @@ const MessagePanel: React.FC<MessagePanelProps> = ({
 			{error && <div className='error-message'>{error}</div>}
 			{showTooltip === 'twitchChannelName' && (
 				<div className='info-tooltip'>
-					Enter your primary Twitch channel's name here
+					{tooltipTexts.twitchChannelName}
 				</div>
 			)}
 			{showTooltip === 'twitchChatbotName' && (
 				<div className='info-tooltip'>
-					Enter the your Twitch channel's chatbot name here. More details can be
-					found{' '}
-					<a
-						href='https://np-chatbot-site.web.app/'
-						rel='noreferrer'
-						target='_blank'
-					>
-						here
-					</a>
+					{tooltipTexts.twitchChatbotName}
 				</div>
 			)}
 			{showTooltip === 'obsClearDisplayTime' && (
 				<div className='info-tooltip'>
-					Enter the duration (in seconds) for the OBS response to remain on
-					screen
+					{tooltipTexts.obsClearDisplayTime}
 				</div>
 			)}
 			{showTooltip === 'seratoDisplayName' && (
 				<div className='info-tooltip'>
-					Enter the display name from your Serato playlist page here
+					{tooltipTexts.seratoDisplayName}
 				</div>
 			)}
 			{showTooltip === 'intervalMessageDuration' && (
 				<div className='info-tooltip'>
-					Enter the duration (in minutes) for your interval messages to appear
+					{tooltipTexts.intervalMessageDuration}
 				</div>
 			)}
 			{showTooltip === 'obsWebsocketAddress' && (
 				<div className='info-tooltip'>
-					Enter your local OBS web socket address here (optional)
+					{tooltipTexts.obsWebsocketAddress}
 				</div>
 			)}
 			{showTooltip === 'obsWebsocketPassword' && (
 				<div className='info-tooltip'>
-					If your web socket connection is secured within OBS, please enter the
-					password here (optional)
+					{tooltipTexts.obsWebsocketPassword}
 				</div>
 			)}
 			{showTooltip === 'userEmailAddress' && (
 				<div className='info-tooltip'>
-					Enter the email address that you'd like your post-stream report send
-					to
+					{tooltipTexts.userEmailAddress}
 				</div>
 			)}
 		</div>

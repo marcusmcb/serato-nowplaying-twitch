@@ -295,9 +295,12 @@ const App = (): JSX.Element => {
 		<div className='App'>
 			<div className='top-panel'>
 				<TitleBar isAuthorized={isAuthorized} isBotConnected={isBotConnected} />
-				<MessagePanel message={message} error={error} showTooltip={showTooltip} />
+				<MessagePanel
+					message={message}
+					error={error}
+					showTooltip={showTooltip}
+				/>
 			</div>
-
 			<div className='app-container'>
 				<div className='creds-prefs-panel'>
 					<CredentialsPanel
@@ -331,7 +334,6 @@ const App = (): JSX.Element => {
 					isConnectionReady={isConnectionReady}
 				/>
 			</div>
-			
 		</div>
 	)
 }
