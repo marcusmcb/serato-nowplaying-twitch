@@ -126,7 +126,7 @@ button:disabled:hover {
 	color: black;
 }
 
-.auth-button-default {	
+.auth-button-default {
 	border: var(--session-info-label-color) 2px solid;
 }
 

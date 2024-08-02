@@ -357,8 +357,10 @@ ipcMain.on('open-auth-settings', (event, url) => {
 
 const createWindow = () => {
 	mainWindow = new BrowserWindow({
-		width: 1280,
-		height: 680,
+		width: 1335,
+		height: 645,	
+		titleBarStyle: 'hidden',
+		titleBarOverlay: true,	
 		webPreferences: {
 			preload: path.join(__dirname, './scripts/preload.js'),
 			nodeIntegration: false,
@@ -370,7 +372,7 @@ const createWindow = () => {
 		? 'http://127.0.0.1:3000'
 		: `file://${path.join(__dirname, './client/build/index.html')}`
 	mainWindow.loadURL(appURL)
-	mainWindow.webContents.openDevTools()
+	// mainWindow.webContents.openDevTools()
 }
 
 app.on('ready', () => {
