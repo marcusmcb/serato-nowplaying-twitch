@@ -17,8 +17,32 @@ const initializeBot = async (config) => {
 
 	const seratoDisplayName = config.seratoDisplayName.replaceAll(" ", "_")
 
-	// const url = `https://serato.com/playlists/${seratoDisplayName}/6-13-2024`
 	const url = `https://serato.com/playlists/${seratoDisplayName}/live`
+
+	/* ---------------------------------------- */
+	/* Serato Playlist URLs for command testing	*/
+	/* ---------------------------------------- */
+	
+	/* long song data outlier example */
+	// const url = `https://serato.com/playlists/${seratoDisplayName}/6-13-2024`
+
+	/* general playlist examples */
+	// const url = `https://serato.com/playlists/${seratoDisplayName}/7-31-2024`
+
+	/* 1 hour playlist examples */
+	// const url = `https://serato.com/playlists/${seratoDisplayName}/1-22-2024`
+	// const url = `https://serato.com/playlists/${seratoDisplayName}/6-17-2024_1`
+
+	/* 2 hour playlist examples */
+	// const url = `https://serato.com/playlists/${seratoDisplayName}/7-21-2024`
+	// const url = `https://serato.com/playlists/${seratoDisplayName}/7-5-2024_1`
+
+	/* 3 hour playlist examples */
+
+	// const url = `https://serato.com/playlists/${seratoDisplayName}/3-23-2024_1`
+	// const url = `https://serato.com/playlists/${seratoDisplayName}/3-1-2024`	
+
+	/* ---------------------------------------- */
 
 	const refreshTokenConfig = returnRefreshTokenConfig(
 		config,

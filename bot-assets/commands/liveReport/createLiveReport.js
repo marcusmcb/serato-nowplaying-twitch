@@ -12,25 +12,25 @@ const {
 	sumTimeValues,
 	removeLargestNumber,
 	isDoubleOrMore,
-	calculateAverageMilliseconds
+	calculateAverageMilliseconds,
 } = require('../liveReport/LiveReportHelpers/liveReportHelpers')
 
 const createLiveReport = async (url) => {
 	const playlistArtistName = extractPlaylistName(url)
 	try {
 		// function to scrape data for report
-		let response = await scrapeData(url)
-		let results = response[0]
-		let timestamps = response[1]
-		let starttime = response[2]
-		let playlistdate = response[3]
-		let playlistTitle = response[4]
+		const response = await scrapeData(url)
+		const results = response[0]
+		const timestamps = response[1]
+		const starttime = response[2]
+		const playlistdate = response[3]
+		const playlistTitle = response[4]
 		let tracksPlayed = []
 		let trackTimestamps = []
 		let doublesPlayed = []
 		let timestampsParsed = []
 		let startTimeString
-		let starttimeParsed = createPlaylistDate(starttime, playlistdate)
+		const starttimeParsed = createPlaylistDate(starttime, playlistdate)
 
 		// parse start time for proper display in UI
 		if (starttime.length === 7) {
@@ -100,15 +100,55 @@ const createLiveReport = async (url) => {
 		const actualAverage = calculateAverageMilliseconds(msArray)
 		const adjustedAverage = calculateAverageMilliseconds(remainingArray)
 
+		const calculateAverage = (array) =>
+			array.reduce((a, b) => a + b) / array.length
 
-		// console.log(longestTrackValue)
-		// console.log(secondLongestTrackValue)
+		const calculateStandardDeviation = (array) => {
+			const mean = calculateAverage(array)
+			const squaredDiffs = array.map((value) => Math.pow(value - mean, 2))
+			const avgSquareDiff = calculateAverage(squaredDiffs)
+			return Math.sqrt(avgSquareDiff)
+		}
 
-		console.log(msArray)
-		console.log(remainingArray)
+		const filterLongOutliers = (msArray, threshold = 2) => {
+			const mean = calculateAverage(msArray)
+			const stdDev = calculateStandardDeviation(msArray)
 
-		// console.log(actualAverage)
-		// console.log(adjustedAverage)
+			const filteredArray = []
+			const removedOutliers = []
+
+			msArray.forEach((value) => {
+				const zScore = (value - mean) / stdDev
+				if (zScore < threshold) {
+					filteredArray.push(value)
+				} else {
+					removedOutliers.push(value)
+				}
+			})
+
+			console.log('Long Outliers Removed:', removedOutliers)
+			return { filteredArray, removedOutliers }
+		}
+
+		const filterShortOutliers = (msArray, threshold = -2) => {
+			const mean = calculateAverage(msArray)
+			const stdDev = calculateStandardDeviation(msArray)
+
+			const filteredArray = []
+			const removedOutliers = []
+
+			msArray.forEach((value) => {
+				const zScore = (value - mean) / stdDev
+				if (zScore > threshold) {
+					filteredArray.push(value)
+				} else {
+					removedOutliers.push(value)
+				}
+			})
+
+			console.log('Short Outliers Removed:', removedOutliers)
+			return { filteredArray, removedOutliers }
+		}
 
 		// add method to calculate average time as MS for remainingArray
 
@@ -120,7 +160,47 @@ const createLiveReport = async (url) => {
 		// console.log(isDoubleOrMore(actualAverage, adjustedAverage))
 
 		let lastMSArray = msArray.slice(0, -1)
-		let averageTrackLength = calculateAverageTime(msArray)
+
+		console.log('MS Array: ', msArray)
+		console.log('MS Array Length: ', msArray.length)
+		console.log('---------------')
+		// calculate average track length for the set
+		// let averageTrackLength = calculateAverageTime(msArray)
+		// let filteredMSArray = filterLongOutliers(msArray)
+		// console.log('Filtered MS Array (Long): ', filteredMSArray)
+		// console.log('Filtered MS Array Length: ', filteredMSArray.length)
+		// console.log('---------------')
+		// filteredMSArray = filterShortOutliers(filteredMSArray)
+		// console.log('Filtered MS Array (Short): ', filteredMSArray)
+		// console.log('Filtered MS Array Length: ', filteredMSArray.length)
+		// console.log('---------------')
+		// let averageTrackLength = calculateAverageTime(filteredMSArray)
+		
+
+		let { filteredArray: longFilteredMSArray, removedOutliers: longOutliers } =
+			filterLongOutliers(msArray)
+		let {
+			filteredArray: finalFilteredMSArray,
+			removedOutliers: shortOutliers,
+		} = filterShortOutliers(longFilteredMSArray)
+
+		let averageTrackLength = calculateAverageTime(finalFilteredMSArray)
+
+		console.log('Long Outliers Removed:', longOutliers)
+		console.log('Short Outliers Removed:', shortOutliers)
+
+		console.log("Total Tracks Played: ", trackLog.length)
+
+		// console.log('Longest Track Value: ', longestTrackValue)
+		// console.log('Second Longest Track Value: ', secondLongestTrackValue)
+		// console.log('Actual Average: ', actualAverage)
+		// console.log('Adjusted Average: ', adjustedAverage)
+		// console.log('---------------')
+
+		// console.log("Remaining Array: ", remainingArray)
+
+		console.log('---------------')
+
 		let previousAverageTrackLength = calculateAverageTime(lastMSArray)
 		// console.log(averageTrackLength)
 		// console.log(previousAverageTrackLength)
@@ -129,12 +209,12 @@ const createLiveReport = async (url) => {
 			previousAverageTrackLength
 		)
 
-		// * * * * * * * * * * * * * * * 
+		// * * * * * * * * * * * * * * *
 
 		// determine best method to account for track length outliers
 		// that are either abnormally long or short
 
-		// * * * * * * * * * * * * * * * 
+		// * * * * * * * * * * * * * * *
 
 		// longest track length behavior explained:
 
@@ -152,7 +232,7 @@ const createLiveReport = async (url) => {
 		// for this, a helper method should be added to make the correct
 		// determination for which averaging method should be used
 
-		// * * * * * * * * * * * * * * * 
+		// * * * * * * * * * * * * * * *
 
 		// shortest track length behavior explained:
 
@@ -160,7 +240,7 @@ const createLiveReport = async (url) => {
 		// should be discarded when calculating the average track length
 		// for the set (detailed reasoning explained in comments below)
 
-		// * * * * * * * * * * * * * * * 
+		// * * * * * * * * * * * * * * *
 
 		// longest track played
 
@@ -185,7 +265,7 @@ const createLiveReport = async (url) => {
 			longestSeconds = tempLongestSeconds
 		}
 
-		// * * * * * * * * * * * * * * * 
+		// * * * * * * * * * * * * * * *
 
 		// shortest track played logic
 
@@ -239,14 +319,14 @@ const createLiveReport = async (url) => {
 			trackLog[minIndex].timestamp
 		)
 
-		let timeSinceLongestPlayed = formatTimeSincePlayedString(
+		const timeSinceLongestPlayed = formatTimeSincePlayedString(
 			longestTrackDifference
 		)
-		let timeSinceShortestPlayed = formatTimeSincePlayedString(
+		const timeSinceShortestPlayed = formatTimeSincePlayedString(
 			shortestTrackDifference
 		)
 
-		let seratoLiveReport = {
+		const seratoLiveReport = {
 			track_length_array: timeDiffs,
 			dj_name: playlistArtistName,
 			set_length: {
@@ -299,9 +379,12 @@ const createLiveReport = async (url) => {
 		// console.log(seratoLiveReport)
 		// console.log("")
 		// console.log("---------------")
+
+		console.log()
+
 		return seratoLiveReport
 	} catch (err) {
-		console.log("Error creating Serato Live report: ", err)
+		console.log('Error creating Serato Live report: ', err)
 	}
 }
 // FUTURE DEV NOTES
