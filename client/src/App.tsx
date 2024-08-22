@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import TitleBar from './components/TitleBar'
 import CredentialsPanel from './components/CredentialsPanel'
 import PreferencesPanel from './components/PreferencesPanel'
@@ -7,6 +7,8 @@ import MessagePanel from './components/MessagePanel'
 import './App.css'
 
 const App = (): JSX.Element => {
+	/* STATE VALUES */
+
 	const [formData, setFormData] = useState({
 		_id: '',
 		twitchChannelName: '',
@@ -24,7 +26,6 @@ const App = (): JSX.Element => {
 	})
 
 	const [error, setError] = useState('')
-	const [message, setMessage] = useState('')
 	const [isObsResponseEnabled, setIsObsResponseEnabled] = useState(false)
 	const [isIntervalEnabled, setIsIntervalEnabled] = useState(false)
 	const [isReportEnabled, setIsReportEnabled] = useState(false)
@@ -32,7 +33,24 @@ const App = (): JSX.Element => {
 	const [isBotConnected, setIsBotConnected] = useState(false)
 	const [isAuthorized, setIsAuthorized] = useState(false)
 	const [isConnectionReady, setIsConnectionReady] = useState(false)
+	const [messageQueue, setMessageQueue] = useState<string[]>([])
+	const [currentMessage, setCurrentMessage] = useState<string | null>(null)
+	const messageTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 	const ipcRenderer = window.electron.ipcRenderer
+
+	/* INTERFACE VALUES */
+
+	interface BotProcessResponse {
+		success: boolean
+		message?: any
+		error?: string
+	}
+
+	interface AuthSuccess {
+		_id: string
+	}
+
+	/* EFFECT HOOKS */
 
 	// hook for successful twitch auth callback
 	useEffect(() => {
@@ -43,30 +61,41 @@ const App = (): JSX.Element => {
 
 		socket.addEventListener('message', (event) => {
 			console.log('Message from server: ', event.data)
-			setMessage(event.data)
+			addMessageToQueue(event.data)
 			if (event.data !== 'npChatbot authorization with Twitch was cancelled.') {
 				setIsAuthorized(true)
 			}
-			setTimeout(() => {
-				setMessage('')
-			}, 5000)
 		})
+
 		socket.addEventListener('error', (event) => {
 			console.error('WebSocket error:', event)
 		})
+
 		return () => {
 			socket.close()
 		}
 	}, [])
 
+	// effect hook to initially set user id in state
+	// once the app has been authorized via Twitch
+	useEffect(() => {
+		const handleAuthSuccess = (response: AuthSuccess) => {
+			console.log('Auth success:', response)
+			setFormData((prevFormData) => ({ ...prevFormData, _id: response._id }))
+		}
+		window.electron.ipcRenderer.on('auth-successful', handleAuthSuccess)
+		return () => {
+			window.electron.ipcRenderer.removeAllListeners('authSuccess')
+		}
+	}, [])
+
+	// hook to set user data in client UI on app load
 	useEffect(() => {
 		const ipcRendererInstance = window.electron?.ipcRenderer
-
 		if (ipcRendererInstance) {
 			ipcRendererInstance.send('getUserData', {})
 			const handleGetUserDataResponse = (response: any) => {
 				if (response && Object.keys(response.data).length > 0) {
-					console.log('HAS VALUES')
 					setFormData(response.data)
 					setIsObsResponseEnabled(response.data.isObsResponseEnabled)
 					setIsIntervalEnabled(response.data.isIntervalEnabled)
@@ -84,60 +113,36 @@ const App = (): JSX.Element => {
 				console.log('USER DATA: ')
 				console.log(response.data)
 			}
-
 			ipcRendererInstance.once('getUserDataResponse', handleGetUserDataResponse)
-
 			return () => {
 				ipcRendererInstance.removeAllListeners('getUserDataResponse')
 			}
 		}
 	}, [])
 
-	interface BotProcessResponse {
-		success: boolean
-		message?: any
-		error?: string
-	}
-
-	interface AuthSuccess {
-		_id: string
-	}
-
-	// FOR TESTING ONLY
-	// effect hook to check if auth code
-	// returned from Twitch in packaged version
+	// hook to handle user response messages in the UI
 	useEffect(() => {
-		const handleAuthCode = (response: any) => {
-			console.log('Auth code:', response)
+		if (messageTimeoutRef.current) {
+			clearTimeout(messageTimeoutRef.current)
+			messageTimeoutRef.current = null
 		}
-		window.electron.ipcRenderer.on('auth-code', handleAuthCode)
-		return () => {
-			window.electron.ipcRenderer.removeAllListeners('auth-code')
+		if (messageQueue.length > 0 || currentMessage) {
+			if (messageQueue.length > 0) {
+				const newMessage = messageQueue[0]
+				setCurrentMessage(newMessage)
+				setMessageQueue((prevQueue) => prevQueue.slice(1))
+			}
+			messageTimeoutRef.current = setTimeout(() => {
+				setCurrentMessage(null)
+			}, 5000)
 		}
-	}, [])
-
-	// effect hook to initially set user id in state
-	// once the app has been authorized via Twitch
-	useEffect(() => {
-		const handleAuthSuccess = (response: AuthSuccess) => {
-			console.log('Auth success:', response)
-			setFormData((prevFormData) => ({ ...prevFormData, _id: response._id }))
-		}
-		window.electron.ipcRenderer.on('auth-successful', handleAuthSuccess)
-		return () => {
-			window.electron.ipcRenderer.removeAllListeners('authSuccess')
-		}
-	}, [])
+	}, [messageQueue, currentMessage])
 
 	// hook to handle error messages from bot process
 	useEffect(() => {
 		const handleBotProcessData = (response: BotProcessResponse) => {
 			console.log('Data from botProcess:', response)
-			setMessage(response.message)
-			setTimeout(() => {
-				setMessage('')
-			}, 4000)
-			// Handle the data in your React state or UI as needed
+			addMessageToQueue(response.message)
 		}
 		window.electron.ipcRenderer.on('botProcessResponse', handleBotProcessData)
 		return () => {
@@ -145,10 +150,7 @@ const App = (): JSX.Element => {
 		}
 	}, [])
 
-	// useEffect(() => {
-	// 	setIsObsResponseEnabled(false) // Always reset to false whenever address or password changes
-	// }, [formData.obsWebsocketAddress, formData.obsWebsocketPassword])
-
+	// hook to handle tooltip visibility
 	useEffect(() => {
 		const handleOutsideClick = (event: any) => {
 			if (
@@ -165,14 +167,36 @@ const App = (): JSX.Element => {
 		}
 	}, [showTooltip])
 
+	// FOR TESTING ONLY
+	// effect hook to check if auth code returned from Twitch in packaged version
+	useEffect(() => {
+		const handleAuthCode = (response: any) => {
+			console.log('Auth code:', response)
+		}
+		window.electron.ipcRenderer.on('auth-code', handleAuthCode)
+		return () => {
+			window.electron.ipcRenderer.removeAllListeners('auth-code')
+		}
+	}, [])
+
+	/* CLIENT UI HELPER METHODS */
+
+	// helper to add user response messages to message queue
+	const addMessageToQueue = (newMessage: string) => {
+		if (newMessage !== undefined) {
+			setMessageQueue((prevQueue) => [...prevQueue, newMessage])
+		} else return
+	}
+
+	// helper to validate submitted email string
 	const isValidEmail = (email: string) => {
 		var pattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
 		return pattern.test(email)
 	}
 
+	// handle npChatbot script connection
 	const handleConnect = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		setMessage('')
-		setMessage('Connecting to Twitch...')
+		addMessageToQueue('Connecting to Twitch...')
 		console.log('*** sending startBotScript ***')
 		ipcRenderer.send('startBotScript', {
 			twitchChannelName: formData.twitchChannelName,
@@ -189,20 +213,18 @@ const App = (): JSX.Element => {
 		ipcRenderer.on('startBotResponse', (response) => {
 			if (response && response.success) {
 				console.log('--- successfully startBotResponse ---')
-				setMessage('npChatbot is connected to your Twitch chat')
+				addMessageToQueue('npChatbot is connected to your Twitch chat')
 				setIsBotConnected(true)
 			} else if (response && response.error) {
 				console.error(response.error)
-				setMessage(response.error)
+				addMessageToQueue(response.error)
 			} else {
 				console.error('Unexpected response format from startBotResponse')
 			}
-			setTimeout(() => {
-				setMessage('')
-			}, 4000)
 		})
 	}
 
+	// handle npChatbot script disconnection
 	const handleDisconnect = async (
 		event: React.MouseEvent<HTMLButtonElement>
 	) => {
@@ -210,26 +232,24 @@ const App = (): JSX.Element => {
 		ipcRenderer.send('stopBotScript', {})
 		ipcRenderer.once('stopBotResponse', (response) => {
 			if (response && response.success) {
-				setMessage('')
-				setMessage('npChatbot has been disconnected')
+				addMessageToQueue('npChatbot has been disconnected')
 				setIsBotConnected(false)
 			} else if (response && response.error) {
 				console.log('Disconnection error: ', response.error)
-				setMessage(response.error)
+				addMessageToQueue(response.error)
 			} else {
 				console.log('Unexpected response from stopBotResponse')
 			}
-			setTimeout(() => {
-				setMessage('')
-			}, 4000)
 		})
 	}
 
+	// handle user input changes
 	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = event.target
 		setFormData((prevFormData) => ({ ...prevFormData, [name]: value }))
 	}
 
+	// handle user credentials and preferences submission
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
 		console.log('--- Form Data Submitted ---')
@@ -246,8 +266,7 @@ const App = (): JSX.Element => {
 			}, 3000)
 			return
 		}
-		setMessage('Updating...')
-
+		addMessageToQueue('Updating...')
 		if (isReportEnabled && formData.userEmailAddress === '') {
 			setError('A valid email address is required for post-stream reporting.')
 			return
@@ -274,20 +293,16 @@ const App = (): JSX.Element => {
 		ipcRenderer.once('userDataResponse', (response) => {
 			console.log(response)
 			if (response && response.success) {
-				setMessage('')
-				setMessage(response.message)
+				addMessageToQueue(response.message)
 				setFormData(response.data)
 				setIsConnectionReady(true)
 			} else if (response && response.error) {
 				console.log('Update error: ', response.error)
-				setMessage('')
-				setMessage(response.error)
+
+				addMessageToQueue(response.error)
 			} else {
 				console.log('Unexpected response when updating preferences')
 			}
-			setTimeout(() => {
-				setMessage('')
-			}, 4000)
 		})
 	}
 
@@ -296,7 +311,7 @@ const App = (): JSX.Element => {
 			<div className='top-panel'>
 				<TitleBar isAuthorized={isAuthorized} isBotConnected={isBotConnected} />
 				<MessagePanel
-					message={message}
+					message={currentMessage || ''}
 					error={error}
 					showTooltip={showTooltip}
 				/>
