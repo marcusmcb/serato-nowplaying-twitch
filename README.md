@@ -110,7 +110,7 @@ The tidier your audio file tags are, the better.  However that text appears in y
 
 ### Testing:
 
-Tested and verified working using Serato DJ Pro 3.0.2 and OBS Studio 29.0.2 (64-bit) on Windows 10/11s.  
+Tested and verified working using Serato DJ Pro 3.0.2 and OBS Studio 29.0.2 (64-bit) on Windows 10/11.  
 
 <hr>
 
