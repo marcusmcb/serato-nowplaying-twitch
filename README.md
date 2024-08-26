@@ -50,6 +50,8 @@ To display command responses on-screen via OBS during your livestream, you'll ne
 
 Once done, you can store the OBS websocket address and password (if secured) values in the npChatbot app's Credentials section which will then enable the "Enable On-Screen OBS Responses" option in the Preferences section.  
 
+<hr>
+
 ### Enable On-Screen OBS Responses (optional)
 
 This setting determines how long the text response from npChatbot will appear on-screen in OBS before clearing; a value of 5 seconds is set by default if this option is enabled but no value is entered.
