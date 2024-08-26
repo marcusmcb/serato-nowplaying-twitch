@@ -116,7 +116,7 @@ Tested and verified working using Serato DJ Pro 3.0.2 and OBS Studio 29.0.2 (64-
 
 #### Questions:
 
-Feel free to message me with any questions regrading the script, configs/setup, or feature requests to expand the concept here.
+Feel free to message me with any questions regrading the app, configuration/setup, or feature requests to expand the core concept here.
 
 <hr>
 
@@ -124,4 +124,4 @@ Feel free to message me with any questions regrading the script, configs/setup, 
 
 To build out a set of interactive analysis tools for your Twitch viewers to see what music you're currently playing or have previously played in your live stream DJ sets using Serato.  
 
-Marcus McBride, 2023.
+Marcus McBride, 2024.
