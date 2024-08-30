@@ -80,6 +80,7 @@ const formatTimeSincePlayedString = (timeString) => {
 		if (minutes[0] === '0') {
 			minutes = minutes[1]
 		}
+		// if hours > 1, add 's' to 'hour'
 		timeStringFormatted = `${hours} hour and ${minutes} minutes ago`
 	}
 	return timeStringFormatted

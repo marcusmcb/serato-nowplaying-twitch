@@ -94,7 +94,7 @@ const createLiveReport = async (url) => {
 			msArray.push(trackLog[i]['length'])
 		}
 
-		const longestTrackValue = Math.max(...msArray)
+		// const longestTrackValue = Math.max(...msArray)
 		const remainingArray = removeLargestNumber(msArray)
 		const secondLongestTrackValue = Math.max(...remainingArray)
 		const actualAverage = calculateAverageMilliseconds(msArray)
@@ -110,7 +110,10 @@ const createLiveReport = async (url) => {
 			return Math.sqrt(avgSquareDiff)
 		}
 
-		const filterLongOutliers = (msArray, threshold = 2) => {
+		// if under 50 tracks, use 2 as a threshold for both outlier checks
+		// else use 3 as the threshold for both outlier checks
+
+		const filterLongOutliers = (msArray, threshold = 3) => {
 			const mean = calculateAverage(msArray)
 			const stdDev = calculateStandardDeviation(msArray)
 
@@ -130,7 +133,7 @@ const createLiveReport = async (url) => {
 			return { filteredArray, removedOutliers }
 		}
 
-		const filterShortOutliers = (msArray, threshold = -2) => {
+		const filterShortOutliers = (msArray, threshold = -3) => {
 			const mean = calculateAverage(msArray)
 			const stdDev = calculateStandardDeviation(msArray)
 
@@ -175,7 +178,6 @@ const createLiveReport = async (url) => {
 		// console.log('Filtered MS Array Length: ', filteredMSArray.length)
 		// console.log('---------------')
 		// let averageTrackLength = calculateAverageTime(filteredMSArray)
-		
 
 		let { filteredArray: longFilteredMSArray, removedOutliers: longOutliers } =
 			filterLongOutliers(msArray)
@@ -189,7 +191,7 @@ const createLiveReport = async (url) => {
 		console.log('Long Outliers Removed:', longOutliers)
 		console.log('Short Outliers Removed:', shortOutliers)
 
-		console.log("Total Tracks Played: ", trackLog.length)
+		console.log('Total Tracks Played: ', trackLog.length)
 
 		// console.log('Longest Track Value: ', longestTrackValue)
 		// console.log('Second Longest Track Value: ', secondLongestTrackValue)
@@ -249,21 +251,43 @@ const createLiveReport = async (url) => {
 		// values removed when setting "max" value below
 		// (likewise for the maxIndex value)
 
-		let longestSeconds
-		let max = Math.max(...timeDiffs)
-		let maxIndex = timeDiffs.indexOf(max)
+		// Determine the longest track from the original array
+		let longestSeconds,
+			longestMinutes,
+			maxIndex,
+			longestTrackName,
+			longestTrackPlayedAt,
+			timeSinceLongestPlayed,
+			lengthValue
+
+		const longestTrackValue = Math.max(...msArray) // Find the longest track length in the original array
+		maxIndex = msArray.indexOf(longestTrackValue) // Get the index of the longest track
+
+		// Check if the longest track is an outlier
+		const isOutlier = longOutliers.includes(longestTrackValue)
+
+		longestTrackName = trackLog[maxIndex].trackId
+		longestTrackPlayedAt = trackLog[maxIndex].timestamp
+
 		let longestTrack = Math.abs(
 			(trackTimestamps[maxIndex] - trackTimestamps[maxIndex + 1]) / 1000
 		)
-		let longestMinutes = Math.floor(longestTrack / 60) % 60
+		longestMinutes = Math.floor(longestTrack / 60) % 60
 		let tempLongestSeconds = longestTrack % 60
 
-		// check length of longest seconds for display parsing
-		if (tempLongestSeconds.toString().length === 1) {
-			longestSeconds = '0' + tempLongestSeconds
-		} else {
-			longestSeconds = tempLongestSeconds
-		}
+		// Check length of longest seconds for display parsing
+		longestSeconds =
+			tempLongestSeconds.toString().length === 1
+				? '0' + tempLongestSeconds
+				: tempLongestSeconds
+
+		const longestTrackDifference = calculateTimeDifference(
+			trackLog[trackLog.length - 1].timestamp,
+			trackLog[maxIndex].timestamp
+		)
+
+		timeSinceLongestPlayed = formatTimeSincePlayedString(longestTrackDifference)
+		lengthValue = `${longestMinutes}:${longestSeconds}`
 
 		// * * * * * * * * * * * * * * *
 
@@ -310,18 +334,18 @@ const createLiveReport = async (url) => {
 			', ' +
 			playlistdate.split(' ')[2]
 
-		const longestTrackDifference = calculateTimeDifference(
-			trackLog[trackLog.length - 1].timestamp,
-			trackLog[maxIndex].timestamp
-		)
+		// const longestTrackDifference = calculateTimeDifference(
+		// 	trackLog[trackLog.length - 1].timestamp,
+		// 	trackLog[maxIndex].timestamp
+		// )
 		const shortestTrackDifference = calculateTimeDifference(
 			trackLog[trackLog.length - 1].timestamp,
 			trackLog[minIndex].timestamp
 		)
 
-		const timeSinceLongestPlayed = formatTimeSincePlayedString(
-			longestTrackDifference
-		)
+		// const timeSinceLongestPlayed = formatTimeSincePlayedString(
+		// 	longestTrackDifference
+		// )
 		const timeSinceShortestPlayed = formatTimeSincePlayedString(
 			shortestTrackDifference
 		)
@@ -338,16 +362,13 @@ const createLiveReport = async (url) => {
 			set_start_time: startTimeString,
 			total_tracks_played: trackLog.length,
 			longest_track: {
-				name: trackLog[maxIndex].trackId,
-				played_at: trackLog[maxIndex].timestamp,
-				time_since_played: calculateTimeDifference(
-					trackLog[trackLog.length - 1].timestamp,
-					trackLog[maxIndex].timestamp
-				),
-				time_since_played_string: timeSinceLongestPlayed,
-				length_value: longestMinutes + ':' + longestSeconds,
+				name: longestTrackName,
+				played_at: longestTrackPlayedAt,
+				time_since_played: timeSinceLongestPlayed,
+				length_value: lengthValue,
 				minutes: longestMinutes,
 				seconds: longestSeconds,
+				isOutlier: isOutlier
 			},
 			shortest_track: {
 				name: trackLog[minIndex].trackId,
@@ -372,15 +393,15 @@ const createLiveReport = async (url) => {
 			playlist_title: playlistTitle,
 			track_array: tracksPlayed,
 		}
-		// console.log("---------------")
-		// console.log("")
-		// console.log("Serato Playlist Report: ")
-		// console.log("")
-		// console.log(seratoLiveReport)
-		// console.log("")
-		// console.log("---------------")
+		// console.log('---------------')
+		// console.log('')
+		// console.log('Serato Playlist Report: ')
+		// console.log('')
+		// console.log(seratoLiveReport.track_log)
+		// console.log('')
+		// console.log('---------------')
 
-		console.log()
+		// console.log()
 
 		return seratoLiveReport
 	} catch (err) {

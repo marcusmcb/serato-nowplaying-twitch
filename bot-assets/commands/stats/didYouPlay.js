@@ -1,6 +1,9 @@
 const createLiveReport = require('../liveReport/createLiveReport')
 const clearOBSResponse = require('../../../obs/obsHelpers/obsHelpers')
-const { NO_LIVE_DATA_MESSAGE, ERROR_MESSAGE } = require('../../constants/constants')
+const {
+	NO_LIVE_DATA_MESSAGE,
+	ERROR_MESSAGE,
+} = require('../../constants/constants')
 
 const timeDifference = (time1, time2) => {
 	const convertToTimeDate = (timeStr) => {
@@ -35,10 +38,7 @@ const dypCommand = async (channel, tags, args, client, obs, url, config) => {
 		try {
 			const reportData = await createLiveReport(url)
 			if (reportData === undefined) {
-				client.say(
-					channel,
-					NO_LIVE_DATA_MESSAGE
-				)
+				client.say(channel, NO_LIVE_DATA_MESSAGE)
 			} else {
 				let searchResults = []
 				let searchTerm = `${args}`.replaceAll(',', ' ')
@@ -82,6 +82,7 @@ const dypCommand = async (channel, tags, args, client, obs, url, config) => {
 						clearOBSResponse(obs, obsClearDisplayTime)
 					}
 				} else {
+					console.log(timeStampsArray)
 					const lastSongPlayed = searchResults[searchResults.length - 1]
 					const queriedTrackTime = timeStampsArray[0].timestamp
 					const currentTrackTime =
@@ -124,7 +125,7 @@ const dypCommand = async (channel, tags, args, client, obs, url, config) => {
 				}
 			}
 		} catch (error) {
-			console.log('DYP command error: ', error)			
+			console.log('DYP command error: ', error)
 			client.say(channel, ERROR_MESSAGE)
 		}
 	}
