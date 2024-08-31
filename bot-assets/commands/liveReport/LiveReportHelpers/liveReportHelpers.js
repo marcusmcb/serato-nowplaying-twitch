@@ -4,12 +4,11 @@ const extractPlaylistName = (inputString) => {
 	const regex = /playlists\/(.*?)\//
 	const match = regex.exec(inputString)
 	if (match && match[1]) {
-		// Replace underscores with whitespace
 		const playlistName = match[1].replace(/_/g, ' ')
 		return playlistName
+	} else {
+		return null
 	}
-	// Return null if no match is found
-	return null
 }
 
 // parse set length from serato scrape
@@ -170,31 +169,52 @@ const sumTimeValues = (timeValue1, timeValue2) => {
 	return result
 }
 
-const removeLargestNumber = (arr) => {
-	const newArr = [...arr]
-	const indexOfLargest = newArr.indexOf(Math.max(...newArr))
-	if (indexOfLargest !== -1) {
-		newArr.splice(indexOfLargest, 1)
-	}
-	return newArr
+// helper method to calculate standard deviation
+// used in determining if a track is an outlier
+const calculateStandardDeviation = (array) => {
+	const mean = calculateAverage(array)
+	const squaredDiffs = array.map((value) => Math.pow(value - mean, 2))
+	const avgSquareDiff = calculateAverage(squaredDiffs)
+	return Math.sqrt(avgSquareDiff)
 }
 
-const isDoubleOrMore = (longestTrack, secondLongestTrack) => {
-	let percentageDifference =
-		((longestTrack - secondLongestTrack) / secondLongestTrack) * 100
-	return {
-		isDoubleOrMore: longestTrack > 3 * secondLongestTrack,
-		percentageDifference: percentageDifference.toFixed(),
-	}
+// helper method to calculate average
+const calculateAverage = (array) => {
+	return array.reduce((a, b) => a + b) / array.length
 }
 
-const calculateAverageMilliseconds = (times) => {
-	const getAverage = (numbers) => {
-		return Math.round(
-			numbers.reduce((acc, number) => acc + number, 0) / numbers.length
-		)
-	}
-	return getAverage(times)
+const filterLongOutliers = (msArray, longOutlierThreshold) => {
+	const mean = calculateAverage(msArray)
+	const stdDev = calculateStandardDeviation(msArray)
+	const filteredArray = []
+	const removedOutliers = []
+	msArray.forEach((value) => {
+		const zScore = (value - mean) / stdDev
+		if (zScore < longOutlierThreshold) {
+			filteredArray.push(value)
+		} else {
+			removedOutliers.push(value)
+		}
+	})
+	console.log('Long Outliers Removed:', removedOutliers)
+	return { filteredArray, removedOutliers }
+}
+
+const filterShortOutliers = (msArray, shortOutlierThreshold) => {
+	const mean = calculateAverage(msArray)
+	const stdDev = calculateStandardDeviation(msArray)
+	const filteredArray = []
+	const removedOutliers = []
+	msArray.forEach((value) => {
+		const zScore = (value - mean) / stdDev
+		if (zScore > shortOutlierThreshold) {
+			filteredArray.push(value)
+		} else {
+			removedOutliers.push(value)
+		}
+	})
+	console.log('Short Outliers Removed:', removedOutliers)
+	return { filteredArray, removedOutliers }
 }
 
 module.exports = {
@@ -206,7 +226,8 @@ module.exports = {
 	calculateTimeDifference,
 	compareTimes,
 	sumTimeValues,
-	removeLargestNumber,
-	isDoubleOrMore,
-	calculateAverageMilliseconds,
+	calculateStandardDeviation,
+	calculateAverage,
+	filterLongOutliers,
+	filterShortOutliers,
 }

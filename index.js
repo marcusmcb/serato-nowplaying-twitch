@@ -31,7 +31,7 @@ const initializeBot = async (config) => {
 
 	/* 1 hour playlist examples */
 	// const url = `https://serato.com/playlists/${seratoDisplayName}/1-22-2024`
-	// const url = `https://serato.com/playlists/${seratoDisplayName}/6-17-2024_1`
+	const url = `https://serato.com/playlists/${seratoDisplayName}/6-17-2024_1`
 
 	/* 2 hour playlist examples */
 	// const url = `https://serato.com/playlists/${seratoDisplayName}/7-21-2024`
@@ -39,7 +39,7 @@ const initializeBot = async (config) => {
 
 	/* 3 hour playlist examples */
 
-	const url = `https://serato.com/playlists/${seratoDisplayName}/3-23-2024_1`
+	// const url = `https://serato.com/playlists/${seratoDisplayName}/3-23-2024_1`
 	// const url = `https://serato.com/playlists/${seratoDisplayName}/3-1-2024`	
 
 	/* ---------------------------------------- */
