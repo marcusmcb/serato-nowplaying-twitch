@@ -1,10 +1,9 @@
 const scrapeData = require('../liveReport/LiveReportHelpers/scrapeData')
-const parseTimeValues = require('../liveReport/LiveReportHelpers/parseTimeValues')
-const parseStartTime = require('../liveReport/LiveReportHelpers/parseStartTime')
-const calculateAverageTime = require('../liveReport/LiveReportHelpers/calculateAverageTime')
+
 const {
 	extractPlaylistName,
 	parseDateAndTime,
+	parseStartTime,
 	createPlaylistDate,
 	formatTimeSincePlayedString,
 	calculateTimeDifference,
@@ -12,6 +11,8 @@ const {
 	sumTimeValues,
 	filterLongOutliers,
 	filterShortOutliers,
+	calculateAverageTime,
+	parseTimeValues,
 } = require('../liveReport/LiveReportHelpers/liveReportHelpers')
 
 const createLiveReport = async (url) => {

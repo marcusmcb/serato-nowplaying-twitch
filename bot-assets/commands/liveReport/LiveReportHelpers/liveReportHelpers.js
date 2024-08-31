@@ -11,6 +11,11 @@ const extractPlaylistName = (inputString) => {
 	}
 }
 
+const parseStartTime = (str, index) => {
+	const result = [str.slice(0, index), str.slice(index)]
+	return result
+}
+
 // parse set length from serato scrape
 const parseDateAndTime = (timeString, playlistDate) => {
 	const date = new Date(playlistDate)
@@ -217,9 +222,44 @@ const filterShortOutliers = (msArray, shortOutlierThreshold) => {
 	return { filteredArray, removedOutliers }
 }
 
+const calculateAverageTime = (times) => {
+	const getAverage = (numbers) => {
+		const total = numbers.reduce((acc, number) => acc + number, 0)
+		return Math.round(total / numbers.length)
+	}
+
+	const convertMilliseconds = (milliseconds) => {
+		const minutes = Math.floor(milliseconds / 60000)
+		const seconds = ((milliseconds % 60000) / 1000).toFixed(0)
+		return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
+	}
+
+	let msAverage = getAverage(times)
+	let average_track_length = convertMilliseconds(msAverage)
+	return average_track_length
+}
+
+const parseTimeValues = (timestamp) => {
+  let timestampSplit = timestamp.split(":");
+  let hours = timestampSplit[0];
+  let minutes = timestampSplit[1];
+  let seconds = timestampSplit[2];
+  if (hours.charAt(0) === "0") {
+    hours = hours.substring(1);
+  }
+  if (minutes.charAt(0) === "0") {
+    minutes = minutes.substring(1);
+  }
+  if (seconds.charAt(0) === "0") {
+    seconds = seconds.substring(1);
+  }
+  return [hours, minutes, seconds];
+};
+
 module.exports = {
 	extractPlaylistName,
 	parseDateAndTime,
+	parseStartTime,
 	createPlaylistDate,
 	convertTo24Hour,
 	formatTimeSincePlayedString,
@@ -228,6 +268,8 @@ module.exports = {
 	sumTimeValues,
 	calculateStandardDeviation,
 	calculateAverage,
+	calculateAverageTime,
 	filterLongOutliers,
 	filterShortOutliers,
+	parseTimeValues
 }
