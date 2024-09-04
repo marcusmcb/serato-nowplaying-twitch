@@ -4,12 +4,17 @@ const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 module.exports = {
   packagerConfig: {
     asar: true,
+    icon: 'path/to/icon', // Ensure the path to your icon is correct for different platforms
   },
   rebuildConfig: {},
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
-      config: {},
+      config: {
+        name: 'serato_nowplaying_twitch', // Application name for Squirrel.Windows
+        setupExe: 'SeratoNowPlayingTwitchSetup.exe', // Name of the setup executable
+        setupIcon: '', // Path to the icon file for Windows
+      },
     },
     {
       name: '@electron-forge/maker-zip',
@@ -29,8 +34,6 @@ module.exports = {
       name: '@electron-forge/plugin-auto-unpack-natives',
       config: {},
     },
-    // Fuses are used to enable/disable various Electron functionality
-    // at package time, before code signing the application
     new FusesPlugin({
       version: FuseVersion.V1,
       [FuseV1Options.RunAsNode]: false,
