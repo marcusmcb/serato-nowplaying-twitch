@@ -7,7 +7,7 @@ if (!fs.existsSync(userDataPath)) {
 	fs.mkdirSync(userDataPath)
 }
 
-const logFilePath = path.join(userDataPath, 'auth.log')
+const logFilePath = path.join(userDataPath, 'app.log')
 
 const logToFile = (message) => {
 	const logMessage = `${new Date().toISOString()} - ${message}\n`
