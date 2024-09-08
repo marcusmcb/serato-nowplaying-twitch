@@ -55,7 +55,7 @@
 		"@electron-forge/plugin-fuses": "^7.4.0",
 		"@electron/fuses": "^1.8.0",
 		"electron": "^26.6.10",
-		"electron-reload": "^2.0.0-alpha.1",
-		"electron-is-dev": "^2.0.0"
+		"electron-is-dev": "^2.0.0",
+		"electron-reload": "^2.0.0-alpha.1"
 	}
 }

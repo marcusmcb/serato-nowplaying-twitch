@@ -10,7 +10,7 @@ module.exports = {
 		platform: 'win32',
 		dir: './',
 		out: './dist',
-		ignore: ['^\\/public$', '^\\/src$'],
+		// ignore: ['^\\/public$', '^\\/src$'],
 	},
 	rebuildConfig: {},
 	makers: [

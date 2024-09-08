@@ -1,13 +1,16 @@
+const { app } = require('electron')
 const fs = require('fs')
 const path = require('path')
 
-const userDataPath = process.env.USER_DATA_PATH || path.join(__dirname, 'logs')
+const userDataPath = app.getPath('userData')
 
-if (!fs.existsSync(userDataPath)) {
-	fs.mkdirSync(userDataPath)
+const logDirPath = path.join(userDataPath, 'logs')
+
+if (!fs.existsSync(logDirPath)) {
+	fs.mkdirSync(logDirPath)
 }
 
-const logFilePath = path.join(userDataPath, 'app.log')
+const logFilePath = path.join(logDirPath, 'npchatbot.log')
 
 const logToFile = (message) => {
 	const logMessage = `${new Date().toISOString()} - ${message}\n`

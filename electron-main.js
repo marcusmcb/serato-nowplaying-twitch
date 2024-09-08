@@ -11,7 +11,7 @@ const dotenv = require('dotenv')
 const WebSocket = require('ws')
 const { URL } = require('url')
 const logToFile = require('./scripts/logger')
-const scriptPath = path.join(__dirname, './boot.js')
+const scriptPath = path.join(app.getAppPath(), 'boot.js');
 
 const {
 	getRefreshToken,
@@ -33,6 +33,8 @@ const {
 	INVALID_TWITCH_URL,
 	INVALID_SERATO_DISPLAY_NAME,
 } = require('./bot-assets/constants/constants')
+
+if (require('electron-squirrel-startup')) app.quit()
 
 const options = {
 	key: fs.readFileSync(path.join(__dirname, './server.key')),
@@ -59,7 +61,7 @@ const PORT = process.env.PORT || 5000
 server.use(bodyParser.json())
 server.use(cors())
 
-const isDev = true
+const isDev = false
 process.env.NODE_ENV = isDev ? 'development' : 'production'
 
 const db = require('./database')
@@ -358,10 +360,10 @@ ipcMain.on('open-auth-settings', (event, url) => {
 const createWindow = () => {
 	mainWindow = new BrowserWindow({
 		width: 1335,
-		height: 545,	
-		titleBarStyle: 'hidden',
-		titleBarOverlay: true,	
-		resizable: false,
+		height: 545,
+		// titleBarStyle: 'hidden',
+		// titleBarOverlay: true,
+		// resizable: false,
 		webPreferences: {
 			preload: path.join(__dirname, './scripts/preload.js'),
 			nodeIntegration: false,
