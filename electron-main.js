@@ -61,7 +61,7 @@ const PORT = process.env.PORT || 5000
 server.use(bodyParser.json())
 server.use(cors())
 
-const isDev = true
+const isDev = false
 process.env.NODE_ENV = isDev ? 'development' : 'production'
 
 const db = require('./database')
