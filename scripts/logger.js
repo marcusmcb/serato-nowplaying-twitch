@@ -2,7 +2,17 @@ const { app } = require('electron')
 const fs = require('fs')
 const path = require('path')
 
-const userDataPath = app.getPath('userData')
+let userDataPath
+
+// Check if the script is running in an Electron environment
+if (process.type) {
+  // Running in Electron
+  const { app } = require('electron');
+  userDataPath = app.getPath('userData');
+} else {
+  // Running in Node.js (dev mode)
+  userDataPath = path.join(__dirname, 'logs'); // or another directory suitable for your development environment
+}
 
 const logDirPath = path.join(userDataPath, 'logs')
 
