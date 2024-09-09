@@ -109,12 +109,12 @@ const initializeBot = async (config) => {
 						return
 					}
 					urlCommandCooldown = true
-					commandList[command](channel, tags, args, client, obs, url, config)
+					commandList[command](channel, tags, args, tmiClient, obs, url, config)
 					setTimeout(() => {
 						urlCommandCooldown = false
 					}, COOLDOWN_DURATION)
 				} else {
-					commandList[command](channel, tags, args, client, obs, url, config)
+					commandList[command](channel, tags, args, tmiClient, obs, url, config)
 				}
 			}
 		}

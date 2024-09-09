@@ -53,6 +53,7 @@ dotenv.config({ path: envPath })
 
 let mainWindow
 let botProcess = false
+let tmiInstance
 let serverInstance
 let authWindow
 let authCode
@@ -240,19 +241,24 @@ ipcMain.on('startBotScript', async (event, arg) => {
 	loadConfigurations()
 		.then((config) => {
 			setTimeout(async () => {
-				await initializeBot(config)				
+				const init = await initializeBot(config)
+				if (init) {
+					console.log('Bot started successfully: ', init)
+				}
+				tmiInstance = init
 			}, 1000)
 		})
 		.catch((err) => {
 			logToFile(`Error loading configurations: ${err}`)
 			logToFile('*******************************')
 			console.error('Error loading configurations:', err)
-		}).finally(() => {
+		})
+		.finally(() => {
 			botProcess === true
 			event.reply('startBotResponse', {
 				success: true,
 				message: 'Bot started successfully.',
-			})				
+			})
 		})
 
 	// logToFile('Spawning bot script')
@@ -309,27 +315,45 @@ ipcMain.on('startBotScript', async (event, arg) => {
 	// })
 })
 
-// ipc method for terminating the npChatbot script
 ipcMain.on('stopBotScript', async (event, arg) => {
-	console.log("BOT PROCESS: ", botProcess)
-	if (botProcess) {
-		botProcess.on('exit', () => {
-			botProcess = null
-		})
-
-		botProcess.kill()
-		console.log('*** npChatBot PROCESS KILLED ***')
+	if (tmiInstance) {
+		tmiInstance.disconnect() // Disconnect the TMI client
+		tmiInstance = null // Clear the client reference
+		botProcess = false // Reset bot process flag
+		console.log('*** npChatBot CLIENT DISCONNECTED ***')
 		event.reply('stopBotResponse', {
 			success: true,
-			message: 'ipcMain: bot process successfully exited',
+			message: 'ipcMain: bot client successfully disconnected',
 		})
 	} else {
 		event.reply('stopBotResponse', {
 			success: false,
-			error: 'ipcMain: no bot process running to exit',
+			error: 'ipcMain: no bot client running to disconnect',
 		})
 	}
 })
+
+// // ipc method for terminating the npChatbot script
+// ipcMain.on('stopBotScript', async (event, arg) => {
+// 	console.log("BOT PROCESS: ", botProcess)
+// 	if (botProcess) {
+// 		botProcess.on('exit', () => {
+// 			botProcess = null
+// 		})
+
+// 		botProcess.kill()
+// 		console.log('*** npChatBot PROCESS KILLED ***')
+// 		event.reply('stopBotResponse', {
+// 			success: true,
+// 			message: 'ipcMain: bot process successfully exited',
+// 		})
+// 	} else {
+// 		event.reply('stopBotResponse', {
+// 			success: false,
+// 			error: 'ipcMain: no bot process running to exit',
+// 		})
+// 	}
+// })
 
 // ipc method to notify client when user data is udpated
 ipcMain.on('userDataUpdated', () => {
