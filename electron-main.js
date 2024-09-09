@@ -11,7 +11,9 @@ const dotenv = require('dotenv')
 const WebSocket = require('ws')
 const { URL } = require('url')
 const logToFile = require('./scripts/logger')
-const scriptPath = path.join(app.getAppPath(), 'boot.js');
+const scriptPath = path.join(app.getAppPath(), 'boot.js')
+const loadConfigurations = require('./config')
+const initializeBot = require('./index')
 
 const {
 	getRefreshToken,
@@ -50,7 +52,7 @@ dotenv.config({ path: envPath })
 // })
 
 let mainWindow
-let botProcess
+let botProcess = false
 let serverInstance
 let authWindow
 let authCode
@@ -61,7 +63,7 @@ const PORT = process.env.PORT || 5000
 server.use(bodyParser.json())
 server.use(cors())
 
-const isDev = false
+const isDev = true
 process.env.NODE_ENV = isDev ? 'development' : 'production'
 
 const db = require('./database')
@@ -235,62 +237,81 @@ ipcMain.on('startBotScript', async (event, arg) => {
 		return
 	}
 
-	logToFile('Spawning bot script')
-	logToFile('*******************************')
-
-	const botEnv = {
-		...process.env,
-		DB_PATH: db.users.filename,
-		USER_DATA_PATH: app.getPath('userData'),
-	}
-
-	botProcess = spawn('node', [scriptPath], { env: botEnv })
-
-	if (botProcess) {
-		console.log('*** npChatBot PROCESS SPAWNED ***')
-	}
-
-	botProcess.stdout.on('data', (data) => {
-		console.log('DATA: ', data.toString())
-		logToFile(`stdout: IPC --> ${data}`)
-		const parsedMessage = data.toString().trim()
-		if (
-			parsedMessage
-				.toLowerCase()
-				.includes(`joined #${arg.twitchChannelName.toLowerCase()}`)
-		) {
-			const botResponse = {
+	loadConfigurations()
+		.then((config) => {
+			setTimeout(async () => {
+				await initializeBot(config)				
+			}, 1000)
+		})
+		.catch((err) => {
+			logToFile(`Error loading configurations: ${err}`)
+			logToFile('*******************************')
+			console.error('Error loading configurations:', err)
+		}).finally(() => {
+			botProcess === true
+			event.reply('startBotResponse', {
 				success: true,
-				message: parsedMessage,
-				data: arg,
-			}
-			event.reply('startBotResponse', botResponse)
-		} else if (parsedMessage.toLowerCase().includes('error')) {
-			const botResponse = {
-				success: false,
-				error: parsedMessage,
-			}
-			event.reply('startBotResponse', botResponse)
-			botProcess = null
-		}
-	})
+				message: 'Bot started successfully.',
+			})				
+		})
 
-	botProcess.stderr.on('data', (data) => {
-		if (data.includes('OBSWebSocketError')) {
-			const botResponse = {
-				success: false,
-				message:
-					'npChatbot could not detect OBS. Please ensure OBS is running.',
-			}
-			event.reply('botProcessResponse', botResponse)
-		}
-		logToFile(`BOT ERROR stderr: IPC --> ${data}`)
-		console.error(`stderr: IPC --> ${data}`)
-	})
+	// logToFile('Spawning bot script')
+	// logToFile('*******************************')
+
+	// const botEnv = {
+	// 	...process.env,
+	// 	DB_PATH: db.users.filename,
+	// 	USER_DATA_PATH: app.getPath('userData'),
+	// }
+
+	// botProcess = spawn('node', [scriptPath], { env: botEnv })
+
+	// if (botProcess) {
+	// 	console.log('*** npChatBot PROCESS SPAWNED ***')
+	// }
+
+	// botProcess.stdout.on('data', (data) => {
+	// 	console.log('DATA: ', data.toString())
+	// 	logToFile(`stdout: IPC --> ${data}`)
+	// 	const parsedMessage = data.toString().trim()
+	// 	if (
+	// 		parsedMessage
+	// 			.toLowerCase()
+	// 			.includes(`joined #${arg.twitchChannelName.toLowerCase()}`)
+	// 	) {
+	// 		const botResponse = {
+	// 			success: true,
+	// 			message: parsedMessage,
+	// 			data: arg,
+	// 		}
+	// 		event.reply('startBotResponse', botResponse)
+	// 	} else if (parsedMessage.toLowerCase().includes('error')) {
+	// 		const botResponse = {
+	// 			success: false,
+	// 			error: parsedMessage,
+	// 		}
+	// 		event.reply('startBotResponse', botResponse)
+	// 		botProcess = null
+	// 	}
+	// })
+
+	// botProcess.stderr.on('data', (data) => {
+	// 	if (data.includes('OBSWebSocketError')) {
+	// 		const botResponse = {
+	// 			success: false,
+	// 			message:
+	// 				'npChatbot could not detect OBS. Please ensure OBS is running.',
+	// 		}
+	// 		event.reply('botProcessResponse', botResponse)
+	// 	}
+	// 	logToFile(`BOT ERROR stderr: IPC --> ${data}`)
+	// 	console.error(`stderr: IPC --> ${data}`)
+	// })
 })
 
 // ipc method for terminating the npChatbot script
 ipcMain.on('stopBotScript', async (event, arg) => {
+	console.log("BOT PROCESS: ", botProcess)
 	if (botProcess) {
 		botProcess.on('exit', () => {
 			botProcess = null

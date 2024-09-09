@@ -54,23 +54,24 @@ const initializeBot = async (config) => {
 	logToFile(`REFRESH TOKEN CONFIG: ${JSON.stringify(refreshTokenConfig)}`)	
 	logToFile("*******************************")
 
-	const client = new tmi.Client(refreshTokenConfig)
+	const tmiClient = new tmi.Client(refreshTokenConfig)
 
 	try {
-		client.connect()
+		tmiClient.connect()
 	} catch (error) {
 		logToFile(`TWITCH CONNECTION ERROR: ${error}`)
 		logToFile("*******************************")
 		console.error('TWITCH CONNECTION ERROR: ', error)
+		return error
 	}
 
 	if (config.isObsResponseEnabled === true) {
 		await connectToOBS(config)
 	}
 
-	autoCommandsConfig(client, obs, config)
+	autoCommandsConfig(tmiClient, obs, config)
 
-	client.on('message', (channel, tags, message, self) => {
+	tmiClient.on('message', (channel, tags, message, self) => {
 		if (self || !message.startsWith('!')) {
 			return
 		}
@@ -94,14 +95,14 @@ const initializeBot = async (config) => {
 				history.length >= COMMAND_REPEAT_LIMIT &&
 				history.every((hist) => hist === command)
 			) {
-				client.say(
+				tmiClient.say(
 					channel,
 					`@${tags.username}, try a different command before using that one again.`
 				)
 			} else {
 				if (command in urlCommandList && displayOBSMessage) {
 					if (urlCommandCooldown) {
-						client.say(
+						tmiClient.say(
 							channel,
 							`@${tags.username}, please wait for the current command on screen to clear before using that one.`
 						)
@@ -118,6 +119,7 @@ const initializeBot = async (config) => {
 			}
 		}
 	})
+	return tmiClient
 }
 
 module.exports = initializeBot
