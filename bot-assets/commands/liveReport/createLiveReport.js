@@ -88,7 +88,10 @@ const createLiveReport = async (url) => {
 		})
 
 		// check track log length to determine seratoLiveReport data returned
-		// full data returned for playlists with 4 or more tracks played
+		// full data will be returned for playlists with 4 or more tracks played
+		
+		// the logic for determining average track length, etc could produce
+		// errors until at 3-4 tracks have been played in the stream
 
 		if (trackLog.length < 4) {
 			// playlist length & parse hours/minutes/seconds

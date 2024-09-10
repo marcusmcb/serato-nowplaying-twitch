@@ -183,6 +183,7 @@ const updateUserToken = async (db, event, token) => {
 						} else if (user) {
 							logToFile(`USER DATA AFTER TOKEN UPDATE: ${JSON.stringify(user)}`)
 							logToFile("*******************************")
+							console.log('USER DATA AFTER TOKEN UPDATE: ', user)
 							event.reply('userDataUpdated', user)
 							return {
 								success: true,

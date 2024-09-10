@@ -170,7 +170,7 @@ const startServer = () => {
 }
 
 // ipc method to connect the npChatbot script to Twitch
-ipcMain.on('startBotScript', async (event, arg) => {
+ipcMain.on('startBotScript', async (event, arg) => {	
 	logToFile('startBotScript CALLED')
 	logToFile('*******************************')
 	let errorResponse = {
