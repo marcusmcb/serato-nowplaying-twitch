@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const { spawn } = require('child_process')
+// const { spawn } = require('child_process')
 const https = require('https')
 const bodyParser = require('body-parser')
 const cors = require('cors')
@@ -11,7 +11,7 @@ const dotenv = require('dotenv')
 const WebSocket = require('ws')
 const { URL } = require('url')
 const logToFile = require('./scripts/logger')
-const scriptPath = path.join(app.getAppPath(), 'boot.js')
+// const scriptPath = path.join(app.getAppPath(), 'boot.js')
 const loadConfigurations = require('./config')
 const initializeBot = require('./index')
 
@@ -64,7 +64,7 @@ const PORT = process.env.PORT || 5000
 server.use(bodyParser.json())
 server.use(cors())
 
-const isDev = true
+const isDev = false
 process.env.NODE_ENV = isDev ? 'development' : 'production'
 
 const db = require('./database')
