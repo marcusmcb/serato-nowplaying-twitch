@@ -288,19 +288,14 @@ const createLiveReport = async (url) => {
 			playlist_title: playlistTitle,
 			track_array: tracksPlayed,
 		}
-		// console.log('---------------')
-		// console.log('')
-		// console.log('Serato Playlist Report: ')
-		// console.log('')
-		// console.log(seratoLiveReport)
-		// console.log('')
-		// console.log('---------------')
-
 		return seratoLiveReport
 	} catch (err) {
 		console.log('Error creating Serato Live report: ', err)
 	}
 }
+
+module.exports = createLiveReport
+
 // FUTURE DEV NOTES
 //
 // check if shortest track is part of a doubles pair
@@ -308,5 +303,3 @@ const createLiveReport = async (url) => {
 // add logic to determine longest track played @ time
 //
 // add logic to determine shortest track played @ time
-
-module.exports = createLiveReport

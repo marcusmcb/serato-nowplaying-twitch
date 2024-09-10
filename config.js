@@ -1,7 +1,6 @@
-const db = require('./database') // Import the database module
+const db = require('./database')
 const logToFile = require('./scripts/logger')
 
-// Function to load user configurations from the database
 const loadConfigurations = () => {
 	return new Promise((resolve, reject) => {
 		db.users.findOne({}, (err, user) => {

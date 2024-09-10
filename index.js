@@ -14,10 +14,11 @@ const initializeBot = async (config) => {
 	const COOLDOWN_DURATION = 5000
 	const COMMAND_REPEAT_LIMIT = 5
 	const displayOBSMessage = config.isObsResponseEnabled
-
 	const seratoDisplayName = config.seratoDisplayName.replaceAll(" ", "_")
 
-	const url = `https://serato.com/playlists/${seratoDisplayName}/live`
+	// const url = `https://serato.com/playlists/${seratoDisplayName}/live`
+
+	const url = `https://serato.com/playlists/${seratoDisplayName}/9-9-2024`
 
 	/* ---------------------------------------- */
 	/* Serato Playlist URLs for command testing	*/

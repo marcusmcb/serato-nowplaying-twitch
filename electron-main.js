@@ -1,6 +1,5 @@
 const fs = require('fs')
 const path = require('path')
-// const { spawn } = require('child_process')
 const https = require('https')
 const bodyParser = require('body-parser')
 const cors = require('cors')
@@ -11,7 +10,6 @@ const dotenv = require('dotenv')
 const WebSocket = require('ws')
 const { URL } = require('url')
 const logToFile = require('./scripts/logger')
-// const scriptPath = path.join(app.getAppPath(), 'boot.js')
 const loadConfigurations = require('./config')
 const initializeBot = require('./index')
 
@@ -46,18 +44,13 @@ const options = {
 const envPath = path.join(__dirname, '.env')
 dotenv.config({ path: envPath })
 
-// require('electron-reload')(__dirname, {
-// 	electron: require(`${__dirname}/node_modules/electron`),
-// 	ignored: /node_modules|[\/\\]\.|users\.db/,
-// })
-
 let mainWindow
-let botProcess = false
 let tmiInstance
 let serverInstance
 let authWindow
 let authCode
 let authError
+let botProcess = false
 
 const server = express()
 const PORT = process.env.PORT || 5000
@@ -70,13 +63,6 @@ process.env.NODE_ENV = isDev ? 'development' : 'production'
 const db = require('./database')
 const obs = new OBSWebSocket()
 const wss = new WebSocket.Server({ port: 8080 })
-
-// logToFile(`Loading .env file from: ${envPath}`)
-// logToFile(`TWITCH_CLIENT_ID: ${process.env.TWITCH_CLIENT_ID}`)
-// logToFile(`TWITCH_CLIENT_SECRET: ${process.env.TWITCH_CLIENT_SECRET}`)
-// logToFile(`TWITCH_AUTH_REDIRECT_URL: ${process.env.TWITCH_AUTH_REDIRECT_URL}`)
-// logToFile(`TWITCH_AUTH_URL: ${process.env.TWITCH_AUTH_URL}`)
-// logToFile(`* * * * * * * * * * * * * * * * * * *`)
 
 server.get('/', (req, res) => {
 	res.send('NPChatbot is up and running')
@@ -176,14 +162,14 @@ ipcMain.on('getUserData', async (event, arg) => {
 	}
 })
 
-// start HTTPS server
+// method to start HTTPS server
 const startServer = () => {
 	serverInstance = https.createServer(options, server).listen(PORT, () => {
 		console.log(`npChatbot HTTPS server is running on port ${PORT}`)
 	})
 }
 
-// ipc method for starting the bot script
+// ipc method to connect the npChatbot script to Twitch
 ipcMain.on('startBotScript', async (event, arg) => {
 	logToFile('startBotScript CALLED')
 	logToFile('*******************************')
@@ -207,6 +193,7 @@ ipcMain.on('startBotScript', async (event, arg) => {
 		}
 	}
 
+	// check if bot process is already running
 	if (botProcess) {
 		event.reply('startBotResponse', {
 			success: false,
@@ -238,6 +225,7 @@ ipcMain.on('startBotScript', async (event, arg) => {
 		return
 	}
 
+	// load configurations and initialize chatbot script
 	loadConfigurations()
 		.then((config) => {
 			setTimeout(async () => {
@@ -260,66 +248,14 @@ ipcMain.on('startBotScript', async (event, arg) => {
 				message: 'Bot started successfully.',
 			})
 		})
-
-	// logToFile('Spawning bot script')
-	// logToFile('*******************************')
-
-	// const botEnv = {
-	// 	...process.env,
-	// 	DB_PATH: db.users.filename,
-	// 	USER_DATA_PATH: app.getPath('userData'),
-	// }
-
-	// botProcess = spawn('node', [scriptPath], { env: botEnv })
-
-	// if (botProcess) {
-	// 	console.log('*** npChatBot PROCESS SPAWNED ***')
-	// }
-
-	// botProcess.stdout.on('data', (data) => {
-	// 	console.log('DATA: ', data.toString())
-	// 	logToFile(`stdout: IPC --> ${data}`)
-	// 	const parsedMessage = data.toString().trim()
-	// 	if (
-	// 		parsedMessage
-	// 			.toLowerCase()
-	// 			.includes(`joined #${arg.twitchChannelName.toLowerCase()}`)
-	// 	) {
-	// 		const botResponse = {
-	// 			success: true,
-	// 			message: parsedMessage,
-	// 			data: arg,
-	// 		}
-	// 		event.reply('startBotResponse', botResponse)
-	// 	} else if (parsedMessage.toLowerCase().includes('error')) {
-	// 		const botResponse = {
-	// 			success: false,
-	// 			error: parsedMessage,
-	// 		}
-	// 		event.reply('startBotResponse', botResponse)
-	// 		botProcess = null
-	// 	}
-	// })
-
-	// botProcess.stderr.on('data', (data) => {
-	// 	if (data.includes('OBSWebSocketError')) {
-	// 		const botResponse = {
-	// 			success: false,
-	// 			message:
-	// 				'npChatbot could not detect OBS. Please ensure OBS is running.',
-	// 		}
-	// 		event.reply('botProcessResponse', botResponse)
-	// 	}
-	// 	logToFile(`BOT ERROR stderr: IPC --> ${data}`)
-	// 	console.error(`stderr: IPC --> ${data}`)
-	// })
 })
 
+// ipc method to disconnect npChatbot script from Twitch
 ipcMain.on('stopBotScript', async (event, arg) => {
 	if (tmiInstance) {
-		tmiInstance.disconnect() // Disconnect the TMI client
-		tmiInstance = null // Clear the client reference
-		botProcess = false // Reset bot process flag
+		tmiInstance.disconnect()
+		tmiInstance = null
+		botProcess = false
 		console.log('*** npChatBot CLIENT DISCONNECTED ***')
 		event.reply('stopBotResponse', {
 			success: true,
@@ -332,28 +268,6 @@ ipcMain.on('stopBotScript', async (event, arg) => {
 		})
 	}
 })
-
-// // ipc method for terminating the npChatbot script
-// ipcMain.on('stopBotScript', async (event, arg) => {
-// 	console.log("BOT PROCESS: ", botProcess)
-// 	if (botProcess) {
-// 		botProcess.on('exit', () => {
-// 			botProcess = null
-// 		})
-
-// 		botProcess.kill()
-// 		console.log('*** npChatBot PROCESS KILLED ***')
-// 		event.reply('stopBotResponse', {
-// 			success: true,
-// 			message: 'ipcMain: bot process successfully exited',
-// 		})
-// 	} else {
-// 		event.reply('stopBotResponse', {
-// 			success: false,
-// 			error: 'ipcMain: no bot process running to exit',
-// 		})
-// 	}
-// })
 
 // ipc method to notify client when user data is udpated
 ipcMain.on('userDataUpdated', () => {

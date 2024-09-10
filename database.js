@@ -3,7 +3,6 @@ const path = require('path')
 const fs = require('fs')
 const { app } = require('electron')
 
-// Determine the correct path for the database
 let dbPath
 
 if (process.env.DB_PATH) {
@@ -14,8 +13,6 @@ if (process.env.DB_PATH) {
 	} else {
 		const userDataPath = app.getPath('userData')
 		dbPath = path.join(userDataPath, 'users.db')
-
-		// Ensure that the users.db file is copied to the userData directory if it does not exist
 		if (!fs.existsSync(dbPath)) {
 			fs.copyFileSync(path.join(__dirname, 'users.db'), dbPath)
 			console.log(`Database file copied to: ${dbPath}`)
@@ -23,7 +20,6 @@ if (process.env.DB_PATH) {
 	}
 }
 
-// Initialize the database with the correct path
 const db = {}
 db.users = new Datastore({ filename: dbPath, autoload: true })
 
