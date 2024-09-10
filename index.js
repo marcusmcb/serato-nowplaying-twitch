@@ -18,7 +18,7 @@ const initializeBot = async (config) => {
 
 	// const url = `https://serato.com/playlists/${seratoDisplayName}/live`
 
-	const url = `https://serato.com/playlists/${seratoDisplayName}/9-9-2024`
+	// const url = `https://serato.com/playlists/${seratoDisplayName}/9-9-2024`
 
 	/* ---------------------------------------- */
 	/* Serato Playlist URLs for command testing	*/
@@ -35,7 +35,7 @@ const initializeBot = async (config) => {
 	// const url = `https://serato.com/playlists/${seratoDisplayName}/6-17-2024_1`
 
 	/* 2 hour playlist examples */
-	// const url = `https://serato.com/playlists/${seratoDisplayName}/7-21-2024`
+	const url = `https://serato.com/playlists/${seratoDisplayName}/7-21-2024`
 	// const url = `https://serato.com/playlists/${seratoDisplayName}/7-5-2024_1`
 
 	/* 3 hour playlist examples */
@@ -50,8 +50,8 @@ const initializeBot = async (config) => {
 		config.twitchAccessToken
 	)
 
-	console.log("REFRESH TOKEN CONFIG: ")
-	console.log(refreshTokenConfig)
+	// console.log("REFRESH TOKEN CONFIG: ")
+	// console.log(refreshTokenConfig)
 	logToFile(`REFRESH TOKEN CONFIG: ${JSON.stringify(refreshTokenConfig)}`)	
 	logToFile("*******************************")
 

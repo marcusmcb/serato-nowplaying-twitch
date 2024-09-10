@@ -39,7 +39,15 @@ const dypCommand = async (channel, tags, args, client, obs, url, config) => {
 			const reportData = await createLiveReport(url)
 			if (reportData === undefined) {
 				client.say(channel, NO_LIVE_DATA_MESSAGE)
+				return
+			} else if (reportData.total_tracks_played < 4) {
+				client.say(
+					channel,
+					`${config.twitchChannelName} hasn't played enough music in this stream to search just yet.`
+				)
+				return
 			} else {
+				// add logic check for trackLog length here
 				let searchResults = []
 				let searchTerm = `${args}`.replaceAll(',', ' ')
 				for (let i = 0; i < reportData.track_array.length; i++) {

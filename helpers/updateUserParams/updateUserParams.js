@@ -1,6 +1,4 @@
-const updateUserData = async (db, event, arg) => {
-	console.log("UPDATE USER DATA:")
-	console.log(arg)
+const updateUserData = async (db, event, arg) => {	
 	event.reply('botProcessResponse', '*** Update user data called ***')
 	try {
 		const user = await new Promise((resolve, reject) => {
@@ -52,7 +50,9 @@ const updateUserData = async (db, event, arg) => {
 		// console.log("UPDATED USER: ")
 		// console.log(updatedUser)
 		// console.log("------------------------")
-		console.log('--- user data update is complete ---')
+		console.log('-----------------------------')
+		console.log('User data updated successfully')
+		console.log('-----------------------------')
 		event.reply('userDataUpdated', updatedUser)
 
 		return {

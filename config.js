@@ -8,11 +8,11 @@ const loadConfigurations = () => {
 				logToFile(`Database error: ${err}`)
 				logToFile('*******************************')
 				reject(err)
-			} else if (user) {
-				console.log('--------------')
-				console.log('USER CONFIG: ')
-				console.log(user)
-				console.log('--------------')
+			} else if (user) {				
+				console.log('User credentials & preferences loaded')
+				// console.log('USER CONFIG: ')
+				// console.log(user)
+				console.log('--------------------------------------')
 				logToFile(`User found: ${JSON.stringify(user)}`)
 				logToFile('*******************************')
 				resolve(user)

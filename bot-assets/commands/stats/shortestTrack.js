@@ -1,6 +1,9 @@
 const createLiveReport = require('../liveReport/createLiveReport')
 const clearOBSResponse = require('../../../obs/obsHelpers/obsHelpers')
-const { NO_LIVE_DATA_MESSAGE, ERROR_MESSAGE } = require('../../constants/constants')
+const {
+	NO_LIVE_DATA_MESSAGE,
+	ERROR_MESSAGE,
+} = require('../../constants/constants')
 
 const displayShortestTrackMessage = (obs, tags, reportData, config) => {
 	let message = `Shortest song in ${config.twitchChannelName}'s set so far : \n\n${reportData.shortest_track.name}\n${reportData.shortest_track.length_value} (played ${reportData.shortest_track.time_since_played_string})`
@@ -25,10 +28,15 @@ const shortestTrackCommand = async (
 	try {
 		const reportData = await createLiveReport(url)
 		if (reportData === undefined) {
+			client.say(channel, NO_LIVE_DATA_MESSAGE)
+			return
+		}
+		if (reportData.total_tracks_played < 4) {
 			client.say(
 				channel,
-				NO_LIVE_DATA_MESSAGE
+				`${config.twitchChannelName} hasn't played enough music in this stream just yet to determine the shortest song.`
 			)
+			return
 		} else {
 			client.say(
 				channel,
@@ -39,7 +47,7 @@ const shortestTrackCommand = async (
 			}
 		}
 	} catch (error) {
-		console.log("Shortest Track command error: ", error)
+		console.log('Shortest Track command error: ', error)
 		client.say(channel, ERROR_MESSAGE)
 	}
 }

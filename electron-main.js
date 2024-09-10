@@ -186,6 +186,8 @@ ipcMain.on('startBotScript', async (event, arg) => {
 				arg.obsWebsocketPassword
 			)
 			await obs.disconnect()
+			console.log('OBS websocket test successful')
+			console.log('--------------------------------------')
 		} catch (error) {
 			errorResponse.error = errorHandler(error)
 			event.reply('startBotResponse', errorResponse)
@@ -213,6 +215,8 @@ ipcMain.on('startBotScript', async (event, arg) => {
 			return
 		} else {
 			await updateUserToken(db, event, currentAccessToken)
+			console.log('User token successfully updated')
+			console.log('--------------------------------------')
 			logToFile('User token successfully updated')
 			logToFile('*******************************')
 		}
@@ -230,10 +234,12 @@ ipcMain.on('startBotScript', async (event, arg) => {
 		.then((config) => {
 			setTimeout(async () => {
 				const init = await initializeBot(config)
-				if (init) {
-					console.log('Bot started successfully: ', init)
-				}
 				tmiInstance = init
+				botProcess === true
+				event.reply('startBotResponse', {
+					success: true,
+					message: 'Bot started successfully.',
+				})
 			}, 1000)
 		})
 		.catch((err) => {
@@ -242,11 +248,9 @@ ipcMain.on('startBotScript', async (event, arg) => {
 			console.error('Error loading configurations:', err)
 		})
 		.finally(() => {
-			botProcess === true
-			event.reply('startBotResponse', {
-				success: true,
-				message: 'Bot started successfully.',
-			})
+			console.log('------------------')
+			console.log('Bot started successfully')
+			console.log('------------------')
 		})
 })
 
@@ -256,7 +260,8 @@ ipcMain.on('stopBotScript', async (event, arg) => {
 		tmiInstance.disconnect()
 		tmiInstance = null
 		botProcess = false
-		console.log('*** npChatBot CLIENT DISCONNECTED ***')
+		console.log('npChatbot successfully disconnected from Twitch')
+		console.log('--------------------------------------')
 		event.reply('stopBotResponse', {
 			success: true,
 			message: 'ipcMain: bot client successfully disconnected',

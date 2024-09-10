@@ -144,8 +144,10 @@ const getRefreshToken = async (refreshToken) => {
 	try {
 		const response = await axios.post(`${process.env.TWITCH_AUTH_URL}`, params)
 		logToFile(`REFRESH TOKEN DATA: ${JSON.stringify(response.data)}`)
-		console.log('TOKEN DATA: ')
-		console.log(response.data)
+		// console.log('TOKEN DATA: ')
+		// console.log(response.data)
+		console.log('Twitch Auth Token Returned')
+		console.log('--------------------------------------')
 		return response.data
 	} catch (error) {
 		logToFile(`REFRESH TOKEN ERROR: ${error.response.data}`)

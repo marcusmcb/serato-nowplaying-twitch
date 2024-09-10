@@ -1,6 +1,9 @@
 const createLiveReport = require('../liveReport/createLiveReport')
 const clearOBSResponse = require('../../../obs/obsHelpers/obsHelpers')
-const { NO_LIVE_DATA_MESSAGE, ERROR_MESSAGE } = require('../../constants/constants')
+const {
+	NO_LIVE_DATA_MESSAGE,
+	ERROR_MESSAGE,
+} = require('../../constants/constants')
 const {
 	parseTimeString,
 	vibeCheckSelector,
@@ -144,11 +147,7 @@ const COMMAND_MAP = {
 }
 
 const npCommands = async (channel, tags, args, client, obs, url, config) => {
-	console.log('npCommands')
-	console.log(tags['display-name'])
-	console.log(config)
-	console.log(channel)
-	const obsClearDisplayTime = config.obsClearDisplayTime	
+	const obsClearDisplayTime = config.obsClearDisplayTime
 	try {
 		const reportData = await createLiveReport(url)
 		if (reportData === undefined) {
@@ -171,7 +170,7 @@ const npCommands = async (channel, tags, args, client, obs, url, config) => {
 			client.say(channel, NP_OPTIONS)
 		}
 	} catch (error) {
-		console.log("np Command error: ", error)
+		console.log('np Command error: ', error)
 		client.say(channel, ERROR_MESSAGE)
 	}
 }

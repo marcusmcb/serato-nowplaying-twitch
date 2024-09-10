@@ -1,6 +1,9 @@
 const createLiveReport = require('../liveReport/createLiveReport')
 const clearOBSResponse = require('../../../obs/obsHelpers/obsHelpers')
-const { NO_LIVE_DATA_MESSAGE, ERROR_MESSAGE } = require('../../constants/constants')
+const {
+	NO_LIVE_DATA_MESSAGE,
+	ERROR_MESSAGE,
+} = require('../../constants/constants')
 
 const sendChatMessage = (client, channel, username, reportData) => {
 	client.say(
@@ -36,9 +39,13 @@ const statsCommand = async (channel, tags, args, client, obs, url, config) => {
 	try {
 		const reportData = await createLiveReport(url)
 		if (reportData === undefined) {
+			client.say(channel, NO_LIVE_DATA_MESSAGE)
+			return
+		}		
+		if (reportData.track_log.length < 4) {
 			client.say(
 				channel,
-				NO_LIVE_DATA_MESSAGE
+				`${config.twitchChannelName} has played ${reportData.total_tracks_played} songs so far in this stream.`
 			)
 			return
 		}

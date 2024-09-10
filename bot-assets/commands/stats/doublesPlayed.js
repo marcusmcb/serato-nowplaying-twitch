@@ -1,6 +1,9 @@
 const createLiveReport = require('../liveReport/createLiveReport')
 const clearOBSResponse = require('../../../obs/obsHelpers/obsHelpers')
-const { NO_LIVE_DATA_MESSAGE, ERROR_MESSAGE } = require('../../constants/constants')
+const {
+	NO_LIVE_DATA_MESSAGE,
+	ERROR_MESSAGE,
+} = require('../../constants/constants')
 
 const doublesCommand = async (
 	channel,
@@ -14,10 +17,14 @@ const doublesCommand = async (
 	try {
 		const reportData = await createLiveReport(url)
 		if (reportData === undefined) {
+			client.say(channel, NO_LIVE_DATA_MESSAGE)
+			return
+		} else if (reportData.total_tracks_played < 4) {
 			client.say(
 				channel,
-				NO_LIVE_DATA_MESSAGE
+				`${config.twitchChannelName} hasn't played enough music in this stream just yet to determine if doubles were played.`
 			)
+			return
 		} else if (reportData.doubles_played.length === 0) {
 			client.say(
 				channel,
@@ -55,7 +62,7 @@ const doublesCommand = async (
 			}
 		}
 	} catch (error) {
-		console.log("Doubles command error: ", error)
+		console.log('Doubles command error: ', error)
 		client.say(channel, ERROR_MESSAGE)
 	}
 }
