@@ -18,6 +18,7 @@ if (process.env.DB_PATH) {
 		// Ensure that the users.db file is copied to the userData directory if it does not exist
 		if (!fs.existsSync(dbPath)) {
 			fs.copyFileSync(path.join(__dirname, 'users.db'), dbPath)
+			console.log(`Database file copied to: ${dbPath}`)
 		}
 	}
 }

@@ -1,22 +1,13 @@
-const Datastore = require('nedb')
-const path = require('path')
+const db = require('./database') // Import the database module
 const logToFile = require('./scripts/logger')
 
-let dbPath
-
-if (process.env.DB_PATH) {
-	dbPath = process.env.DB_PATH
-} else {
-	dbPath = path.join(__dirname, 'users.db')
-}
-
-const db = {}
-db.users = new Datastore({ filename: dbPath, autoload: true })
-
+// Function to load user configurations from the database
 const loadConfigurations = () => {
 	return new Promise((resolve, reject) => {
 		db.users.findOne({}, (err, user) => {
 			if (err) {
+				logToFile(`Database error: ${err}`)
+				logToFile('*******************************')
 				reject(err)
 			} else if (user) {
 				console.log('--------------')
@@ -28,8 +19,8 @@ const loadConfigurations = () => {
 				resolve(user)
 			} else {
 				logToFile('No user configurations found.')
-				reject(new Error('No user configurations found.'))
 				logToFile('*******************************')
+				reject(new Error('No user configurations found.'))
 			}
 		})
 	})
