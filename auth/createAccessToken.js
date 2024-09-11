@@ -114,6 +114,7 @@ const initAuthToken = async (code, wss, mainWindow) => {
 						}
 						mainWindow.webContents.send('auth-successful', {
 							_id: newDoc._id,
+							twitchRefreshToken: newDoc.twitchRefreshToken,
 						})
 					}
 				)

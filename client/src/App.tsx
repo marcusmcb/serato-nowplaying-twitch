@@ -48,6 +48,7 @@ const App = (): JSX.Element => {
 
 	interface AuthSuccess {
 		_id: string
+		twitchRefreshToken: string
 	}
 
 	/* EFFECT HOOKS */
@@ -81,7 +82,11 @@ const App = (): JSX.Element => {
 	useEffect(() => {
 		const handleAuthSuccess = (response: AuthSuccess) => {
 			console.log('Auth success:', response)
-			setFormData((prevFormData) => ({ ...prevFormData, _id: response._id }))
+			setFormData((prevFormData) => ({
+				...prevFormData,
+				_id: response._id,
+				twitchRefreshToken: response.twitchRefreshToken,
+			}))
 		}
 		window.electron.ipcRenderer.on('auth-successful', handleAuthSuccess)
 		return () => {

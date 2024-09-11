@@ -281,10 +281,8 @@ ipcMain.on('userDataUpdated', () => {
 
 // ipc method to handler user data/preference updates
 ipcMain.on('submitUserData', async (event, arg) => {
-	console.log('ARG: ', arg)
-
 	let token
-
+	console.log("ARG: ", arg)
 	try {
 		const currentAccessToken = await getRefreshToken(arg.twitchRefreshToken)
 		if (currentAccessToken.status === 400) {
