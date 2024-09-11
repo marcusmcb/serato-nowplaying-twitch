@@ -24,35 +24,32 @@ const seratoURLValidityCheck = async (seratoDisplayName) => {
 
 // helper method to validate Twitch URL
 const twitchURLValidityCheck = async (twitchDisplayName) => {
-	
-	console.log("-----------------")
-	console.log("twitchDisplayName: ", twitchDisplayName)
-	console.log("-----------------")
+	console.log('-----------------')
+	console.log('twitchDisplayName: ', twitchDisplayName)
+	console.log('-----------------')
 
 	const url = `https://www.twitch.tv/${twitchDisplayName}`
 	try {
 		const response = await axios.get(url)
 		const pageContent = response.data
-		// console.log("PAGE CONTENT: ")
-		// console.log(pageContent)
-		// console.log("* * * * * * * * * * * * * * *")
+
+		// Updated pattern with a refined regex
 		const pattern = new RegExp(
-			`content=["']twitch\\.tv/${twitchDisplayName}["']`,
+			`content=["']twitch\\.tv/(${twitchDisplayName})["']`,
 			'i'
-		)		
-		console.log("pattern: ", pattern)
-		console.log("-----------------")
+		)
+		console.log('pattern: ', pattern)
+		console.log('-----------------')
 		const exists = pattern.test(pageContent)
-		console.log("exists? : ", exists)
-		// if the pattern is found, we can assume the channel exists
-		// the pattern is not returned with invalid Twitch URL
-		if (exists) {		
-			console.log("Twitch user page exists.")	
+		console.log('exists? : ', exists)
+
+		if (exists) {
+			console.log('Twitch user page exists.')
 			return true
 		} else {
-			console.log("Twitch user page does not exist.")
+			console.log('Twitch user page does not exist.')
 			return false
-		}		
+		}
 	} catch (error) {
 		console.error('Error checking Twitch channel by content:', error)
 		return false
