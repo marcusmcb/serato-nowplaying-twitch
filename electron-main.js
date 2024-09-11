@@ -170,7 +170,7 @@ const startServer = () => {
 }
 
 // ipc method to connect the npChatbot script to Twitch
-ipcMain.on('startBotScript', async (event, arg) => {	
+ipcMain.on('startBotScript', async (event, arg) => {
 	logToFile('startBotScript CALLED')
 	logToFile('*******************************')
 	let errorResponse = {
@@ -281,19 +281,42 @@ ipcMain.on('userDataUpdated', () => {
 
 // ipc method to handler user data/preference updates
 ipcMain.on('submitUserData', async (event, arg) => {
-	console.log('****************************')
-	console.log('USER DATA SUBMITTED: ')
-	console.log(arg.twitchChannelName)
-	console.log(arg.twitchChatbotName)
-	console.log(arg.seratoDisplayName)
-	console.log('****************************')
+	console.log('ARG: ', arg)
+
+	let token
+
+	try {
+		const currentAccessToken = await getRefreshToken(arg.twitchRefreshToken)
+		if (currentAccessToken.status === 400) {
+			const errorResponse = {
+				success: false,
+				error: errorHandler(currentAccessToken.message),
+			}
+			event.reply('userDataResponse', errorResponse)
+			return
+		} else {
+			await updateUserToken(db, event, currentAccessToken)
+			console.log('User token successfully updated')
+			console.log('--------------------------------------')
+			logToFile('User token successfully updated')			
+			logToFile('*******************************')		}
+			token = currentAccessToken
+	} catch (error) {
+		const errorResponse = {
+			success: false,
+			error: 'Failed to refresh user token during update.',
+		}
+		event.reply('userDataResponse', errorResponse)
+		return
+	}
+
 	const seratoDisplayName = arg.seratoDisplayName.replaceAll(' ', '_')
 	const isValidSeratoURL = await seratoURLValidityCheck(seratoDisplayName)
 	console.log('SERATO URL VALIDITY: ', isValidSeratoURL)
-	const isValidTwitchURL = await twitchURLValidityCheck(arg.twitchChannelName)
+	const isValidTwitchURL = await twitchURLValidityCheck(arg.twitchChannelName, token)
 	console.log('TWITCH URL VALIDITY: ', isValidTwitchURL)
 	const isValidTwitchChatbotURL = await twitchURLValidityCheck(
-		arg.twitchChatbotName
+		arg.twitchChatbotName, token
 	)
 	console.log('TWITCH CHATBOT URL VALIDITY: ', isValidTwitchChatbotURL)
 

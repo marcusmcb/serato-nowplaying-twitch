@@ -1,4 +1,5 @@
 const axios = require('axios')
+const { client } = require('tmi.js')
 const WebSocket = require('ws')
 
 // helper method to validate Serato live playlist URL
@@ -23,27 +24,22 @@ const seratoURLValidityCheck = async (seratoDisplayName) => {
 }
 
 // helper method to validate Twitch URL
-const twitchURLValidityCheck = async (twitchDisplayName) => {
+const twitchURLValidityCheck = async (twitchDisplayName, token) => {
 	console.log('-----------------')
 	console.log('twitchDisplayName: ', twitchDisplayName)
+	console.log('token: ', token)
 	console.log('-----------------')
 
-	const url = `https://www.twitch.tv/${twitchDisplayName}`
+	const url = `https://api.twitch.tv/helix/users?login=${twitchDisplayName}`
+
 	try {
-		const response = await axios.get(url)
-		const pageContent = response.data
-
-		// Updated pattern with a refined regex
-		const pattern = new RegExp(
-			`content=["']twitch\\.tv/(${twitchDisplayName})["']`,
-			'i'
-		)
-		console.log('pattern: ', pattern)
-		console.log('-----------------')
-		const exists = pattern.test(pageContent)
-		console.log('exists? : ', exists)
-
-		if (exists) {
+		const response = await axios.get(url, {
+			headers: {
+				'Client-Id': process.env.TWITCH_CLIENT_ID,
+				Authorization: 'Bearer ' + token.access_token,
+			},
+		})
+		if (response.data.data.length > 0) {
 			console.log('Twitch user page exists.')
 			return true
 		} else {
