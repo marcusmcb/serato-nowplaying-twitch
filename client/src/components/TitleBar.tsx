@@ -22,7 +22,7 @@ const TitleBar = ({
 
 	return (
 		<div>
-			<div className='app-title'>npChatbot App</div>
+			<div className='app-title'>npChatbot</div>
 			<button
 				onClick={handleAuthClick}
 				disabled={isBotConnected}

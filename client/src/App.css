@@ -233,6 +233,10 @@ button:disabled:hover {
 	color: var(--highlight-color);
 }
 
+.info-tooltip a:hover {
+	color: var(--highlight-color);
+}
+
 .toggle-field {
 	display: flex;
 	align-items: center;

@@ -12,50 +12,40 @@ const MessagePanel: React.FC<MessagePanelProps> = ({
 	error,
 	showTooltip,
 }) => {
+	// Function to get the tooltip content
+	const getTooltipContent = (key: string) => {
+		switch (key) {
+			case 'twitchChannelName':
+				return tooltipTexts.twitchChannelName
+			case 'twitchChatbotName':
+				return tooltipTexts.twitchChatbotName
+			case 'obsClearDisplayTime':
+				return tooltipTexts.obsClearDisplayTime
+			case 'seratoDisplayName':
+				return tooltipTexts.seratoDisplayName
+			case 'intervalMessageDuration':
+				return tooltipTexts.intervalMessageDuration
+			case 'obsWebsocketAddress':
+				return tooltipTexts.obsWebsocketAddress
+			case 'obsWebsocketPassword':
+				return tooltipTexts.obsWebsocketPassword
+			case 'userEmailAddress':
+				return tooltipTexts.userEmailAddress
+			default:
+				return ''
+		}
+	}
+
 	return (
 		<div className='message-panel'>
 			<div className='app-form-title'>More Info:</div>
 			{message && <div className='success-message'>{message}</div>}
 			{error && <div className='error-message'>{error}</div>}
-			{showTooltip === 'twitchChannelName' && (
-				<div className='info-tooltip'>
-					{tooltipTexts.twitchChannelName}
-				</div>
-			)}
-			{showTooltip === 'twitchChatbotName' && (
-				<div className='info-tooltip'>
-					{tooltipTexts.twitchChatbotName}
-				</div>
-			)}
-			{showTooltip === 'obsClearDisplayTime' && (
-				<div className='info-tooltip'>
-					{tooltipTexts.obsClearDisplayTime}
-				</div>
-			)}
-			{showTooltip === 'seratoDisplayName' && (
-				<div className='info-tooltip'>
-					{tooltipTexts.seratoDisplayName}
-				</div>
-			)}
-			{showTooltip === 'intervalMessageDuration' && (
-				<div className='info-tooltip'>
-					{tooltipTexts.intervalMessageDuration}
-				</div>
-			)}
-			{showTooltip === 'obsWebsocketAddress' && (
-				<div className='info-tooltip'>
-					{tooltipTexts.obsWebsocketAddress}
-				</div>
-			)}
-			{showTooltip === 'obsWebsocketPassword' && (
-				<div className='info-tooltip'>
-					{tooltipTexts.obsWebsocketPassword}
-				</div>
-			)}
-			{showTooltip === 'userEmailAddress' && (
-				<div className='info-tooltip'>
-					{tooltipTexts.userEmailAddress}
-				</div>
+			{showTooltip && (
+				<div
+					className='info-tooltip'
+					dangerouslySetInnerHTML={{ __html: getTooltipContent(showTooltip) }} // Render HTML safely
+				/>
 			)}
 		</div>
 	)

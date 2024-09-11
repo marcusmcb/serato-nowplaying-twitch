@@ -27,19 +27,19 @@ type FieldConfig = {
 const fieldsConfig: FieldConfig[] = [
 	{
 		id: 'twitch-channel-name',
-		label: 'Twitch Channel Name:',
+		label: 'Twitch© Channel Name:',
 		name: 'twitchChannelName',
 		placeholder: 'required'
 	},
 	{
 		id: 'twitch-chatbot-name',
-		label: 'Twitch Chatbot Name:',
+		label: 'Twitch© Chatbot Name:',
 		name: 'twitchChatbotName',
 		placeholder: 'required'
 	},
 	{
 		id: 'serato-display-name',
-		label: 'Serato Display Name:',
+		label: 'Serato© Display Name:',
 		name: 'seratoDisplayName',
 		placeholder: 'required'
 	},
