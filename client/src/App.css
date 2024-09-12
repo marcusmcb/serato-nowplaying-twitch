@@ -11,8 +11,11 @@
 	--dm-sans: 'DM Sans', sans-serif;
 }
 
-.App {
-	margin: 15px 0px 15px 0;
+body {
+	margin: 0px;
+}
+
+.App {	
 	padding: 15px;
 	background-color: var(--main-bg-color);
 }

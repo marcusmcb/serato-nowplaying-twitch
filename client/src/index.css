@@ -2,7 +2,7 @@ body {
 	-webkit-app-region: drag;
 }
 
-button, input, span {
+button, input, span, a {
 	-webkit-app-region: no-drag;
 }
 

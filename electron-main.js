@@ -282,7 +282,7 @@ ipcMain.on('userDataUpdated', () => {
 // ipc method to handler user data/preference updates
 ipcMain.on('submitUserData', async (event, arg) => {
 	let token
-	console.log("ARG: ", arg)
+	console.log('ARG: ', arg)
 	try {
 		const currentAccessToken = await getRefreshToken(arg.twitchRefreshToken)
 		if (currentAccessToken.status === 400) {
@@ -296,9 +296,10 @@ ipcMain.on('submitUserData', async (event, arg) => {
 			await updateUserToken(db, event, currentAccessToken)
 			console.log('User token successfully updated')
 			console.log('--------------------------------------')
-			logToFile('User token successfully updated')			
-			logToFile('*******************************')		}
-			token = currentAccessToken
+			logToFile('User token successfully updated')
+			logToFile('*******************************')
+		}
+		token = currentAccessToken
 	} catch (error) {
 		const errorResponse = {
 			success: false,
@@ -311,10 +312,14 @@ ipcMain.on('submitUserData', async (event, arg) => {
 	const seratoDisplayName = arg.seratoDisplayName.replaceAll(' ', '_')
 	const isValidSeratoURL = await seratoURLValidityCheck(seratoDisplayName)
 	console.log('SERATO URL VALIDITY: ', isValidSeratoURL)
-	const isValidTwitchURL = await twitchURLValidityCheck(arg.twitchChannelName, token)
+	const isValidTwitchURL = await twitchURLValidityCheck(
+		arg.twitchChannelName,
+		token
+	)
 	console.log('TWITCH URL VALIDITY: ', isValidTwitchURL)
 	const isValidTwitchChatbotURL = await twitchURLValidityCheck(
-		arg.twitchChatbotName, token
+		arg.twitchChatbotName,
+		token
 	)
 	console.log('TWITCH CHATBOT URL VALIDITY: ', isValidTwitchChatbotURL)
 
@@ -346,15 +351,19 @@ ipcMain.on('open-auth-settings', (event, url) => {
 const createWindow = () => {
 	mainWindow = new BrowserWindow({
 		width: 1335,
-		height: 545,
-		// titleBarStyle: 'hidden',
-		// titleBarOverlay: true,
-		// resizable: false,
+		height: 515,		
+		titleBarStyle: 'hidden',
+		titleBarOverlay: {
+			color: 'rgb(49, 49, 49)',
+			symbolColor: 'white',
+		},
+		resizable: false,
 		webPreferences: {
 			preload: path.join(__dirname, './scripts/preload.js'),
 			nodeIntegration: false,
 			contextIsolation: true,
 		},
+		icon: path.join(__dirname, './client/public/favicon.ico'),
 	})
 
 	const appURL = isDev

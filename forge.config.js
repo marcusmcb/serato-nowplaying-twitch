@@ -22,10 +22,10 @@ module.exports = {
 			config: {
 				authors: 'Marcus McBride',
 				description: 'A chatbot for Serato & Twitch',
-				name: 'npchatbot', // Application name for Squirrel.Windows
-				exe: 'npchatbot.exe', // Executable name of the installed app
-				setupExe: 'npchatbot-setup.exe', // Name of the setup executable
-				setupIcon: './client/public/favicon.ico', // Path to your icon file (must be in .ico format for Windows)
+				name: 'npchatbot',
+				exe: 'npchatbot.exe',
+				setupExe: 'npchatbot-setup.exe',
+				setupIcon: './client/public/favicon.ico',
 			},
 		},
 		{
