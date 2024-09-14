@@ -1,5 +1,5 @@
-const createLiveReport = require('../liveReport/createLiveReport')
 const clearOBSResponse = require('../../../obs/obsHelpers/obsHelpers')
+
 const {
 	NO_LIVE_DATA_MESSAGE,
 	ERROR_MESSAGE,
@@ -18,15 +18,13 @@ const displayLongestTrackMessage = (obs, tags, reportData, config) => {
 
 const longestTrackCommand = async (
 	channel,
-	tags,
-	args,
 	client,
-	obs,
-	url,
-	config
+	reportData,
+	obs,	
+	config,
+	tags
 ) => {
 	try {
-		const reportData = await createLiveReport(url)
 		if (reportData === undefined) {
 			client.say(channel, NO_LIVE_DATA_MESSAGE)
 			return

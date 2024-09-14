@@ -3,7 +3,7 @@
 	--main-text-color: #fff;
 	--highlight-color: rgb(74, 242, 228);
 	--success-color: rgb(87, 255, 104);
-	--error-color: rgb(255, 136, 136);
+	--error-color: rgb(238, 85, 85);
 	--session-info-label-color: rgb(240, 253, 155);
 	--session-info-status-color: rgb(253, 157, 155);
 	--disabled-color: #aaa;
@@ -271,7 +271,7 @@ button:disabled:hover {
 .error-message {
 	color: var(--error-color);
 	font-family: var(--dm-sans);
-	font-size: 20px;
+	font-size: 20px;	
 }
 
 .app-info-panel {

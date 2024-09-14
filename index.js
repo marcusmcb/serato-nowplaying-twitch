@@ -12,7 +12,7 @@ const initializeBot = async (config) => {
 	let userCommandHistory = {}
 	let urlCommandCooldown = false
 	const COOLDOWN_DURATION = 5000
-	const COMMAND_REPEAT_LIMIT = 5
+	const COMMAND_REPEAT_LIMIT = 10
 	const displayOBSMessage = config.isObsResponseEnabled
 	const seratoDisplayName = config.seratoDisplayName.replaceAll(" ", "_")
 

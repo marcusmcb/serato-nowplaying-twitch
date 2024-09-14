@@ -1,9 +1,13 @@
 const createLiveReport = require('../liveReport/createLiveReport')
 const clearOBSResponse = require('../../../obs/obsHelpers/obsHelpers')
+const { shortestTrackCommand } = require('../stats/shortestTrack')
+const { longestTrackCommand } = require('../stats/longestTrack')
+
 const {
 	NO_LIVE_DATA_MESSAGE,
 	ERROR_MESSAGE,
 } = require('../../constants/constants')
+
 const {
 	parseTimeString,
 	vibeCheckSelector,
@@ -22,10 +26,15 @@ const updateOBSWithText = (obs, text, obsClearDisplayTime, config) => {
 	}
 }
 
+// !np test response
+const handleTest = (channel, client) => {
+	client.say(channel, 'npChatbot is properly linked to your Twitch channel.')
+}
+
 // !np options response
 const handleOptions = (channel, client) => {
 	const message =
-		'Use the following commands to search through my play history: !np (current song), !np previous (previous song), !np start (first song), !np vibecheck (try it & find out), !stats, !doubles, !longestsong, !shortestsong, !dyp (artist name)'
+		'You can find the full npChatbot command list at www.npchatbot.com/commands'
 	client.say(channel, message)
 }
 
@@ -138,12 +147,45 @@ const handleVibeCheck = (
 	}
 }
 
+// !np shortest response
+const handleShortest = (
+	channel,
+	client,
+	reportData,
+	obs,
+	obsClearDisplayTime,
+	config,
+	tags
+) => {
+	shortestTrackCommand(channel, client, reportData, obs, config, tags)
+}
+
+// !np longest response
+const handleLongest = (
+	channel,
+	client,
+	reportData,
+	obs,
+	obsClearDisplayTime,
+	config,
+	tags
+) => {
+	longestTrackCommand(channel, client, reportData, obs, config, tags)
+}
+
+// !np doubles response
+const handleDoubles = () => {}
+
 const COMMAND_MAP = {
 	undefined: handleDefault,
 	previous: handlePrevious,
 	start: handleStart,
 	vibecheck: handleVibeCheck,
 	options: handleOptions,
+	test: handleTest,
+	shortest: handleShortest,
+	longest: handleLongest,
+	doubles: handleDoubles,
 }
 
 const npCommands = async (channel, tags, args, client, obs, url, config) => {
@@ -157,6 +199,7 @@ const npCommands = async (channel, tags, args, client, obs, url, config) => {
 
 		const handler = COMMAND_MAP[args[0]]
 		if (handler) {
+			console.log('HANDLER: ', handler)
 			handler(
 				channel,
 				client,

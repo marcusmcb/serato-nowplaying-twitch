@@ -256,6 +256,7 @@ const App = (): JSX.Element => {
 
 	// handle user credentials and preferences submission
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+		setError("")
 		event.preventDefault()
 		console.log('--- Form Data Submitted ---')
 		console.log(formData)
@@ -265,7 +266,7 @@ const App = (): JSX.Element => {
 			!formData.twitchChatbotName ||
 			!formData.seratoDisplayName
 		) {
-			setError('Please fill in all fields.')
+			setError('Please fill in all required fields before updating.')
 			setTimeout(() => {
 				setError('')
 			}, 3000)
@@ -303,8 +304,11 @@ const App = (): JSX.Element => {
 				setIsConnectionReady(true)
 			} else if (response && response.error) {
 				console.log('Update error: ', response.error)
-
-				addMessageToQueue(response.error)
+				setCurrentMessage("")
+				setError(response.error)
+				setTimeout(() => {
+					setError("")
+				}, 5000)
 			} else {
 				console.log('Unexpected response when updating preferences')
 			}

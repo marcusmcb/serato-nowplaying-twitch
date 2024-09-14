@@ -36,6 +36,10 @@ const MessagePanel: React.FC<MessagePanelProps> = ({
 		}
 	}
 
+	if (error) {
+		console.log("Error: ", error)
+	}
+
 	return (
 		<div className='message-panel'>
 			<div className='app-form-title'>More Info:</div>
