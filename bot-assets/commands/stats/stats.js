@@ -1,5 +1,5 @@
-const createLiveReport = require('../liveReport/createLiveReport')
 const clearOBSResponse = require('../../../obs/obsHelpers/obsHelpers')
+
 const {
 	NO_LIVE_DATA_MESSAGE,
 	ERROR_MESSAGE,
@@ -34,14 +34,12 @@ const displayStatsMessage = (obs, tags, reportData, config, trendIndicator) => {
 	clearOBSResponse(obs, obsClearDisplayTime)
 }
 
-const statsCommand = async (channel, tags, args, client, obs, url, config) => {
-	console.log(tags['display-name'])
-	try {
-		const reportData = await createLiveReport(url)
+const statsCommand = async (channel, client, reportData, obs, config, tags) => {
+	try {		
 		if (reportData === undefined) {
 			client.say(channel, NO_LIVE_DATA_MESSAGE)
 			return
-		}		
+		}
 		if (reportData.track_log.length < 4) {
 			client.say(
 				channel,

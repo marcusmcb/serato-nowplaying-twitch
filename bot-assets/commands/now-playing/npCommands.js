@@ -13,6 +13,7 @@ const {
 	parseTimeString,
 	vibeCheckSelector,
 } = require('../now-playing/npCommandHelpers/npCommandHelpers')
+const { statsCommand } = require('../stats/stats')
 
 const NP_OPTIONS =
 	'npChatbot options: !np, !np previous, !np start, !np vibecheck, !dyp (query), !stats, !doubles, !shortestsong, !longestsong'
@@ -187,6 +188,19 @@ const handleDoubles = (
 	doublesCommand(channel, client, reportData, obs, config, tags)
 }
 
+const handleStats = (
+	channel,
+	client,
+	reportData,
+	obs,
+	obsClearDisplayTime,
+	config,
+	tags
+) => {
+	console.log("--------------> ", config.twitchChannelName)
+	statsCommand(channel, client, reportData, obs, config, tags)
+}
+
 const COMMAND_MAP = {
 	undefined: handleDefault,
 	previous: handlePrevious,
@@ -197,6 +211,7 @@ const COMMAND_MAP = {
 	shortest: handleShortest,
 	longest: handleLongest,
 	doubles: handleDoubles,
+	stats: handleStats,
 }
 
 const npCommands = async (channel, tags, args, client, obs, url, config) => {
