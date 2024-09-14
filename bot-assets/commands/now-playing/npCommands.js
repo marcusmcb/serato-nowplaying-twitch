@@ -2,6 +2,7 @@ const createLiveReport = require('../liveReport/createLiveReport')
 const clearOBSResponse = require('../../../obs/obsHelpers/obsHelpers')
 const { shortestTrackCommand } = require('../stats/shortestTrack')
 const { longestTrackCommand } = require('../stats/longestTrack')
+const { doublesCommand } = require('../stats/doublesPlayed')
 
 const {
 	NO_LIVE_DATA_MESSAGE,
@@ -174,7 +175,17 @@ const handleLongest = (
 }
 
 // !np doubles response
-const handleDoubles = () => {}
+const handleDoubles = (
+	channel,
+	client,
+	reportData,
+	obs,
+	obsClearDisplayTime,
+	config,
+	tags
+) => {
+	doublesCommand(channel, client, reportData, obs, config, tags)
+}
 
 const COMMAND_MAP = {
 	undefined: handleDefault,
@@ -199,7 +210,6 @@ const npCommands = async (channel, tags, args, client, obs, url, config) => {
 
 		const handler = COMMAND_MAP[args[0]]
 		if (handler) {
-			console.log('HANDLER: ', handler)
 			handler(
 				channel,
 				client,

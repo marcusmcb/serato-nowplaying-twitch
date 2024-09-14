@@ -1,4 +1,4 @@
-const createLiveReport = require('../liveReport/createLiveReport')
+// const createLiveReport = require('../liveReport/createLiveReport')
 const clearOBSResponse = require('../../../obs/obsHelpers/obsHelpers')
 const {
 	NO_LIVE_DATA_MESSAGE,
@@ -7,15 +7,14 @@ const {
 
 const doublesCommand = async (
 	channel,
-	tags,
-	args,
 	client,
+	reportData,
 	obs,
-	url,
-	config
+	config,
+	tags
 ) => {
 	try {
-		const reportData = await createLiveReport(url)
+		// const reportData = await createLiveReport(url)
 		if (reportData === undefined) {
 			client.say(channel, NO_LIVE_DATA_MESSAGE)
 			return
