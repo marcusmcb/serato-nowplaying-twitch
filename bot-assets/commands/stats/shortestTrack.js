@@ -8,7 +8,7 @@ const {
 const displayShortestTrackMessage = (obs, tags, reportData, config) => {
 	let message = `Shortest song in ${config.twitchChannelName}'s set so far : \n\n${reportData.shortest_track.name}\n${reportData.shortest_track.length_value} (played ${reportData.shortest_track.time_since_played_string})`
 	obs.call('SetInputSettings', {
-		inputName: 'obs-chat-response',
+		inputName: 'npchatbot-response',
 		inputSettings: {
 			text: message,
 		},

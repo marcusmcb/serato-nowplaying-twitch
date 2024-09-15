@@ -1,7 +1,7 @@
 const clearOBSResponse = (obs, obsClearDisplayTime) => {  
   setTimeout(() => {
     obs.call("SetInputSettings", {
-      inputName: "obs-chat-response",
+      inputName: "npchatbot-response",
       inputSettings: {
         text: "",
       },

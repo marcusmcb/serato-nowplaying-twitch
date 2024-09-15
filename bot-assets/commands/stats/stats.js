@@ -26,7 +26,7 @@ const displayStatsMessage = (obs, tags, reportData, config, trendIndicator) => {
 	}%)`
 
 	obs.call('SetInputSettings', {
-		inputName: 'obs-chat-response',
+		inputName: 'npchatbot-response',
 		inputSettings: {
 			text: message,
 		},

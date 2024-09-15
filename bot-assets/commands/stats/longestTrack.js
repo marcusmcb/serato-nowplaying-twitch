@@ -8,7 +8,7 @@ const {
 const displayLongestTrackMessage = (obs, tags, reportData, config) => {
 	let message = `Longest song in ${config.twitchChannelName}'s set so far : \n\n${reportData.longest_track.name}\n${reportData.longest_track.length_value} (played ${reportData.longest_track.time_since_played})`
 	obs.call('SetInputSettings', {
-		inputName: 'obs-chat-response',
+		inputName: 'npchatbot-response',
 		inputSettings: {
 			text: message,
 		},

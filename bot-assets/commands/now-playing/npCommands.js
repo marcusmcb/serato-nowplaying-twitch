@@ -21,7 +21,7 @@ const NP_OPTIONS =
 const updateOBSWithText = (obs, text, obsClearDisplayTime, config) => {
 	if (config.isObsResponseEnabled) {
 		obs.call('SetInputSettings', {
-			inputName: 'obs-chat-response',
+			inputName: 'npchatbot-response',
 			inputSettings: { text },
 		})
 		clearOBSResponse(obs, obsClearDisplayTime)
@@ -217,13 +217,18 @@ const COMMAND_MAP = {
 const npCommands = async (channel, tags, args, client, obs, url, config) => {
 	const obsClearDisplayTime = config.obsClearDisplayTime
 	try {
+		const handler = COMMAND_MAP[args[0]]
+		if (args[0] === 'test') {
+			handler(channel, client)
+			return
+		}
+
 		const reportData = await createLiveReport(url)
 		if (reportData === undefined) {
 			client.say(channel, NO_LIVE_DATA_MESSAGE)
 			return
 		}
-
-		const handler = COMMAND_MAP[args[0]]
+		
 		if (handler) {
 			handler(
 				channel,

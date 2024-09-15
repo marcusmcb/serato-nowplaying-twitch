@@ -31,7 +31,7 @@ const doublesCommand = async (
 			)
 			if (config.isObsResponseEnabled === true) {
 				obs.call('SetInputSettings', {
-					inputName: 'obs-chat-response',
+					inputName: 'npchatbot-response',
 					inputSettings: {
 						text: `${config.twitchChannelName} has not rocked doubles so far in this set.`,
 					},
@@ -47,7 +47,7 @@ const doublesCommand = async (
 			)
 			if (config.isObsResponseEnabled === true) {
 				obs.call('SetInputSettings', {
-					inputName: 'obs-chat-response',
+					inputName: 'npchatbot-response',
 					inputSettings: {
 						text: `${config.twitchChannelName} has rocked doubles\n${
 							reportData.doubles_played.length

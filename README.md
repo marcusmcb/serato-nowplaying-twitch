@@ -49,7 +49,7 @@ Once done, you can store the OBS websocket address and password (if secured) val
 
 This setting determines how long the text response from npChatbot will appear on-screen in OBS before clearing; a value of 5 seconds is set by default if this option is enabled but no value is entered.
 
-The OBS responses are configured within the chatbot script to return its responses to a common Text (GDI+) element named `'obs-chat-response'`. You can easily create this element and set its name and add it to any scene in your OBS collection.
+The OBS responses are configured within the chatbot script to return its responses to a common Text (GDI+) element named `'npchatbot-response'`. You can easily create this element and set its name and add it to any scene in your OBS collection.
 
 Font size/color, element sizing, and placement are <b>not</b> programmatically set by this script; you'll need to make these determinations for best use within your own Twitch stream.
 

@@ -357,7 +357,7 @@ const createWindow = () => {
 			color: 'rgb(49, 49, 49)',
 			symbolColor: 'white',
 		},
-		resizable: false,
+		resizable: true,
 		webPreferences: {
 			preload: path.join(__dirname, './scripts/preload.js'),
 			nodeIntegration: false,

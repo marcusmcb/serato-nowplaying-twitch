@@ -82,7 +82,7 @@ const dypCommand = async (channel, tags, args, client, obs, url, config) => {
 					)
 					if (config.isObsResponseEnabled === true) {
 						obs.call('SetInputSettings', {
-							inputName: 'obs-chat-response',
+							inputName: 'npchatbot-response',
 							inputSettings: {
 								text: `${config.twitchChannelName} has not played\n'${searchItem}' so far in this stream.`,
 							},
@@ -108,7 +108,7 @@ const dypCommand = async (channel, tags, args, client, obs, url, config) => {
 						)
 						if (config.isObsResponseEnabled === true) {
 							obs.call('SetInputSettings', {
-								inputName: 'obs-chat-response',
+								inputName: 'npchatbot-response',
 								inputSettings: {
 									text: `${config.twitchChannelName} has played\n'${searchItem}' ${searchResults.length} time so far in this stream.\n\nTheir last song was: \n${lastSongPlayed} \n* played ${timeSincePlayed} ago`,
 								},
@@ -122,7 +122,7 @@ const dypCommand = async (channel, tags, args, client, obs, url, config) => {
 						)
 						if (config.isObsResponseEnabled === true) {
 							obs.call('SetInputSettings', {
-								inputName: 'obs-chat-response',
+								inputName: 'npchatbot-response',
 								inputSettings: {
 									text: `${config.twitchChannelName} has played\n'${searchItem}' ${searchResults.length} times so far in this stream.\n\nTheir last song played was: \n${lastSongPlayed} \n* played ${timeSincePlayed} ago`,
 								},
