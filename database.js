@@ -21,6 +21,7 @@ if (process.env.DB_PATH) {
 }
 
 const db = {}
+
 db.users = new Datastore({ filename: dbPath, autoload: true })
 
 module.exports = db

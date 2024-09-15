@@ -12,7 +12,6 @@ module.exports = {
 		platform: 'win32',
 		dir: './',
 		out: './dist',
-		// ignore: ['^\\/public$', '^\\/src$'],
 	},
 	rebuildConfig: {},
 	makers: [
@@ -25,8 +24,8 @@ module.exports = {
 				name: 'npchatbot',
 				exe: 'npchatbot.exe',
 				setupExe: 'npchatbot-setup.exe',
-				setupIcon: './client/public/favicon.ico',			
-				loadingGif: './client/public/spinner.gif',	
+				setupIcon: './client/public/favicon.ico',
+				loadingGif: './client/public/spinner.gif',
 			},
 		},
 		{

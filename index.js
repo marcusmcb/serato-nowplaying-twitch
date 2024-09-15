@@ -49,9 +49,7 @@ const initializeBot = async (config) => {
 		config,
 		config.twitchAccessToken
 	)
-
-	// console.log("REFRESH TOKEN CONFIG: ")
-	// console.log(refreshTokenConfig)
+	
 	logToFile(`REFRESH TOKEN CONFIG: ${JSON.stringify(refreshTokenConfig)}`)	
 	logToFile("*******************************")
 
