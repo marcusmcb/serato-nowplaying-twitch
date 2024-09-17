@@ -335,6 +335,7 @@ const App = (): JSX.Element => {
 						handleSubmit={handleSubmit}
 						isBotConnected={isBotConnected}
 						isObsResponseEnabled={isObsResponseEnabled}
+						isAuthorized={isAuthorized}
 					/>
 					<PreferencesPanel
 						formData={formData}

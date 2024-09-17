@@ -15,6 +15,7 @@ type CredentialsPanelProps = {
 	handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void
 	isBotConnected: boolean
 	isObsResponseEnabled: boolean
+	isAuthorized: boolean
 }
 
 type FieldConfig = {
@@ -29,19 +30,19 @@ const fieldsConfig: FieldConfig[] = [
 		id: 'twitch-channel-name',
 		label: 'Twitch© Channel Name:',
 		name: 'twitchChannelName',
-		placeholder: 'required'
+		placeholder: 'required',
 	},
 	{
 		id: 'twitch-chatbot-name',
 		label: 'Twitch© Chatbot Name:',
 		name: 'twitchChatbotName',
-		placeholder: 'required'
+		placeholder: 'required',
 	},
 	{
 		id: 'serato-display-name',
 		label: 'Serato© Display Name:',
 		name: 'seratoDisplayName',
-		placeholder: 'required'
+		placeholder: 'required',
 	},
 	{
 		id: 'obs-websocket-address',
@@ -59,7 +60,7 @@ const fieldsConfig: FieldConfig[] = [
 
 const InputField: React.FC<{
 	fieldConfig: FieldConfig
-	value: string | undefined 
+	value: string | undefined
 	handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void
 	showTooltip: string | null
 	setShowTooltip: (value: string | null) => void
@@ -133,9 +134,13 @@ const CredentialsPanel: React.FC<CredentialsPanelProps> = (props) => {
 				))}
 
 				<div className='button-row'>
-					<button disabled={props.isBotConnected} type='submit' onClick={() => {
-						console.log("PROPS: ", props.formData)
-					}}>
+					<button
+						disabled={props.isBotConnected || !props.isAuthorized}
+						type='submit'
+						onClick={() => {
+							console.log('PROPS: ', props.formData)
+						}}
+					>
 						Update
 					</button>
 					<div className='toggle-field hide-sensitive-toggle'>
