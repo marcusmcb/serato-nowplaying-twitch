@@ -32,7 +32,7 @@ body {
 }
 
 .app-container-column {
-	margin-right: 55px;
+	margin-right: 25px;
 }
 
 .app-title {
@@ -335,7 +335,15 @@ input[type='checkbox']:checked:before {
 	color: var(--disabled-color);
 }
 
-@media (max-width: 1180px) {
+.pref-input {
+	width: 50px;
+}
+
+.chatbot-controls {
+	margin-right: 20px;
+}
+
+@media (max-width: 800px) {
 	.app-container {
 		flex-direction: column;
 	}

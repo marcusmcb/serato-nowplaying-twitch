@@ -350,14 +350,14 @@ ipcMain.on('open-auth-settings', (event, url) => {
 
 const createWindow = () => {
 	mainWindow = new BrowserWindow({
-		width: 1335,
+		width: 1105,
 		height: 515,		
 		titleBarStyle: 'hidden',
 		titleBarOverlay: {
 			color: 'rgb(49, 49, 49)',
 			symbolColor: 'white',
 		},
-		resizable: true,
+		resizable: false,
 		webPreferences: {
 			preload: path.join(__dirname, './scripts/preload.js'),
 			nodeIntegration: false,

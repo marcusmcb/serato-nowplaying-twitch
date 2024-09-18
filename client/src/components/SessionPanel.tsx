@@ -58,7 +58,7 @@ const SessionPanel: React.FC<SessionPanelProps> = (props) => {
 	}, [props.isBotConnected])
 
 	return (
-		<div className='app-container-column'>
+		<div className='chatbot-controls'>
 			<div className='app-form-title start-chatbot'>Chatbot Controls:</div>
 			<div className='bot-control-button-panel'>
 				<button

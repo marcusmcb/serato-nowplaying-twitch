@@ -60,7 +60,7 @@ const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
 				</label>
 
 				<input
-					className={!props.isObsResponseEnabled || props.isBotConnected ? 'disabled-label' : ''}
+					className={!props.isObsResponseEnabled || props.isBotConnected ? 'pref-input disabled-label' : 'pref-input'}
 					type='text'
 					id='obs-clear-display-time'
 					name='obsClearDisplayTime'
@@ -110,7 +110,7 @@ const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
 				</label>
 
 				<input
-					className={!props.isIntervalEnabled || props.isBotConnected ? 'disabled-label' : ''}
+					className={!props.isIntervalEnabled || props.isBotConnected ? 'disabled-label pref-input' : 'pref-input'}
 					type='text'
 					id='obs-interval-duration'
 					name='intervalMessageDuration'
