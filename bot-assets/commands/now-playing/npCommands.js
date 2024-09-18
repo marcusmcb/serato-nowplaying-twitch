@@ -29,8 +29,10 @@ const updateOBSWithText = (obs, text, obsClearDisplayTime, config) => {
 }
 
 // !np test response
-const handleTest = (channel, client) => {
-	client.say(channel, 'npChatbot is properly linked to your Twitch channel.')
+const handleTest = (channel, client, tags) => {
+	if (tags.username === `${process.env.TWITCH_CHANNEL_NAME}` || tags.mod) {
+		client.say(channel, 'npChatbot is properly linked to your Twitch channel.')
+	}
 }
 
 // !np options response
@@ -197,7 +199,7 @@ const handleStats = (
 	config,
 	tags
 ) => {
-	console.log("--------------> ", config.twitchChannelName)
+	console.log('--------------> ', config.twitchChannelName)
 	statsCommand(channel, client, reportData, obs, config, tags)
 }
 
@@ -219,7 +221,7 @@ const npCommands = async (channel, tags, args, client, obs, url, config) => {
 	try {
 		const handler = COMMAND_MAP[args[0]]
 		if (args[0] === 'test') {
-			handler(channel, client)
+			handler(channel, client, tags)
 			return
 		}
 
@@ -228,7 +230,7 @@ const npCommands = async (channel, tags, args, client, obs, url, config) => {
 			client.say(channel, NO_LIVE_DATA_MESSAGE)
 			return
 		}
-		
+
 		if (handler) {
 			handler(
 				channel,
