@@ -350,7 +350,7 @@ ipcMain.on('open-auth-settings', (event, url) => {
 
 const createWindow = () => {
 	mainWindow = new BrowserWindow({
-		width: 1105,
+		width: 1130,
 		height: 515,		
 		titleBarStyle: 'hidden',
 		titleBarOverlay: {

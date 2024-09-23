@@ -16,7 +16,7 @@ const {
 const { statsCommand } = require('../stats/stats')
 
 const NP_OPTIONS =
-	'npChatbot options: !np, !np previous, !np start, !np vibecheck, !dyp (query), !stats, !doubles, !shortestsong, !longestsong'
+	'npChatbot options: !np, !np previous, !np start, !np vibecheck, !dyp (query), !np stats, !np doubles, !np shortest, !np longest'
 
 const updateOBSWithText = (obs, text, obsClearDisplayTime, config) => {
 	if (config.isObsResponseEnabled) {
@@ -30,9 +30,7 @@ const updateOBSWithText = (obs, text, obsClearDisplayTime, config) => {
 
 // !np test response
 const handleTest = (channel, client, tags) => {
-	if (tags.username === `${process.env.TWITCH_CHANNEL_NAME}` || tags.mod) {
-		client.say(channel, 'npChatbot is properly linked to your Twitch channel.')
-	}
+	client.say(channel, 'npChatbot is properly linked to your Twitch channel.')
 }
 
 // !np options response

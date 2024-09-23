@@ -66,7 +66,7 @@ const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
 					name='obsClearDisplayTime'
 					value={props.formData.obsClearDisplayTime}
 					onChange={props.handleInputChange}
-					placeholder='enter time in seconds'
+					// placeholder='enter time in seconds'
 					disabled={!props.isObsResponseEnabled }
 				/>
 				<span
@@ -116,7 +116,7 @@ const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
 					name='intervalMessageDuration'
 					value={props.formData.intervalMessageDuration}
 					onChange={props.handleInputChange}
-					placeholder='enter time in minutes'
+					// placeholder='enter time in minutes'
 					disabled={!props.isIntervalEnabled || props.isBotConnected}
 				/>
 				<span

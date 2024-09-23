@@ -16,7 +16,8 @@ const TitleBar = ({
 			ipcRenderer.send('open-auth-url')
 		} else {
 			console.log('Already authorized')
-			ipcRenderer.send('open-auth-settings', 'https://www.twitch.tv/settings/connections')
+			// ipcRenderer.send('open-auth-settings', 'https://www.twitch.tv/settings/connections')
+			ipcRenderer.send('open-auth-url')
 		}
 	}
 
