@@ -13,6 +13,8 @@ const logToFile = require('./scripts/logger')
 const loadConfigurations = require('./config')
 const initializeBot = require('./index')
 
+const createLiveReport = require('./bot-assets/commands/liveReport/createLiveReport')
+
 const {
 	getRefreshToken,
 	updateUserToken,
@@ -256,6 +258,15 @@ ipcMain.on('startBotScript', async (event, arg) => {
 
 // ipc method to disconnect npChatbot script from Twitch
 ipcMain.on('stopBotScript', async (event, arg) => {
+	const seratoDisplayName = arg.seratoDisplayName.replaceAll(' ', '_')
+	const url = `https://serato.com/playlists/${seratoDisplayName}/7-21-2024`
+	console.log('URL: ', url)
+	const reportData = await createLiveReport(url)
+
+	if (reportData !== undefined) {
+		console.log('FINAL REPORT DATA: ', reportData)
+	}
+	
 	if (tmiInstance) {
 		tmiInstance.disconnect()
 		tmiInstance = null
@@ -351,7 +362,7 @@ ipcMain.on('open-auth-settings', (event, url) => {
 const createWindow = () => {
 	mainWindow = new BrowserWindow({
 		width: 1130,
-		height: 515,		
+		height: 515,
 		titleBarStyle: 'hidden',
 		titleBarOverlay: {
 			color: 'rgb(49, 49, 49)',

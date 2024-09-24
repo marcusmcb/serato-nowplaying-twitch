@@ -234,7 +234,7 @@ const App = (): JSX.Element => {
 		event: React.MouseEvent<HTMLButtonElement>
 	) => {
 		console.log('*** npChatbot disconnect event ***')
-		ipcRenderer.send('stopBotScript', {})
+		ipcRenderer.send('stopBotScript', { seratoDisplayName: formData.seratoDisplayName })
 		ipcRenderer.once('stopBotResponse', (response) => {
 			if (response && response.success) {
 				addMessageToQueue('npChatbot has been disconnected')

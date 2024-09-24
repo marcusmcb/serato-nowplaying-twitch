@@ -16,7 +16,7 @@ const initializeBot = async (config) => {
 	const displayOBSMessage = config.isObsResponseEnabled
 	const seratoDisplayName = config.seratoDisplayName.replaceAll(" ", "_")
 
-	const url = `https://serato.com/playlists/${seratoDisplayName}/live`
+	// const url = `https://serato.com/playlists/${seratoDisplayName}/live`
 
 	// const url = `https://serato.com/playlists/${seratoDisplayName}/9-9-2024`
 
@@ -35,7 +35,7 @@ const initializeBot = async (config) => {
 	// const url = `https://serato.com/playlists/${seratoDisplayName}/6-17-2024_1`
 
 	/* 2 hour playlist examples */
-	// const url = `https://serato.com/playlists/${seratoDisplayName}/7-21-2024`
+	const url = `https://serato.com/playlists/${seratoDisplayName}/7-21-2024`
 	// const url = `https://serato.com/playlists/${seratoDisplayName}/7-5-2024_1`
 
 	/* 3 hour playlist examples */
