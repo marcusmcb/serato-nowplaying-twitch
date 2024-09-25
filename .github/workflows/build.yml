@@ -28,14 +28,14 @@ jobs:
           TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
           TWITCH_AUTH_REDIRECT_URL: ${{ secrets.TWITCH_AUTH_REDIRECT_URL }}
           TWITCH_AUTH_URL: ${{ secrets.TWITCH_AUTH_URL }}
-        run: npm install
+        run: npm install --legacy-peer-deps
 
       - name: Install client dependencies
         working-directory: client
-        run: npm install
+        run: npm install --legacy-peer-deps
 
       - name: Install TypeScript
-        run: npm install typescript --save-dev
+        run: npm install typescript --save-dev --legacy-peer-deps
 
       - name: Build Windows installer
         env:
@@ -52,7 +52,7 @@ jobs:
           name: Windows-Build
           path: out/make/squirrel.windows/*.exe
 
-  build-macos:
+    build-macos:
     runs-on: macos-latest
     environment: production
     steps:
@@ -71,14 +71,14 @@ jobs:
           TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
           TWITCH_AUTH_REDIRECT_URL: ${{ secrets.TWITCH_AUTH_REDIRECT_URL }}
           TWITCH_AUTH_URL: ${{ secrets.TWITCH_AUTH_URL }}
-        run: npm install
+        run: npm install --legacy-peer-deps
 
       - name: Install client dependencies
         working-directory: client
-        run: npm install
+        run: npm install --legacy-peer-deps
 
       - name: Install TypeScript
-        run: npm install typescript --save-dev
+        run: npm install typescript --save-dev --legacy-peer-deps
 
       - name: Build macOS installer
         env:
