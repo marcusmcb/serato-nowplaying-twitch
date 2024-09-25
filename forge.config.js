@@ -9,7 +9,7 @@ module.exports = {
 		name: 'npchatbot',
 		icon: './client/public/favicon/favicon.ico',
 		arch: 'x64',
-		platform: 'win32',
+		platform: 'all',
 		dir: './',
 		out: './dist',
 	},
