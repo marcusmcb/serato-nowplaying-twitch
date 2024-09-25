@@ -17,10 +17,9 @@ interface SessionPanelProps {
 	handleDisconnect: (event: React.MouseEvent<HTMLButtonElement>) => void
 	isBotConnected: boolean
 	isAuthorized: boolean
-	isConnectionReady: boolean	
+	isConnectionReady: boolean
 	isReportOpen: boolean
 	reportData: ReportData | null
-	
 }
 
 const openReportInNewWindow = (reportData: ReportData | null): void => {
@@ -128,9 +127,11 @@ const SessionPanel: React.FC<SessionPanelProps> = (props) => {
 					className='bot-control-button'
 					disabled={!props.isBotConnected}
 					type='submit'
-					onClick={(event) => {						
+					onClick={(event) => {
 						props.handleDisconnect(event)
-						resetUptime()
+						setTimeout(() => {
+							resetUptime()
+						}, 500)
 					}}
 				>
 					End Session
