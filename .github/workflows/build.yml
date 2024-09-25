@@ -52,7 +52,7 @@ jobs:
           name: Windows-Build
           path: out/make/squirrel.windows/*.exe
 
-    build-macos:
+  build-macos:
     runs-on: macos-latest
     environment: production
     steps:
