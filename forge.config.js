@@ -7,7 +7,7 @@ module.exports = {
 			unpack: '**/users.db',
 		},
 		name: 'npchatbot',
-		icon: './client/public/favicon.ico',
+		icon: './client/public/favicon/favicon.ico',
 		arch: 'x64',
 		platform: 'win32',
 		dir: './',
@@ -20,7 +20,7 @@ module.exports = {
 			platforms: ['win32'],
 			config: {
 				authors: 'Marcus McBride',
-				description: 'A chatbot for Serato & Twitch',
+				description: 'Interactive Music Commmands for Twitch & Serato',
 				name: 'npchatbot',
 				exe: 'npchatbot.exe',
 				setupExe: 'npchatbot-setup.exe',
@@ -39,6 +39,17 @@ module.exports = {
 		{
 			name: '@electron-forge/maker-rpm',
 			config: {},
+		},
+		{
+			name: '@electron-forge/maker-dmg',
+			platforms: ['darwin'],
+			config: {
+				name: 'npchatbot',
+				icon: './client/public/favicon/favicon.icns',
+				background: './client/public/dmg-background.png',
+				overwrite: true,
+				format: 'ULFO',
+			},
 		},
 	],
 	plugins: [
