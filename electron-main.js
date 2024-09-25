@@ -59,7 +59,7 @@ const PORT = process.env.PORT || 5000
 server.use(bodyParser.json())
 server.use(cors())
 
-const isDev = false
+const isDev = true
 process.env.NODE_ENV = isDev ? 'development' : 'production'
 
 const db = require('./database')
@@ -258,14 +258,14 @@ ipcMain.on('startBotScript', async (event, arg) => {
 
 // ipc method to disconnect npChatbot script from Twitch
 ipcMain.on('stopBotScript', async (event, arg) => {
-	const seratoDisplayName = arg.seratoDisplayName.replaceAll(' ', '_')
-	const url = `https://serato.com/playlists/${seratoDisplayName}/7-21-2024`
-	console.log('URL: ', url)
-	const reportData = await createLiveReport(url)
+	// const seratoDisplayName = arg.seratoDisplayName.replaceAll(' ', '_')
+	// const url = `https://serato.com/playlists/${seratoDisplayName}/7-21-2024`
+	// console.log('URL: ', url)
+	// const reportData = await createLiveReport(url)
 
-	if (reportData !== undefined) {
-		console.log('FINAL REPORT DATA: ', reportData)
-	}
+	// if (reportData !== undefined) {
+	// 	console.log('FINAL REPORT DATA: ', reportData)
+	// }
 
 	if (tmiInstance) {
 		tmiInstance.disconnect()

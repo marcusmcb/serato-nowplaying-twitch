@@ -43,7 +43,7 @@
 		"ws": "^8.16.0"
 	},
 	"engines": {
-		"node": "14.x",
+		"node": "18.x",
 		"npm": "9.x"
 	},
 	"devDependencies": {
