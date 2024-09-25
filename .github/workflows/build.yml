@@ -11,7 +11,7 @@ on:
 jobs:
   build-windows:
     runs-on: windows-latest
-    environment: production  # Specify the environment here
+    environment: production
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -19,9 +19,9 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '14' # Adjust based on your needs
+          node-version: '14'
 
-      - name: Install dependencies
+      - name: Install root dependencies
         env:
           NODE_ENV: ${{ secrets.NODE_ENV }}
           TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
@@ -29,6 +29,13 @@ jobs:
           TWITCH_AUTH_REDIRECT_URL: ${{ secrets.TWITCH_AUTH_REDIRECT_URL }}
           TWITCH_AUTH_URL: ${{ secrets.TWITCH_AUTH_URL }}
         run: npm install
+
+      - name: Install client dependencies
+        working-directory: client
+        run: npm install
+
+      - name: Install TypeScript
+        run: npm install typescript --save-dev
 
       - name: Build Windows installer
         env:
@@ -47,7 +54,7 @@ jobs:
 
   build-macos:
     runs-on: macos-latest
-    environment: production  # Specify the environment here
+    environment: production
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -57,7 +64,7 @@ jobs:
         with:
           node-version: '14'
 
-      - name: Install dependencies
+      - name: Install root dependencies
         env:
           NODE_ENV: ${{ secrets.NODE_ENV }}
           TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
@@ -65,6 +72,13 @@ jobs:
           TWITCH_AUTH_REDIRECT_URL: ${{ secrets.TWITCH_AUTH_REDIRECT_URL }}
           TWITCH_AUTH_URL: ${{ secrets.TWITCH_AUTH_URL }}
         run: npm install
+
+      - name: Install client dependencies
+        working-directory: client
+        run: npm install
+
+      - name: Install TypeScript
+        run: npm install typescript --save-dev
 
       - name: Build macOS installer
         env:
