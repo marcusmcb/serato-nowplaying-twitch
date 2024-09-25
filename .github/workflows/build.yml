@@ -1,96 +1,96 @@
-name: Build and Release
+# name: Build and Release
 
-on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+# on:
+#   push:
+#     branches:
+#       - master
+#   pull_request:
+#     branches:
+#       - master
 
-jobs:
-  build-windows:
-    runs-on: windows-latest
-    environment: production
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+# jobs:
+#   build-windows:
+#     runs-on: windows-latest
+#     environment: production
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '14'
+#       - name: Set up Node.js
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: '14'
 
-      - name: Install root dependencies
-        env:
-          NODE_ENV: ${{ secrets.NODE_ENV }}
-          TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
-          TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
-          TWITCH_AUTH_REDIRECT_URL: ${{ secrets.TWITCH_AUTH_REDIRECT_URL }}
-          TWITCH_AUTH_URL: ${{ secrets.TWITCH_AUTH_URL }}
-        run: npm install
+#       - name: Install root dependencies
+#         env:
+#           NODE_ENV: ${{ secrets.NODE_ENV }}
+#           TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
+#           TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
+#           TWITCH_AUTH_REDIRECT_URL: ${{ secrets.TWITCH_AUTH_REDIRECT_URL }}
+#           TWITCH_AUTH_URL: ${{ secrets.TWITCH_AUTH_URL }}
+#         run: npm install
 
-      - name: Install client dependencies
-        working-directory: client
-        run: npm install
+#       - name: Install client dependencies
+#         working-directory: client
+#         run: npm install
 
-      - name: Install TypeScript
-        run: npm install typescript --save-dev
+#       - name: Install TypeScript
+#         run: npm install typescript --save-dev
 
-      - name: Build Windows installer
-        env:
-          NODE_ENV: ${{ secrets.NODE_ENV }}
-          TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
-          TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
-          TWITCH_AUTH_REDIRECT_URL: ${{ secrets.TWITCH_AUTH_REDIRECT_URL }}
-          TWITCH_AUTH_URL: ${{ secrets.TWITCH_AUTH_URL }}
-        run: npm run make -- --platform win32
+#       - name: Build Windows installer
+#         env:
+#           NODE_ENV: ${{ secrets.NODE_ENV }}
+#           TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
+#           TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
+#           TWITCH_AUTH_REDIRECT_URL: ${{ secrets.TWITCH_AUTH_REDIRECT_URL }}
+#           TWITCH_AUTH_URL: ${{ secrets.TWITCH_AUTH_URL }}
+#         run: npm run make -- --platform win32
 
-      - name: Upload Windows artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: Windows-Build
-          path: out/make/squirrel.windows/*.exe
+#       - name: Upload Windows artifacts
+#         uses: actions/upload-artifact@v3
+#         with:
+#           name: Windows-Build
+#           path: out/make/squirrel.windows/*.exe
 
-  build-macos:
-    runs-on: macos-latest
-    environment: production
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+#   build-macos:
+#     runs-on: macos-latest
+#     environment: production
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '14'
+#       - name: Set up Node.js
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: '14'
 
-      - name: Install root dependencies
-        env:
-          NODE_ENV: ${{ secrets.NODE_ENV }}
-          TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
-          TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
-          TWITCH_AUTH_REDIRECT_URL: ${{ secrets.TWITCH_AUTH_REDIRECT_URL }}
-          TWITCH_AUTH_URL: ${{ secrets.TWITCH_AUTH_URL }}
-        run: npm install
+#       - name: Install root dependencies
+#         env:
+#           NODE_ENV: ${{ secrets.NODE_ENV }}
+#           TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
+#           TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
+#           TWITCH_AUTH_REDIRECT_URL: ${{ secrets.TWITCH_AUTH_REDIRECT_URL }}
+#           TWITCH_AUTH_URL: ${{ secrets.TWITCH_AUTH_URL }}
+#         run: npm install
 
-      - name: Install client dependencies
-        working-directory: client
-        run: npm install
+#       - name: Install client dependencies
+#         working-directory: client
+#         run: npm install
 
-      - name: Install TypeScript
-        run: npm install typescript --save-dev
+#       - name: Install TypeScript
+#         run: npm install typescript --save-dev
 
-      - name: Build macOS installer
-        env:
-          NODE_ENV: ${{ secrets.NODE_ENV }}
-          TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
-          TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
-          TWITCH_AUTH_REDIRECT_URL: ${{ secrets.TWITCH_AUTH_REDIRECT_URL }}
-          TWITCH_AUTH_URL: ${{ secrets.TWITCH_AUTH_URL }}
-        run: npm run make -- --platform darwin
+#       - name: Build macOS installer
+#         env:
+#           NODE_ENV: ${{ secrets.NODE_ENV }}
+#           TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
+#           TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
+#           TWITCH_AUTH_REDIRECT_URL: ${{ secrets.TWITCH_AUTH_REDIRECT_URL }}
+#           TWITCH_AUTH_URL: ${{ secrets.TWITCH_AUTH_URL }}
+#         run: npm run make -- --platform darwin
 
-      - name: Upload macOS artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: macOS-Build
-          path: out/make/*.dmg
+#       - name: Upload macOS artifacts
+#         uses: actions/upload-artifact@v3
+#         with:
+#           name: macOS-Build
+#           path: out/make/*.dmg
