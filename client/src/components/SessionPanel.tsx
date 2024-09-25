@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react'
+import ReactDOM from 'react-dom'
+import { ReportData } from '../types'
+import ReportViewer from './ReportViewer'
 import '../App.css'
 
 // add logic to handle any errors returned
@@ -14,7 +17,49 @@ interface SessionPanelProps {
 	handleDisconnect: (event: React.MouseEvent<HTMLButtonElement>) => void
 	isBotConnected: boolean
 	isAuthorized: boolean
-	isConnectionReady: boolean
+	isConnectionReady: boolean	
+	isReportOpen: boolean
+	reportData: ReportData | null
+	
+}
+
+const openReportInNewWindow = (reportData: ReportData | null): void => {
+	// Open a new window
+	const reportWindow = window.open('', '_blank', 'width=800,height=600')
+
+	if (!reportWindow) {
+		console.error('Failed to open new window.')
+		return
+	}
+
+	// Write the initial HTML structure for the new window
+	reportWindow.document.write(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>npChatbot Final Report</title>
+    </head>
+    <body>
+      <div id="root"></div>
+    </body>
+    </html>
+  `)
+
+	// Wait for the window to load its content before rendering
+	reportWindow.onload = () => {
+		if (reportWindow.document.getElementById('root')) {
+			// Render the ReportViewer component into the new window's DOM
+			ReactDOM.render(
+				<React.StrictMode>
+					<ReportViewer reportData={reportData} />
+				</React.StrictMode>,
+				reportWindow.document.getElementById('root')
+			)
+		}
+	}
 }
 
 const SessionPanel: React.FC<SessionPanelProps> = (props) => {
@@ -27,6 +72,12 @@ const SessionPanel: React.FC<SessionPanelProps> = (props) => {
 		setMinutes(0)
 		setSeconds(0)
 	}
+
+	useEffect(() => {
+		if (props.isReportOpen && props.reportData) {
+			openReportInNewWindow(props.reportData)
+		}
+	}, [props.isReportOpen, props.reportData])
 
 	useEffect(() => {
 		let interval: NodeJS.Timeout
@@ -65,7 +116,11 @@ const SessionPanel: React.FC<SessionPanelProps> = (props) => {
 					className='bot-control-button'
 					type='submit'
 					onClick={props.handleConnect}
-					disabled={props.isBotConnected || !props.isAuthorized || !props.isConnectionReady}
+					disabled={
+						props.isBotConnected ||
+						!props.isAuthorized ||
+						!props.isConnectionReady
+					}
 				>
 					{!props.isBotConnected ? 'Connect' : 'Connected'}
 				</button>
@@ -73,13 +128,23 @@ const SessionPanel: React.FC<SessionPanelProps> = (props) => {
 					className='bot-control-button'
 					disabled={!props.isBotConnected}
 					type='submit'
-					onClick={(event) => {
-						resetUptime()
+					onClick={(event) => {						
 						props.handleDisconnect(event)
+						resetUptime()
 					}}
 				>
 					End Session
 				</button>
+				{/* {props.isReportOpen && (
+					<button
+						className='bot-control-button'
+						onClick={() => {
+							openReportInNewWindow(props.reportData)
+						}}
+					>
+						Report
+					</button>
+				)} */}
 			</div>
 			<div className='app-form-title session-info'>Session Info:</div>
 			<div className='session-info-label'>

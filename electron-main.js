@@ -258,14 +258,34 @@ ipcMain.on('startBotScript', async (event, arg) => {
 
 // ipc method to disconnect npChatbot script from Twitch
 ipcMain.on('stopBotScript', async (event, arg) => {
-	// const seratoDisplayName = arg.seratoDisplayName.replaceAll(' ', '_')
-	// const url = `https://serato.com/playlists/${seratoDisplayName}/7-21-2024`
-	// console.log('URL: ', url)
-	// const reportData = await createLiveReport(url)
+	const seratoDisplayName = arg.seratoDisplayName.replaceAll(' ', '_')
+	const url = `https://serato.com/playlists/${seratoDisplayName}/7-21-2024`
+	console.log('URL: ', url)
+	const reportData = await createLiveReport(url)
 
-	// if (reportData !== undefined) {
-	// 	console.log('FINAL REPORT DATA: ', reportData)
-	// }
+	if (reportData !== undefined) {
+		console.log('FINAL REPORT DATA: ', reportData)
+	}
+
+	const finalReportData = {
+		dj_name: reportData.dj_name,
+		set_start_time: reportData.set_start_time,
+		playlist_date: reportData.playlist_date,		
+		set_length: reportData.set_length.length_value,		
+		set_length_hours: reportData.set_length.hours,
+		set_length_minutes: reportData.set_length.minutes,
+		set_length_seconds: reportData.set_length.seconds,		
+		average_track_length: reportData.average_track_length,
+		shortest_track_name: reportData.shortest_track.name,
+		shortest_track_length: reportData.shortest_track.length_value,
+		shortest_track_minutes: reportData.shortest_track.minutes,	
+		shortest_track_seconds: reportData.shortest_track.seconds,	
+		longest_track_name: reportData.longest_track.name,
+		longest_track_length: reportData.longest_track.length_value,	
+		longest_track_minutes: reportData.longest_track.minutes,
+		longest_track_seconds: reportData.longest_track.seconds,
+		total_tracks_played: reportData.total_tracks_played,		
+	}
 
 	if (tmiInstance) {
 		tmiInstance.disconnect()
@@ -276,6 +296,7 @@ ipcMain.on('stopBotScript', async (event, arg) => {
 		event.reply('stopBotResponse', {
 			success: true,
 			message: 'ipcMain: bot client successfully disconnected',
+			data: finalReportData,
 		})
 	} else {
 		event.reply('stopBotResponse', {

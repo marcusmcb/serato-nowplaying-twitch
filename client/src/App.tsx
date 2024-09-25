@@ -4,9 +4,24 @@ import CredentialsPanel from './components/CredentialsPanel'
 import PreferencesPanel from './components/PreferencesPanel'
 import SessionPanel from './components/SessionPanel'
 import MessagePanel from './components/MessagePanel'
+import { ReportData } from './types'
 import './App.css'
 
 const App = (): JSX.Element => {
+
+	/* INTERFACE VALUES */
+
+	interface BotProcessResponse {
+		success: boolean
+		message?: any
+		error?: string
+	}
+
+	interface AuthSuccess {
+		_id: string
+		twitchRefreshToken: string
+	}	
+
 	/* STATE VALUES */
 
 	const [formData, setFormData] = useState({
@@ -35,21 +50,12 @@ const App = (): JSX.Element => {
 	const [isConnectionReady, setIsConnectionReady] = useState(false)
 	const [messageQueue, setMessageQueue] = useState<string[]>([])
 	const [currentMessage, setCurrentMessage] = useState<string | null>(null)
+	const [reportData, setReportData] = useState<ReportData | null>(null);
+  const [isReportOpen, setIsReportOpen] = useState(false);
 	const messageTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 	const ipcRenderer = window.electron.ipcRenderer
 
-	/* INTERFACE VALUES */
-
-	interface BotProcessResponse {
-		success: boolean
-		message?: any
-		error?: string
-	}
-
-	interface AuthSuccess {
-		_id: string
-		twitchRefreshToken: string
-	}
+	
 
 	/* EFFECT HOOKS */
 
@@ -234,9 +240,14 @@ const App = (): JSX.Element => {
 		event: React.MouseEvent<HTMLButtonElement>
 	) => {
 		console.log('*** npChatbot disconnect event ***')
-		ipcRenderer.send('stopBotScript', { seratoDisplayName: formData.seratoDisplayName })
+		ipcRenderer.send('stopBotScript', {
+			seratoDisplayName: formData.seratoDisplayName,
+		})
 		ipcRenderer.once('stopBotResponse', (response) => {
 			if (response && response.success) {
+				console.log('Final Report Data: ', response.data)
+				setReportData(response.data as ReportData);
+        // setIsReportOpen(true);
 				addMessageToQueue('npChatbot has been disconnected')
 				setIsBotConnected(false)
 			} else if (response && response.error) {
@@ -256,7 +267,7 @@ const App = (): JSX.Element => {
 
 	// handle user credentials and preferences submission
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-		setError("")
+		setError('')
 		event.preventDefault()
 		console.log('--- Form Data Submitted ---')
 		console.log(formData)
@@ -304,10 +315,10 @@ const App = (): JSX.Element => {
 				setIsConnectionReady(true)
 			} else if (response && response.error) {
 				console.log('Update error: ', response.error)
-				setCurrentMessage("")
+				setCurrentMessage('')
 				setError(response.error)
 				setTimeout(() => {
-					setError("")
+					setError('')
 				}, 5000)
 			} else {
 				console.log('Unexpected response when updating preferences')
@@ -357,6 +368,8 @@ const App = (): JSX.Element => {
 					isBotConnected={isBotConnected}
 					isAuthorized={isAuthorized}
 					isConnectionReady={isConnectionReady}
+					reportData={reportData || {} as ReportData}
+					isReportOpen={isReportOpen}
 				/>
 			</div>
 		</div>
