@@ -14,16 +14,14 @@ import '../App.css'
 
 interface SessionPanelProps {
 	handleConnect: (event: React.MouseEvent<HTMLButtonElement>) => void
-	handleDisconnect: (event: React.MouseEvent<HTMLButtonElement>) => void
+	handleDisconnect: (event: React.MouseEvent<HTMLButtonElement>) => void	
+	setReportView: (value: boolean) => void
+	reportView: boolean
 	isBotConnected: boolean
 	isAuthorized: boolean
 	isConnectionReady: boolean
-	isReportOpen: boolean
+	isReportReady: boolean
 	reportData: ReportData | null
-}
-
-const openReportInNewWindow = (reportData: ReportData | null): void => {
-	console.log("Report Data: ", reportData)	
 }
 
 const SessionPanel: React.FC<SessionPanelProps> = (props) => {
@@ -35,13 +33,13 @@ const SessionPanel: React.FC<SessionPanelProps> = (props) => {
 		setHours(0)
 		setMinutes(0)
 		setSeconds(0)
-	}
+	}	
 
-	useEffect(() => {
-		if (props.isReportOpen && props.reportData) {
-			openReportInNewWindow(props.reportData)
-		}
-	}, [props.isReportOpen, props.reportData])
+	// useEffect(() => {
+	// 	if (props.isReportReady && props.reportData) {
+	// 		openReportView(props.reportData)
+	// 	}
+	// }, [props.isReportReady, props.reportData])
 
 	useEffect(() => {
 		let interval: NodeJS.Timeout
@@ -101,11 +99,11 @@ const SessionPanel: React.FC<SessionPanelProps> = (props) => {
 				>
 					End Session
 				</button>
-				{props.isReportOpen && (
+				{props.isReportReady && (
 					<button
 						className='bot-control-button'
 						onClick={() => {
-							openReportInNewWindow(props.reportData)
+							props.setReportView(true)
 						}}
 					>
 						Report

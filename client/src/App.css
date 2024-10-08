@@ -70,6 +70,10 @@ body {
 	margin-bottom: 10px;
 }
 
+.main-report-panel {
+	width: 100%;
+}
+
 .bot-control-button-panel {
 	margin-top: 15px;
 }

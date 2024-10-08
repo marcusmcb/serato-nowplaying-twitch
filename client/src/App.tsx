@@ -5,10 +5,10 @@ import PreferencesPanel from './components/PreferencesPanel'
 import SessionPanel from './components/SessionPanel'
 import MessagePanel from './components/MessagePanel'
 import { ReportData } from './types'
+import ReportViewer from './components/ReportViewer'
 import './App.css'
 
 const App = (): JSX.Element => {
-
 	/* INTERFACE VALUES */
 
 	interface BotProcessResponse {
@@ -20,7 +20,7 @@ const App = (): JSX.Element => {
 	interface AuthSuccess {
 		_id: string
 		twitchRefreshToken: string
-	}	
+	}
 
 	/* STATE VALUES */
 
@@ -50,12 +50,11 @@ const App = (): JSX.Element => {
 	const [isConnectionReady, setIsConnectionReady] = useState(false)
 	const [messageQueue, setMessageQueue] = useState<string[]>([])
 	const [currentMessage, setCurrentMessage] = useState<string | null>(null)
-	const [reportData, setReportData] = useState<ReportData | null>(null);
-  const [isReportOpen, setIsReportOpen] = useState(false);
+	const [reportData, setReportData] = useState<ReportData | null>(null)
+	const [isReportReady, setIsReportReady] = useState(false)
+	const [reportView, setReportView] = useState(false)
 	const messageTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 	const ipcRenderer = window.electron.ipcRenderer
-
-	
 
 	/* EFFECT HOOKS */
 
@@ -246,8 +245,8 @@ const App = (): JSX.Element => {
 		ipcRenderer.once('stopBotResponse', (response) => {
 			if (response && response.success) {
 				console.log('Final Report Data: ', response.data)
-				setReportData(response.data as ReportData);
-        setIsReportOpen(true);
+				setReportData(response.data as ReportData)
+				setIsReportReady(true)
 				addMessageToQueue('npChatbot has been disconnected')
 				setIsBotConnected(false)
 			} else if (response && response.error) {
@@ -336,41 +335,53 @@ const App = (): JSX.Element => {
 					showTooltip={showTooltip}
 				/>
 			</div>
-			<div className='app-container'>
-				<div className='creds-prefs-panel'>
-					<CredentialsPanel
-						formData={formData}
-						handleInputChange={handleInputChange}
-						showTooltip={showTooltip}
-						setShowTooltip={setShowTooltip}
-						handleSubmit={handleSubmit}
-						isBotConnected={isBotConnected}
-						isObsResponseEnabled={isObsResponseEnabled}
-						isAuthorized={isAuthorized}
-					/>
-					<PreferencesPanel
-						formData={formData}
-						isObsResponseEnabled={isObsResponseEnabled}
-						setIsObsResponseEnabled={setIsObsResponseEnabled}
-						isIntervalEnabled={isIntervalEnabled}
-						setIsIntervalEnabled={setIsIntervalEnabled}
-						isReportEnabled={isReportEnabled}
-						setIsReportEnabled={setIsReportEnabled}
-						handleInputChange={handleInputChange}
-						showTooltip={showTooltip}
-						setShowTooltip={setShowTooltip}
-						isBotConnected={isBotConnected}
-					/>
-				</div>
-				<SessionPanel
-					handleConnect={handleConnect}
-					handleDisconnect={handleDisconnect}
-					isBotConnected={isBotConnected}
-					isAuthorized={isAuthorized}
-					isConnectionReady={isConnectionReady}
-					reportData={reportData || {} as ReportData}
-					isReportOpen={isReportOpen}
-				/>
+			<div>
+				{reportView ? (
+					<div className='app-container'>						
+						<div className='main-report-panel'>
+							<ReportViewer reportData={reportData} setReportView={setReportView}/>
+						</div>
+					</div>
+				) : (
+					<div className='app-container'>
+						<div className='creds-prefs-panel'>
+							<CredentialsPanel
+								formData={formData}
+								handleInputChange={handleInputChange}
+								showTooltip={showTooltip}
+								setShowTooltip={setShowTooltip}
+								handleSubmit={handleSubmit}
+								isBotConnected={isBotConnected}
+								isObsResponseEnabled={isObsResponseEnabled}
+								isAuthorized={isAuthorized}
+							/>
+							<PreferencesPanel
+								formData={formData}
+								isObsResponseEnabled={isObsResponseEnabled}
+								setIsObsResponseEnabled={setIsObsResponseEnabled}
+								isIntervalEnabled={isIntervalEnabled}
+								setIsIntervalEnabled={setIsIntervalEnabled}
+								isReportEnabled={isReportEnabled}
+								setIsReportEnabled={setIsReportEnabled}
+								handleInputChange={handleInputChange}
+								showTooltip={showTooltip}
+								setShowTooltip={setShowTooltip}
+								isBotConnected={isBotConnected}
+							/>
+						</div>
+						<SessionPanel
+							handleConnect={handleConnect}
+							handleDisconnect={handleDisconnect}
+							isBotConnected={isBotConnected}
+							isAuthorized={isAuthorized}
+							isConnectionReady={isConnectionReady}
+							reportData={reportData || ({} as ReportData)}
+							isReportReady={isReportReady}
+							setReportView={setReportView}
+							reportView={reportView}
+						/>
+					</div>
+				)}
 			</div>
 		</div>
 	)

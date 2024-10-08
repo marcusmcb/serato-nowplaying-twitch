@@ -1,0 +1,70 @@
+:root {
+	--main-bg-color: rgb(49, 49, 49);
+	--main-text-color: #fff;
+	--highlight-color: rgb(74, 242, 228);
+	--success-color: rgb(87, 255, 104);
+	--error-color: rgb(238, 85, 85);
+	--session-info-label-color: rgb(240, 253, 155);
+	--session-info-status-color: rgb(253, 157, 155);
+	--disabled-color: #aaa;
+	--fira-sans: 'Fira Sans', sans-serif;
+	--dm-sans: 'DM Sans', sans-serif;
+}
+
+.report-title {
+	font-size: 1.5em;
+	font-weight: bold;
+	margin-top: 15px;
+	font-family: var(--fira-sans);
+	color: var(--highlight-color);
+}
+
+.report-subtitle {
+	font-family: var(--fira-sans);
+	font-weight: bold;
+  margin-top: 5px;  
+  margin-bottom: 20px;
+}
+
+.report-close-button {
+	margin-top: 35px;
+}
+
+.report-panel {
+  margin-top: 15px;
+	display: flex;
+	justify-content: space-between;
+	font-family: var(--fira-sans);  
+}
+
+.report-dj-name {
+  color: var(--main-text-color)
+}
+
+.report-panel-left,
+.report-panel-right {
+	flex: 1; /* Take up equal available width */
+	text-align: left; /* Ensure left alignment */
+}
+
+.report-panel-item {
+	margin-top: 10px;
+  color: var(--session-info-label-color)
+}
+
+.report-panel-item-span {
+	margin-left: 30px;
+  color: var(--main-text-color);
+  font-weight: 500;
+}
+
+.report-panel-item-detail {
+  margin-top: 15px;
+  font-size: 1.1em;
+  font-weight: 500;
+}
+
+.report-panel-item-detail-caption {
+  font-size: .9em;
+  margin-top: 5px;
+}
