@@ -247,7 +247,7 @@ const App = (): JSX.Element => {
 			if (response && response.success) {
 				console.log('Final Report Data: ', response.data)
 				setReportData(response.data as ReportData);
-        // setIsReportOpen(true);
+        setIsReportOpen(true);
 				addMessageToQueue('npChatbot has been disconnected')
 				setIsBotConnected(false)
 			} else if (response && response.error) {

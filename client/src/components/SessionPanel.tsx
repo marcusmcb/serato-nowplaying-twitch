@@ -23,42 +23,7 @@ interface SessionPanelProps {
 }
 
 const openReportInNewWindow = (reportData: ReportData | null): void => {
-	// Open a new window
-	const reportWindow = window.open('', '_blank', 'width=800,height=600')
-
-	if (!reportWindow) {
-		console.error('Failed to open new window.')
-		return
-	}
-
-	// Write the initial HTML structure for the new window
-	reportWindow.document.write(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>npChatbot Final Report</title>
-    </head>
-    <body>
-      <div id="root"></div>
-    </body>
-    </html>
-  `)
-
-	// Wait for the window to load its content before rendering
-	reportWindow.onload = () => {
-		if (reportWindow.document.getElementById('root')) {
-			// Render the ReportViewer component into the new window's DOM
-			ReactDOM.render(
-				<React.StrictMode>
-					<ReportViewer reportData={reportData} />
-				</React.StrictMode>,
-				reportWindow.document.getElementById('root')
-			)
-		}
-	}
+	console.log("Report Data: ", reportData)	
 }
 
 const SessionPanel: React.FC<SessionPanelProps> = (props) => {
@@ -136,7 +101,7 @@ const SessionPanel: React.FC<SessionPanelProps> = (props) => {
 				>
 					End Session
 				</button>
-				{/* {props.isReportOpen && (
+				{props.isReportOpen && (
 					<button
 						className='bot-control-button'
 						onClick={() => {
@@ -145,7 +110,7 @@ const SessionPanel: React.FC<SessionPanelProps> = (props) => {
 					>
 						Report
 					</button>
-				)} */}
+				)}
 			</div>
 			<div className='app-form-title session-info'>Session Info:</div>
 			<div className='session-info-label'>
