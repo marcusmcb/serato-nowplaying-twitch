@@ -77,7 +77,7 @@ const formatTimeSincePlayedString = (timeString) => {
 		// finish logic for this case
 		let hours = timeString.split(':')[0]
 		let minutes = timeString.split(':')[1]
-		console.log('HOURS: ', hours, 'MINUTES: ', minutes)
+		// console.log('HOURS: ', hours, 'MINUTES: ', minutes)
 		if (hours[0] === '0') {
 			hours = hours[1]
 		}
@@ -201,7 +201,7 @@ const filterLongOutliers = (msArray, longOutlierThreshold) => {
 			removedOutliers.push(value)
 		}
 	})
-	console.log('Long Outliers Removed:', removedOutliers)
+	// console.log('Long Outliers Removed:', removedOutliers)
 	return { filteredArray, removedOutliers }
 }
 
