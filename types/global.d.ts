@@ -10,6 +10,14 @@ declare global {
 				once: (channel: string, func: (...args: any[]) => void) => void
 				removeAllListeners: (channel: string) => void
 			}
+			getUserData: () => Promise<any>
+			startBotScript: (data?: any) => Promise<any>
+			stopBotScript: (data?: any) => Promise<any>
+			getPlaylistSummaries: () => Promise<any>
+			validateLivePlaylist: (data?: any) => Promise<any>
+			submitUserData: (data?: any) => Promise<any>
+			deleteSelectedPlaylist: (playlistId?: any) => Promise<any>
+			sharePlaylistToDiscord: (data?: any) => Promise<any>
 			logToMain?: (message: string) => void
 		}
 	}

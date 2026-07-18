@@ -106,22 +106,26 @@ const ReportViewer: React.FC<ReportViewerProps> = ({
 
 	const handleConfirmDelete = () => {
 		setShowDeleteModal(false)
-		ipcRenderer.send('delete-selected-playlist', reportData?._id)
-		ipcRenderer.once('deletePlaylistResponse', (response: any) => {
-			if (response && response.success) {
-				reloadPlaylistSummaries(currentReportIndex)
-				// After reload, check if any summaries remain
-				setTimeout(() => {
-					if (playlistSummaries.length <= 1) {
-						setReportView(false)
-					}
-				}, 200)
-			} else if (response && response.error) {
-				console.error('Error deleting playlist:', response.error)
-			} else {
-				console.error('Unexpected response format from deletePlaylistResponse')
-			}
-		})
+		window.electron
+			.deleteSelectedPlaylist(reportData?._id)
+			.then((response) => {
+				if (response && response.success) {
+					reloadPlaylistSummaries(currentReportIndex)
+					// After reload, check if any summaries remain
+					setTimeout(() => {
+						if (playlistSummaries.length <= 1) {
+							setReportView(false)
+						}
+					}, 200)
+				} else if (response && response.error) {
+					console.error('Error deleting playlist:', response.error)
+				} else {
+					console.error('Unexpected response format from delete-selected-playlist')
+				}
+			})
+			.catch((error) => {
+				console.error('Error deleting playlist:', error)
+			})
 	}
 
 	return (

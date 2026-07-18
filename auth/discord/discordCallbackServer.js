@@ -201,11 +201,20 @@ const startDiscordCallbackServer = ({
 				}
 
 				if (code) {
-					await initDiscordAuthToken(
+					const isAuthSuccessful = await initDiscordAuthToken(
 						code,
 						wss,
 						getMainWindow && getMainWindow()
 					)
+
+					if (!isAuthSuccessful) {
+						res.writeHead(502, { 'Content-Type': 'text/plain' })
+						res.end(
+							'Discord authorization failed during token exchange. Please verify app credentials and re-authorize.'
+						)
+						return
+					}
+
 					setTimeout(() => {
 						console.log('Discord auth token initialized.')
 					}, 100)

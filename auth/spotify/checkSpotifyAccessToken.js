@@ -48,7 +48,7 @@ const checkSpotifyAccessToken = async () => {
 				// Persist the refreshed access token to the OS keystore instead of DB
 				try {
 					const tokenBlob = await getToken('spotify', user._id).catch(() => null)
-					await require('../database/helpers/tokens').storeToken('spotify', user._id, {
+					await require('../../database/helpers/tokens').storeToken('spotify', user._id, {
 						...(tokenBlob || {}),
 						access_token: newAccessToken,
 						refreshed_at: Date.now(),

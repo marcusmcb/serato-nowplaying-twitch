@@ -63,8 +63,6 @@ const App = (): JSX.Element => {
 	const [playlistSummaries, setPlaylistSummaries] = useState<ReportData[]>([])
 	const [currentReportIndex, setCurrentReportIndex] = useState(0)
 
-	const ipcRenderer = window.electron.ipcRenderer
-
 	/* CLIENT UI HELPER METHODS */
 
 	// helper to add user response messages to message queue
@@ -184,7 +182,7 @@ const App = (): JSX.Element => {
 		}
 		window.electron.ipcRenderer.on('auth-successful', handleAuthSuccess)
 		return () => {
-			window.electron.ipcRenderer.removeAllListeners('authSuccess')
+			window.electron.ipcRenderer.removeAllListeners('auth-successful')
 		}
 	}, [])
 
@@ -206,9 +204,7 @@ const App = (): JSX.Element => {
 		event: React.MouseEvent<HTMLButtonElement>
 	) => {
 		validateLivePlaylist(
-			event,
 			formData,
-			ipcRenderer,
 			addMessageToQueue,
 			setError
 		)
@@ -219,9 +215,7 @@ const App = (): JSX.Element => {
 		event: React.MouseEvent<HTMLButtonElement>
 	) => {
 		handleConnect(
-			event,
 			formData,
-			ipcRenderer,
 			addMessageToQueue,
 			setIsBotConnected,
 			setError
@@ -233,16 +227,13 @@ const App = (): JSX.Element => {
 		event: React.MouseEvent<HTMLButtonElement>
 	) => {
 		handleDisconnect(
-			event,
-			ipcRenderer,
 			formData,
 			setReportData,
 			setIsReportReady,
 			addMessageToQueue,
 			setIsBotConnected,
 			setPlaylistSummaries,
-			setCurrentReportIndex,
-			setError
+			setCurrentReportIndex
 		)
 	}
 
@@ -253,7 +244,6 @@ const App = (): JSX.Element => {
 		handleSubmit(
 			event,
 			formData,
-			ipcRenderer,
 			addMessageToQueue,
 			setCurrentMessage,
 			setError,

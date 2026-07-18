@@ -150,7 +150,17 @@ const getTwitchRefreshToken = async (refreshToken) => {
 }
 
 const updateUserToken = async (db, event, token) => {
-	event.reply('botProcessResponse', '*** Update user token called ***')
+	const safeReply = (channel, payload) => {
+		try {
+			if (event && typeof event.reply === 'function') {
+				event.reply(channel, payload)
+			}
+		} catch (e) {
+			// no-op: invoke-based IPC events do not support event.reply
+		}
+	}
+
+	safeReply('botProcessResponse', '*** Update user token called ***')
 	try {
 		// Resolve current user using promises so we can use await cleanly
 		const user = await new Promise((resolve, reject) =>
@@ -191,7 +201,7 @@ const updateUserToken = async (db, event, token) => {
 					isIntervalEnabled: !!userDoc.isIntervalEnabled,
 					isSpotifyEnabled: !!userDoc.isSpotifyEnabled,
 				}
-				event.reply('userDataUpdated', sanitized)
+				safeReply('userDataUpdated', sanitized)
 				return {
 					success: true,
 					message: 'User token successfully updated',

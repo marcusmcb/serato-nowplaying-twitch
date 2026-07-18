@@ -2,37 +2,28 @@ import { ReportData } from '../types'
 import fetchPlaylistSummaries from './fetchPlaylistSummaries'
 
 const handleDisconnect = async (
-	event: React.MouseEvent<HTMLButtonElement>,
-	ipcRenderer: any,
 	formData: any,
 	setReportData: (data: ReportData | null) => void,
 	setIsReportReady: (ready: boolean) => void,
 	addMessageToQueue: (message: string) => void,
 	setIsBotConnected: (connected: boolean) => void,
 	setPlaylistSummaries: (summaries: ReportData[]) => void,
-	setCurrentReportIndex: (index: number) => void,
-	setError: (error: string) => void
+	setCurrentReportIndex: (index: number) => void
 ) => {
 	console.log('*** npChatbot disconnect event ***')
-	ipcRenderer.send('stop-bot-script', {
+	const stopBotResult = await window.electron.stopBotScript({
 		seratoDisplayName: formData.seratoDisplayName,
 	})
 
-	// Await the stopBotResponse before continuing
-	const stopBotResult = await new Promise<any>((resolve) => {
-		ipcRenderer.once('stop-bot-response', (response: any) => {
-			if (response && response.success) {
-				addMessageToQueue('npChatbot has been disconnected from Twitch.')
-				setIsBotConnected(false)
-			} else if (response && response.error) {
-				console.log('Disconnection error: ', response.error)
-				addMessageToQueue(response.error)
-			} else {
-				console.log('Unexpected response from stopBotResponse')
-			}
-			resolve(response)
-		})
-	})
+	if (stopBotResult && stopBotResult.success) {
+		addMessageToQueue('npChatbot has been disconnected from Twitch.')
+		setIsBotConnected(false)
+	} else if (stopBotResult && stopBotResult.error) {
+		console.log('Disconnection error: ', stopBotResult.error)
+		addMessageToQueue(stopBotResult.error)
+	} else {
+		console.log('Unexpected response from stop-bot-script')
+	}
 
 	console.log('stopBotResponse received:', stopBotResult)
 
@@ -40,7 +31,7 @@ const handleDisconnect = async (
 	const playlistSummaries = await fetchPlaylistSummaries()
 	console.log('Fetched playlist summaries:', playlistSummaries)
 	console.log("*****************************************************")
-	if (!playlistSummaries || playlistSummaries.length !== 0) {
+	if (playlistSummaries && playlistSummaries.length > 0) {
 		setPlaylistSummaries(playlistSummaries)
 		setCurrentReportIndex(0)
 		setReportData(playlistSummaries[0] as ReportData)

@@ -14,21 +14,51 @@ const logToFile = require('../../scripts/logger')
 const WebSocket = require('ws')
 const { storeToken } = require('../../database/helpers/tokens')
 
+const normalizeEnvValue = (value) => {
+	if (typeof value !== 'string') return ''
+	const trimmed = value.trim()
+	if (
+		(trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+		(trimmed.startsWith("'") && trimmed.endsWith("'"))
+	) {
+		return trimmed.slice(1, -1).trim()
+	}
+	return trimmed
+}
+
 const exchangeCodeForSpotifyToken = async (code) => {
+	const spotifyClientId = normalizeEnvValue(process.env.SPOTIFY_CLIENT_ID)
+	const spotifyClientSecret = normalizeEnvValue(
+		process.env.SPOTIFY_CLIENT_SECRET
+	)
+	const spotifyRedirectUri = normalizeEnvValue(process.env.SPOTIFY_REDIRECT_URI)
+
 	logToFile(`exchangeCodeForSpotifyToken called with code: ${code}`)
 	logToFile(`* * * * * * *`)
-	logToFile(`Spotify client ID: ${process.env.SPOTIFY_CLIENT_ID}`)
-	logToFile(`Spotify client secret: ${process.env.SPOTIFY_CLIENT_SECRET}`)
-	logToFile(`Spotify redirect URI: ${process.env.SPOTIFY_REDIRECT_URI}`)
+	logToFile(`Spotify client ID present: ${spotifyClientId ? 'yes' : 'no'}`)
+	logToFile(
+		`Spotify client secret present: ${spotifyClientSecret ? 'yes' : 'no'}`
+	)
+	logToFile(`Spotify redirect URI: ${spotifyRedirectUri}`)
 	logToFile(`* * * * * * *`)
 
+	if (!spotifyClientId || !spotifyClientSecret || !spotifyRedirectUri) {
+		console.error(
+			'Missing Spotify OAuth configuration. Check SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, and SPOTIFY_REDIRECT_URI.'
+		)
+		logToFile(
+			'Missing Spotify OAuth configuration. Check SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, and SPOTIFY_REDIRECT_URI.'
+		)
+		return undefined
+	}
+
 	const authHeader = Buffer.from(
-		`${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`
+		`${spotifyClientId}:${spotifyClientSecret}`
 	).toString('base64')
 
 	const data = new URLSearchParams({
 		code: code,
-		redirect_uri: process.env.SPOTIFY_REDIRECT_URI,
+		redirect_uri: spotifyRedirectUri,
 		grant_type: 'authorization_code',
 	}).toString()
 
@@ -55,6 +85,11 @@ const exchangeCodeForSpotifyToken = async (code) => {
 			logToFile(`* * * * * * *`)
 		}
 	} catch (error) {
+		if (error.response?.data?.error === 'invalid_client') {
+			logToFile(
+				'Spotify token exchange failed with invalid_client. Verify SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET in .env.'
+			)
+		}
 		console.error(
 			'Error exchanging code for token:',
 			error.response?.data || error.message
@@ -71,6 +106,18 @@ const exchangeCodeForSpotifyToken = async (code) => {
 const initSpotifyAuthToken = async (code, wss, mainWindow) => {
 	try {
 		const token = await exchangeCodeForSpotifyToken(code)
+		if (!token || !token.access_token) {
+			const errMsg =
+				'Spotify token exchange failed. Verify Spotify app credentials and re-authorize.'
+			console.error(errMsg)
+			logToFile(errMsg)
+			wss.clients.forEach((client) => {
+				if (client.readyState === WebSocket.OPEN) {
+					client.send(errMsg)
+				}
+			})
+			return false
+		}
 		if (token) {
 			console.log(
 				`exchangeCodeForSpotifyToken result successful: ${JSON.stringify(
@@ -105,10 +152,16 @@ const initSpotifyAuthToken = async (code, wss, mainWindow) => {
 
 			if (user) {
 				try {
+					const { getToken } = require('../../database/helpers/tokens')
+					const existingSpotifyBlob = await getToken('spotify', user._id).catch(
+						() => null
+					)
+					const refreshTokenToStore =
+						token.refresh_token || existingSpotifyBlob?.refresh_token || null
 					// Persist tokens into OS keystore via keytar
 					await storeToken('spotify', user._id, {
 						access_token: token.access_token,
-						refresh_token: token.refresh_token,
+						refresh_token: refreshTokenToStore,
 						authorization_code: code,
 						expires_in: token.expires_in,
 					})
@@ -131,7 +184,7 @@ const initSpotifyAuthToken = async (code, wss, mainWindow) => {
 					const newDoc = await insertAsync({})
 					await storeToken('spotify', newDoc._id, {
 						access_token: token.access_token,
-						refresh_token: token.refresh_token,
+						refresh_token: token.refresh_token || null,
 						authorization_code: code,
 						expires_in: token.expires_in,
 					})
@@ -151,6 +204,7 @@ const initSpotifyAuthToken = async (code, wss, mainWindow) => {
 				client.send('npChatbot successfully linked to your Spotify account')
 			}
 		})
+		return true
 	} catch (error) {
 		console.error('Error exchanging code for token:', error)
 		wss.clients.forEach((client) => {
@@ -160,6 +214,7 @@ const initSpotifyAuthToken = async (code, wss, mainWindow) => {
 		})
 		logToFile(`Error exchanging code for token: ${error}`)
 		logToFile(`* * * * * * *`)
+		return false
 	}
 }
 

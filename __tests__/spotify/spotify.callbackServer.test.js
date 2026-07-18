@@ -13,7 +13,7 @@ describe('Spotify Callback Server', () => {
     jest.resetModules()
 
     // Mocks for token initialization and user id setting
-    initSpotifyAuthTokenMock = jest.fn().mockResolvedValue(undefined)
+    initSpotifyAuthTokenMock = jest.fn().mockResolvedValue(true)
     setSpotifyUserIdMock = jest.fn().mockResolvedValue(undefined)
 
     jest.doMock('../../auth/spotify/createSpotifyAccessToken', () => ({

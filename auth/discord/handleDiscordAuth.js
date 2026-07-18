@@ -4,15 +4,31 @@ const db = require('../../database/database')
 const WebSocket = require('ws')
 const { storeToken } = require('../../database/helpers/tokens')
 
-const getDiscordClientId = () => process.env.DISCORD_CLIENT_ID
-const getDiscordClientSecret = () => process.env.DISCORD_CLIENT_SECRET
+const normalizeEnvValue = (value) => {
+	if (typeof value !== 'string') return ''
+	const trimmed = value.trim()
+	if (
+		(trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+		(trimmed.startsWith("'") && trimmed.endsWith("'"))
+	) {
+		return trimmed.slice(1, -1).trim()
+	}
+	return trimmed
+}
+
+const getDiscordClientId = () => normalizeEnvValue(process.env.DISCORD_CLIENT_ID)
+const getDiscordClientSecret = () =>
+	normalizeEnvValue(process.env.DISCORD_CLIENT_SECRET)
 const getDiscordRedirectUri = () =>
-	process.env.DISCORD_REDIRECT_URI ||
+	normalizeEnvValue(process.env.DISCORD_REDIRECT_URI) ||
 	'http://localhost:5003/auth/discord/callback'
 
 const getDiscordAuthUrl = (state) => {
 	const DISCORD_CLIENT_ID = getDiscordClientId()
 	const DISCORD_REDIRECT_URI = getDiscordRedirectUri()
+	if (!DISCORD_CLIENT_ID || !DISCORD_REDIRECT_URI) {
+		return null
+	}
 	const params = querystring.stringify({
 		client_id: DISCORD_CLIENT_ID,
 		redirect_uri: DISCORD_REDIRECT_URI,
@@ -29,6 +45,14 @@ const exchangeCodeForDiscordToken = async (code) => {
 		const DISCORD_CLIENT_ID = getDiscordClientId()
 		const DISCORD_CLIENT_SECRET = getDiscordClientSecret()
 		const DISCORD_REDIRECT_URI = getDiscordRedirectUri()
+
+		if (!DISCORD_CLIENT_ID || !DISCORD_CLIENT_SECRET || !DISCORD_REDIRECT_URI) {
+			return {
+				error: 'missing_config',
+				error_description:
+					'Missing DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET, or DISCORD_REDIRECT_URI',
+			}
+		}
 
 		console.log('Discord Token Exchange called.')
 		console.log('-------------------------------')
@@ -70,6 +94,32 @@ const initDiscordAuthToken = async (code, wss, mainWindow) => {
 		const tokenData = await exchangeCodeForDiscordToken(code)
 		if (tokenData) console.log('Token Data: ', tokenData)
 		console.log('-------------------------------')
+
+		if (!tokenData || tokenData.error || !tokenData.access_token) {
+			const message = tokenData?.error_description
+				? `Discord auth failed: ${tokenData.error_description}`
+				: 'Discord auth failed: unable to exchange authorization code for token.'
+			console.error(message)
+			wss.clients.forEach((client) => {
+				if (client.readyState === WebSocket.OPEN) {
+					client.send(message)
+				}
+			})
+			return false
+		}
+
+		if (!tokenData.webhook || !tokenData.webhook.url) {
+			const message =
+				'Discord auth failed: webhook was not returned. Re-authorize and select a channel when prompted.'
+			console.error(message)
+			wss.clients.forEach((client) => {
+				if (client.readyState === WebSocket.OPEN) {
+					client.send(message)
+				}
+			})
+			return false
+		}
+
 			// Persist tokens into OS keystore (keytar) and also update DB metadata/legacy fields
 			const findOneAsync = () => new Promise((resolve, reject) => db.users.findOne({}, (err, user) => (err ? reject(err) : resolve(user))))
 			const updateAsync = (q, u) => new Promise((resolve, reject) => db.users.update(q, u, { multi: true }, (err, num) => (err ? reject(err) : resolve(num))))
@@ -128,6 +178,8 @@ const initDiscordAuthToken = async (code, wss, mainWindow) => {
 			}
 		})
 
+		return true
+
 		// mainWindow.webContents.send('discord-auth-success', tokenData)
 	} catch (error) {
 		console.error('Error exchanging code for token:', error)
@@ -136,6 +188,7 @@ const initDiscordAuthToken = async (code, wss, mainWindow) => {
 				client.send(`Error during Discord auth: ${error}`)
 			}
 		})
+		return false
 	}
 }
 

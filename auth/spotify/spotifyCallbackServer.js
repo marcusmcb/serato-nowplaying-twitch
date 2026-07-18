@@ -47,11 +47,20 @@ const startSpotifyCallbackServer = ({ port = 5001, wss, getMainWindow }) => {
 				console.log('Received authorization code:', code)
 
 				if (code) {
-					await initSpotifyAuthToken(
+					const isAuthSuccessful = await initSpotifyAuthToken(
 						code,
 						wss,
 						getMainWindow && getMainWindow()
 					)
+
+					if (!isAuthSuccessful) {
+						res.writeHead(502, { 'Content-Type': 'text/plain' })
+						res.end(
+							'Spotify authorization failed during token exchange. Please verify app credentials and try again.'
+						)
+						return
+					}
+
 					setTimeout(async () => {
 						try {
 							await setSpotifyUserId()

@@ -18,6 +18,9 @@ const loadConfigurations = require('./config')
 const initializeBot = require('./index')
 const { handleStartBotScript } = require('./bot-scripts/handleStartBotScript')
 const { handleStopBotScript } = require('./bot-scripts/handleStopBotScript')
+const {
+	createBotSessionController,
+} = require('./bot-scripts/botSessionController')
 const logToFile = require('./scripts/logger')
 
 // auth handlers and user data methods
@@ -47,12 +50,8 @@ const getUserData = require('./database/helpers/userData/getUserData')
 const { getToken } = require('./database/helpers/tokens')
 
 /* PLAYLIST HANDLERS */
-const {
-	createPlaylistSummary,
-} = require('./bot-assets/summary/createPlaylistSummary')
-const {
-	getCurrentPlaylistSummary,
-} = require('./bot-assets/command-use/commandUse')
+const { createPlaylistSummary } = require('./bot-assets/summary/createPlaylistSummary')
+const { getCurrentPlaylistSummary } = require('./bot-assets/command-use/commandUse')
 const {
 	getPlaylistSummaries,
 } = require('./database/helpers/playlistSummaries/getPlaylistSummaries')
@@ -87,10 +86,7 @@ dotenv.config({ path: envPath })
 
 // environment variables
 let mainWindow
-let tmiInstance
 let serverInstance
-let botProcess = false
-let isConnected = false
 
 // One-time nonce(s) used to authorize localhost Discord share requests from the
 // generated browser report.
@@ -139,6 +135,19 @@ const startServer = () => {
 		console.log(`npChatbot HTTPS server is running on port ${PORT}`)
 	})
 }
+
+const botSessionController = createBotSessionController({
+	loadConfigurations,
+	initializeBot,
+	handleStartBotScript,
+	handleStopBotScript,
+	getCurrentPlaylistSummary,
+	createPlaylistSummary,
+	addPlaylist,
+	getUserData,
+	db,
+	logToFile,
+})
 
 // start Discord auth callback server
 let discordCallbackServer = null
@@ -296,15 +305,25 @@ ipcMain.on('renderer-log', (_event, message) => {
 	}
 })
 
-ipcMain.on('get-user-data', async (event, arg) => {
-	const response = await handleGetUserData()
-	event.reply('getUserDataResponse', response)
-})
-
 ipcMain.handle('get-user-data', async (_event, _arg) => {
 	const response = await handleGetUserData()
 	return response
 })
+
+const invokeLegacyReplyHandler = async (handler, successChannel, ...args) => {
+	let responsePayload = null
+	const legacyEvent = {
+		reply: (channel, payload) => {
+			if (channel === successChannel) {
+				responsePayload = payload
+			}
+		},
+	}
+
+	const returnValue = await handler(legacyEvent, ...args)
+	if (responsePayload !== null) return responsePayload
+	return returnValue
+}
 
 ipcMain.on('userDataUpdated', () => {
 	mainWindow.webContents.send('userDataUpdated')
@@ -318,25 +337,40 @@ ipcMain.on('open-twitch-auth-url', async (event, arg) => {
 	handleTwitchAuth(event, arg, mainWindow, wss)
 })
 
-ipcMain.on('delete-selected-playlist', async (event, arg) => {
-	await deletePlaylist(arg, event)
-})
-
-ipcMain.on('get-playlist-summaries', async (event, _arg) => {
+ipcMain.handle('delete-selected-playlist', async (_event, playlistId) => {
 	try {
-		const summaries = await getPlaylistSummaries()
-		event.reply(
-			'get-playlist-summaries-response',
-			Array.isArray(summaries) ? summaries : [],
-		)
+		const result = await deletePlaylist(playlistId)
+		return result && result.success === true
+			? result
+			: { success: false, error: 'Failed to delete playlist.' }
 	} catch (e) {
-		console.error('Failed to fetch playlist summaries:', e)
-		event.reply('get-playlist-summaries-response', null)
+		console.error('Failed to delete selected playlist:', e)
+		return { success: false, error: String(e?.message || e) }
 	}
 })
 
-ipcMain.on('submit-user-data', async (event, arg) => {
-	handleSubmitUserData(event, arg, mainWindow)
+ipcMain.handle('get-playlist-summaries', async (_event, _arg) => {
+	try {
+		const summaries = await getPlaylistSummaries()
+		return Array.isArray(summaries) ? summaries : []
+	} catch (e) {
+		console.error('Failed to fetch playlist summaries:', e)
+		return null
+	}
+})
+
+ipcMain.handle('submit-user-data', async (_event, arg) => {
+	try {
+		return await invokeLegacyReplyHandler(
+			handleSubmitUserData,
+			'userDataResponse',
+			arg,
+			mainWindow,
+		)
+	} catch (e) {
+		console.error('Failed to submit user data:', e)
+		return { success: false, error: String(e?.message || e) }
+	}
 })
 
 ipcMain.on('open-spotify-auth-url', async (event, arg) => {
@@ -348,19 +382,31 @@ ipcMain.on('open-spotify-auth-url', async (event, arg) => {
 ipcMain.on('open-discord-auth-url', async (event, arg) => {
 	const state = 'npchatbot-' + Date.now()
 	const discordAuthUrl = getDiscordAuthUrl(state)
+	if (!discordAuthUrl) {
+		const msg =
+			'Discord auth configuration is missing. Set DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET, and DISCORD_REDIRECT_URI in .env.'
+		console.error(msg)
+		try {
+			wss.clients.forEach((client) => {
+				if (client.readyState === 1) client.send(msg)
+			})
+		} catch (e) {}
+		return
+	}
 	shell.openExternal(discordAuthUrl)
 })
 
-ipcMain.on('validate-live-playlist', async (event, arg) => {
+ipcMain.handle('validate-live-playlist', async (_event, arg) => {
 	const isValid = await validateLivePlaylist(arg.url)
-	event.reply('validate-live-playlist-response', { isValid: isValid })
+	return { isValid: isValid }
 })
 
-ipcMain.on('update-connection-state', (event, state) => {
-	isConnected = state
+ipcMain.on('update-connection-state', (_event, _state) => {
+	// Main process owns authoritative connection state via botSessionController.
+	// Keep this channel as a no-op for compatibility with older renderer code.
 })
 
-ipcMain.on('share-playlist-to-discord', async (event, payload) => {
+ipcMain.handle('share-playlist-to-discord', async (_event, payload) => {
 	const { spotifyURL, sessionDate } = payload || {}
 	const userData = await getUserData(db)
 	const twitchChannelName = userData?.twitchChannelName
@@ -376,74 +422,29 @@ ipcMain.on('share-playlist-to-discord', async (event, payload) => {
 		webhookURL = null
 	}
 	if (!webhookURL) webhookURL = userData?.discord?.webhook_url || null
-	await sharePlaylistToDiscord(
+	const ok = await sharePlaylistToDiscord(
 		spotifyURL,
 		webhookURL,
 		twitchChannelName,
 		sessionDate,
-		event,
 	)
+	return ok
+		? { success: true }
+		: {
+				success: false,
+				error:
+					'Failed to share playlist to Discord. Please re-authorize npChatbot with Discord.',
+		  }
 })
 
 // ipc handler for the Twitch connection process
-ipcMain.on('start-bot-script', async (event, arg) => {
-	const validStartResponse = await handleStartBotScript(event, arg, botProcess)
-	if (validStartResponse === false) {
-		return
-	}
-	// load configurations and initialize chatbot script
-	setTimeout(() => {
-		loadConfigurations()
-			.then((config) => {
-				setTimeout(async () => {
-					const init = await initializeBot(config)
-					tmiInstance = init
-					botProcess === true
-					event.reply('start-bot-response', {
-						success: true,
-						message: 'npChatbot is connected to your Twitch channel.',
-					})
-				}, 1000)
-			})
-			.catch((err) => {
-				logToFile(`Error loading configurations: ${err}`)
-				logToFile('*******************************')
-				console.error('Error loading configurations:', err)
-			})
-			.finally(() => {
-				console.log('------------------')
-				console.log('Bot started successfully')
-				console.log('------------------')
-			})
-	}, 1000)
+ipcMain.handle('start-bot-script', async (event, arg) => {
+	return botSessionController.start(event, arg)
 })
 
 // ipc handler for the Twitch disconnection process
-ipcMain.on('stop-bot-script', async (event, arg) => {
-	const playlistData = await getCurrentPlaylistSummary()
-	console.log('Playlist data: ', playlistData)
-	if (playlistData && playlistData.total_tracks_played > 0) {
-		const finalPlaylistData = await createPlaylistSummary(playlistData)
-		const user = await getUserData(db)
-		if (user) {
-			if (user.isSpotifyEnabled) {
-				finalPlaylistData.spotify_link = user.currentSpotifyPlaylistLink
-			} else {
-				finalPlaylistData.spotify_link = ''
-			}
-		}
-		await addPlaylist(finalPlaylistData)
-	} else {
-		console.log('No playlist data found to insert into database.')
-	}
-
-	await handleStopBotScript(event, arg, tmiInstance)
-	console.log('----- STOPPING BOT SCRIPT -----')
-	tmiInstance = null
-	botProcess = false
-	isConnected = false
-	console.log('npChatbot successfully disconnected from Twitch')
-	console.log('--------------------------------------')
+ipcMain.handle('stop-bot-script', async (_event, arg) => {
+	return botSessionController.stop(arg)
 })
 
 // create the main application window via helper
@@ -492,11 +493,9 @@ const initMainWindow = async () => {
 
 	mainWindow = await createMainWindow({
 		isDev,
-		getIsConnected: () => isConnected,
+		getIsConnected: () => botSessionController.getIsConnected(),
 		onForceClose: () => {
-			tmiInstance = null
-			botProcess = false
-			isConnected = false
+			botSessionController.forceReset()
 			app.quit()
 		},
 		preloadPath,
@@ -564,6 +563,7 @@ app.on('ready', async () => {
 })
 
 app.on('before-quit', () => {
+	botSessionController.forceReset()
 	if (mainWindow) {
 		mainWindow.destroy()
 	}

@@ -33,6 +33,15 @@ describe('Discord exchangeCodeForDiscordToken', () => {
     )
   })
 
+  it('returns null auth URL when Discord client id is missing', async () => {
+    delete process.env.DISCORD_CLIENT_ID
+    process.env.DISCORD_REDIRECT_URI = 'http://localhost:5003/auth/discord/callback'
+
+    const { getDiscordAuthUrl } = require('../../auth/discord/handleDiscordAuth')
+    const url = getDiscordAuthUrl('state123')
+    expect(url).toBeNull()
+  })
+
   it('returns token payload on success', async () => {
     process.env.DISCORD_CLIENT_ID = 'disc-client-id'
     process.env.DISCORD_CLIENT_SECRET = 'disc-client-secret'
@@ -55,5 +64,17 @@ describe('Discord exchangeCodeForDiscordToken', () => {
     mock.onPost('https://discord.com/api/oauth2/token').reply(500, { error: 'server_error' })
     const res = await exchangeCodeForDiscordToken('code123')
     expect(res).toHaveProperty('error')
+  })
+
+  it('returns missing_config error when required env vars are missing', async () => {
+    process.env.DISCORD_CLIENT_ID = 'disc-client-id'
+    delete process.env.DISCORD_CLIENT_SECRET
+    process.env.DISCORD_REDIRECT_URI = 'http://localhost:5003/auth/discord/callback'
+
+    const { exchangeCodeForDiscordToken } = require('../../auth/discord/handleDiscordAuth')
+    const res = await exchangeCodeForDiscordToken('code123')
+    expect(res).toMatchObject({
+      error: 'missing_config',
+    })
   })
 })

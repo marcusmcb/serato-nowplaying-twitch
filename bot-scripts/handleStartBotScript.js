@@ -13,9 +13,7 @@ const getUserData = require('../database/helpers/userData/getUserData')
 const OBSWebSocket = require('obs-websocket-js').default
 const obs = new OBSWebSocket()
 
-const { getToken: getKeystoreToken } = require('../database/helpers/tokens')
-
-const handleStartBotScript = async (event, arg, botProcess) => {
+const handleStartBotScript = async (event, arg) => {
 	logToFile('startBotScript CALLED')
 	logToFile('*******************************')
 
@@ -24,15 +22,6 @@ const handleStartBotScript = async (event, arg, botProcess) => {
 	let errorResponse = {
 		success: false,
 		error: null,
-	}
-
-	// check if bot process is already running
-	if (botProcess) {
-		event.reply('start-bot-response', {
-			success: false,
-			error: 'Bot is already running.',
-		})
-		return false
 	}
 
 	// const user = await new Promise((resolve, reject) => {
@@ -53,8 +42,7 @@ const handleStartBotScript = async (event, arg, botProcess) => {
 				success: false,
 				error: errorHandler(currentAccessToken.message),
 			}
-			event.reply('start-bot-response', errorResponse)
-			return false
+			return errorResponse
 		} else {
 			await updateUserToken(db, event, currentAccessToken)
 			console.log('User token successfully updated')
@@ -63,12 +51,14 @@ const handleStartBotScript = async (event, arg, botProcess) => {
 			logToFile('*******************************')
 		}
 	} catch (error) {
+		console.error('Failed to update user token during start:', error)
+		logToFile(`Failed to update user token during start: ${error}`)
+		logToFile('*******************************')
 		const errorResponse = {
 			success: false,
 			error: 'Failed to update user token.',
 		}
-		event.reply('start-bot-response', errorResponse)
-		return false
+		return errorResponse
 	}
 
 	// validate local OBS connection if OBS responses are enabled
@@ -83,8 +73,7 @@ const handleStartBotScript = async (event, arg, botProcess) => {
 			console.log('--------------------------------------')
 		} catch (error) {
 			errorResponse.error = errorHandler(error)
-			event.reply('start-bot-response', errorResponse)
-			return false
+			return errorResponse
 		}
 	}
 
@@ -105,15 +94,18 @@ const handleStartBotScript = async (event, arg, botProcess) => {
 					success: false,
 					error: errorHandler('Spotify token is invalid'),
 				}
-				event.reply('start-bot-response', errorResponse)
-				return false
+				return errorResponse
 			}
 		}
 
 		const response = await provider.ensurePlaylistOnBotStart({ arg, user })
-		if (response) {
-			event.reply('start-bot-response', response)
+		if (response && response.success === false) {
+			return response
 		}
+	}
+
+	return {
+		success: true,
 	}
 }
 

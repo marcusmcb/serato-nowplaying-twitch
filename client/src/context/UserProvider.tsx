@@ -129,7 +129,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 				setIsTwitchAuthorized(userData.isTwitchAuthorized)
 			if (typeof userData.isSpotifyAuthorized === 'boolean')
 				setIsSpotifyAuthorized(userData.isSpotifyAuthorized)
-			if (typeof userData.discord === 'object') setIsDiscordAuthorized(true)
+			setIsDiscordAuthorized(!!userData?.discord?.webhook_url)
 
 			// hydrate form data (normalize numbers to strings for inputs if needed)
 			const hydratedForm: UserContextType['formData'] = {
@@ -176,35 +176,21 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 			setIsUserContextReady(true)
 		}
 
-		// Prefer invoke for request/response to avoid race conditions
-		Promise.resolve()
-			.then(async () => {
-				if (ipcRenderer.invoke) {
-					console.log('Requesting User Data via invoke')
-					try { window.electron.logToMain?.('[UserProvider] requesting via invoke') } catch {}
-					const response = await ipcRenderer.invoke('get-user-data', {})
-					applyUserData(response)
-					return true
-				}
-				return false
-			})
-			.catch(() => false)
-			.then((usedInvoke) => {
-				// Fallback to send/on if invoke not available
-				if (!usedInvoke) {
-					console.log('Requesting User Data via send/on fallback')
-					try { window.electron.logToMain?.('[UserProvider] requesting via send/on') } catch {}
-					const handler = (response: any) => {
-						applyUserData(response)
-					}
-					ipcRenderer.once('getUserDataResponse', handler)
-					ipcRenderer.send('get-user-data', {})
-				}
-			})
-
-		return () => {
-			ipcRenderer.removeAllListeners('getUserDataResponse')
+		const loadUserData = async () => {
+			console.log('Requesting User Data via invoke')
+			try {
+				window.electron.logToMain?.('[UserProvider] requesting via invoke')
+				const response = await window.electron.getUserData()
+				applyUserData(response)
+			} catch (error) {
+				console.error('Failed to request user data via invoke:', error)
+				setIsUserContextReady(true)
+			}
 		}
+
+		void loadUserData()
+
+		return () => {}
 	}, [])
 
 	// Update isConnectionReady when required fields change
