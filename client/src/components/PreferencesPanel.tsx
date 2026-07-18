@@ -33,6 +33,10 @@ const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
 		setIsAutoIDEnabled,
 		isAutoIDCleanupEnabled,
 		setIsAutoIDCleanupEnabled,
+		isAutoIDDelayEnabled,
+		setIsAutoIDDelayEnabled,
+		autoIDDelaySeconds,
+		setAutoIDDelaySeconds,
 	} = useUserContext()
 
 	const isSpotifyToggleDisabled = !isSpotifyAuthorized || props.isBotConnected
@@ -41,6 +45,18 @@ const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
 	const isAutoIdToggleDisabled = !isTwitchAuthorized || props.isBotConnected
 	const isAutoIdCleanupDisabled =
 		!isTwitchAuthorized || !isAutoIDEnabled || props.isBotConnected
+	const isAutoIdDelayDisabled =
+		!isTwitchAuthorized || !isAutoIDEnabled || props.isBotConnected
+	const handleAutoIDDelayChange = (
+		event: React.ChangeEvent<HTMLInputElement>
+	) => {
+		if (event.target.value === '') {
+			setAutoIDDelaySeconds(0)
+			return
+		}
+		const nextValue = Number(event.target.value)
+		setAutoIDDelaySeconds(Math.max(0, Math.min(99, nextValue)))
+	}
 
 
 	return (
@@ -185,6 +201,58 @@ const PreferencesPanel: React.FC<PreferencesPanelProps> = (props) => {
 							props.showTooltip === 'autoIDCleanupEnabled'
 								? null
 								: 'autoIDCleanupEnabled'
+						)
+					}
+				>
+					?
+				</span>
+			</div>
+
+			<div className='toggle-field interval-prefs-element'>
+				<input
+					type='checkbox'
+					disabled={isAutoIdDelayDisabled}
+					id='autoIDDelayEnabled'
+					checked={isAutoIDDelayEnabled}
+					onChange={() => setIsAutoIDDelayEnabled(!isAutoIDDelayEnabled)}
+					className={isAutoIdDelayDisabled ? 'disabled-toggle' : ''}
+				/>
+				<div className='auto-id-delay-control'>
+					<label
+						htmlFor='autoIDDelayEnabled'
+						className={
+							(!isAutoIDEnabled ||
+							!isAutoIDDelayEnabled ||
+							isAutoIdDelayDisabled
+								? 'disabled-label'
+								: '') +
+							(props.isBotConnected || !isAutoIDEnabled
+								? ' greyed-out-label'
+								: '')
+						}
+					>
+						Auto ID Delay
+					</label>
+					<input
+						type='number'
+						min='0'
+						max='99'
+						id='autoIDDelaySeconds'
+						value={autoIDDelaySeconds}
+						disabled={!isAutoIDDelayEnabled || isAutoIdDelayDisabled}
+						onChange={handleAutoIDDelayChange}
+						className='auto-id-delay-input'
+					/>
+				</div>
+				<span
+					className={`question-icon ${
+						props.showTooltip === 'autoIDDelayEnabled' ? 'active-icon' : ''
+					}`}
+					onClick={() =>
+						props.setShowTooltip(
+							props.showTooltip === 'autoIDDelayEnabled'
+								? null
+								: 'autoIDDelayEnabled'
 						)
 					}
 				>

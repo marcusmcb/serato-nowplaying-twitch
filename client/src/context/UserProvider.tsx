@@ -11,7 +11,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 	const [isSpotifyEnabled, setIsSpotifyEnabled] = useState(false)
 	const [isAutoIDEnabled, setIsAutoIDEnabled] = useState(false)
 	const [isAutoIDCleanupEnabled, setIsAutoIDCleanupEnabled] = useState(false)
+	const [isAutoIDDelayEnabled, setIsAutoIDDelayEnabled] = useState(false)
 	const [continueLastPlaylist, setContinueLastPlaylist] = useState(false)
+	const [autoIDDelaySeconds, setAutoIDDelaySeconds] = useState(0)
 	const [obsClearDisplayTime, setObsClearDisplayTime] = useState(5)
 	const [intervalMessageDuration, setIntervalMessageDuration] = useState(15)
 	const [isTwitchAuthorized, setIsTwitchAuthorized] = useState(false)
@@ -40,6 +42,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 		continueLastPlaylist: false,
 		isAutoIDEnabled: false,
 		isAutoIDCleanupEnabled: false,
+		isAutoIDDelayEnabled: false,
+		autoIDDelaySeconds: '',
 	})
 
 	const [initialFormData, setInitialFormData] = useState(formData)
@@ -50,7 +54,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 		isSpotifyEnabled,
 		isAutoIDEnabled,
 		isAutoIDCleanupEnabled,
+		isAutoIDDelayEnabled,
 		continueLastPlaylist,
+		autoIDDelaySeconds,
 		obsClearDisplayTime,
 		intervalMessageDuration,
 	})
@@ -100,8 +106,15 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 				setIsAutoIDEnabled(userData.isAutoIDEnabled)
 			if (typeof userData.isAutoIDCleanupEnabled === 'boolean')
 				setIsAutoIDCleanupEnabled(userData.isAutoIDCleanupEnabled)
+			if (typeof userData.isAutoIDDelayEnabled === 'boolean')
+				setIsAutoIDDelayEnabled(userData.isAutoIDDelayEnabled)
 			if (typeof userData.continueLastPlaylist === 'boolean')
 				setContinueLastPlaylist(userData.continueLastPlaylist)
+			if (
+				typeof userData.autoIDDelaySeconds === 'number' ||
+				typeof userData.autoIDDelaySeconds === 'string'
+			)
+				setAutoIDDelaySeconds(Number(userData.autoIDDelaySeconds))
 			if (
 				typeof userData.obsClearDisplayTime === 'number' ||
 				typeof userData.obsClearDisplayTime === 'string'
@@ -136,6 +149,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 				continueLastPlaylist: !!userData.continueLastPlaylist,
 				isAutoIDEnabled: !!userData.isAutoIDEnabled,
 				isAutoIDCleanupEnabled: !!userData.isAutoIDCleanupEnabled,
+				isAutoIDDelayEnabled: !!userData.isAutoIDDelayEnabled,
+				autoIDDelaySeconds: String(userData.autoIDDelaySeconds ?? ''),
 			}
 			_setFormData(hydratedForm)
 			// compute connection ready based on required fields
@@ -152,7 +167,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 				isSpotifyEnabled: !!userData.isSpotifyEnabled,
 				isAutoIDEnabled: !!userData.isAutoIDEnabled,
 				isAutoIDCleanupEnabled: !!userData.isAutoIDCleanupEnabled,
+				isAutoIDDelayEnabled: !!userData.isAutoIDDelayEnabled,
 				continueLastPlaylist: !!userData.continueLastPlaylist,
+				autoIDDelaySeconds: Number(userData.autoIDDelaySeconds ?? 0),
 				obsClearDisplayTime: Number(userData.obsClearDisplayTime ?? 0),
 				intervalMessageDuration: Number(userData.intervalMessageDuration ?? 0),
 			})
@@ -216,6 +233,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 			isSpotifyEnabled !== initialPreferences.isSpotifyEnabled ||
 			isAutoIDEnabled !== initialPreferences.isAutoIDEnabled ||
 			isAutoIDCleanupEnabled !== initialPreferences.isAutoIDCleanupEnabled ||
+			isAutoIDDelayEnabled !== initialPreferences.isAutoIDDelayEnabled ||
+			autoIDDelaySeconds !== initialPreferences.autoIDDelaySeconds ||
 			continueLastPlaylist !== initialPreferences.continueLastPlaylist
 		)
 	}, [
@@ -225,6 +244,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 		isSpotifyEnabled,
 		isAutoIDEnabled,
 		isAutoIDCleanupEnabled,
+		isAutoIDDelayEnabled,
+		autoIDDelaySeconds,
 		continueLastPlaylist,
 		initialPreferences,
 	])
@@ -265,6 +286,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 				diffs.push('pref:isAutoIDEnabled')
 			if (isAutoIDCleanupEnabled !== initialPreferences.isAutoIDCleanupEnabled)
 				diffs.push('pref:isAutoIDCleanupEnabled')
+			if (isAutoIDDelayEnabled !== initialPreferences.isAutoIDDelayEnabled)
+				diffs.push('pref:isAutoIDDelayEnabled')
+			if (autoIDDelaySeconds !== initialPreferences.autoIDDelaySeconds)
+				diffs.push('pref:autoIDDelaySeconds')
 			if (continueLastPlaylist !== initialPreferences.continueLastPlaylist)
 				diffs.push('pref:continueLastPlaylist')
 		}
@@ -301,6 +326,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 		isSpotifyEnabled,
 		isAutoIDEnabled,
 		isAutoIDCleanupEnabled,
+		isAutoIDDelayEnabled,
+		autoIDDelaySeconds,
 		continueLastPlaylist,
 		formData,
 		initialFormData,
@@ -316,6 +343,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 			// Normalize numeric inputs to strings in snapshot for stable comparisons
 			const normalized = {
 				...nextFormData,
+				autoIDDelaySeconds: String(nextFormData.autoIDDelaySeconds ?? ''),
 				intervalMessageDuration: String(
 					nextFormData.intervalMessageDuration ?? ''
 				),
@@ -325,6 +353,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 		} else {
 			setInitialFormData({
 				...formData,
+				autoIDDelaySeconds: String(formData.autoIDDelaySeconds ?? ''),
 				intervalMessageDuration: String(formData.intervalMessageDuration ?? ''),
 				obsClearDisplayTime: String(formData.obsClearDisplayTime ?? ''),
 			})
@@ -334,6 +363,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 			// Align live numeric states with committed snapshot
 			setObsClearDisplayTime(nextPreferences.obsClearDisplayTime)
 			setIntervalMessageDuration(nextPreferences.intervalMessageDuration)
+			setAutoIDDelaySeconds(nextPreferences.autoIDDelaySeconds)
 		} else
 			setInitialPreferences({
 				isObsResponseEnabled,
@@ -342,7 +372,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 				isSpotifyEnabled,
 				isAutoIDEnabled,
 				isAutoIDCleanupEnabled,
+				isAutoIDDelayEnabled,
 				continueLastPlaylist,
+				autoIDDelaySeconds,
 				obsClearDisplayTime,
 				intervalMessageDuration,
 			})
@@ -351,8 +383,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 		if (!nextPreferences && nextFormData) {
 			const nextObs = Number(nextFormData.obsClearDisplayTime || 0)
 			const nextInterval = Number(nextFormData.intervalMessageDuration || 0)
+			const nextAutoIDDelay = Number(nextFormData.autoIDDelaySeconds || 0)
 			setObsClearDisplayTime(nextObs)
 			setIntervalMessageDuration(nextInterval)
+			setAutoIDDelaySeconds(nextAutoIDDelay)
 		}
 		// After committing snapshots, clear unsaved flag
 		setHasUnsavedChanges(false)
@@ -378,8 +412,12 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 		setIsAutoIDEnabled: markDirtySetter(setIsAutoIDEnabled),
 		isAutoIDCleanupEnabled,
 		setIsAutoIDCleanupEnabled: markDirtySetter(setIsAutoIDCleanupEnabled),
+		isAutoIDDelayEnabled,
+		setIsAutoIDDelayEnabled: markDirtySetter(setIsAutoIDDelayEnabled),
 		continueLastPlaylist,
 		setContinueLastPlaylist: markDirtySetter(setContinueLastPlaylist),
+		autoIDDelaySeconds,
+		setAutoIDDelaySeconds: markDirtySetter(setAutoIDDelaySeconds),
 		obsClearDisplayTime,
 		setObsClearDisplayTime: markDirtySetter(setObsClearDisplayTime),
 		intervalMessageDuration,

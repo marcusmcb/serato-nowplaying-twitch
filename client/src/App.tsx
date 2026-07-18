@@ -37,6 +37,8 @@ const App = (): JSX.Element => {
 		isSpotifyEnabled,
 		isAutoIDEnabled,
 		isAutoIDCleanupEnabled,
+		isAutoIDDelayEnabled,
+		autoIDDelaySeconds,
 		continueLastPlaylist,
 		setIsTwitchAuthorized,
 		setIsSpotifyAuthorized,
@@ -262,6 +264,8 @@ const App = (): JSX.Element => {
 			isSpotifyEnabled,
 			isAutoIDEnabled,
 			isAutoIDCleanupEnabled,
+			isAutoIDDelayEnabled,
+			autoIDDelaySeconds,
 			continueLastPlaylist
 		)
 		// commitInitial will be called inside handleSubmit on success

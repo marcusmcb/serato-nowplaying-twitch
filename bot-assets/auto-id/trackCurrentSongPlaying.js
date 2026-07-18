@@ -39,6 +39,25 @@ let hasSeededSongsPlayedForContinuedPlaylistByProvider = {}
 let lastSeratoCurrent = null
 let lastSeratoPrevious = null
 
+const sendAutoIdMessage = (
+	twitchClient,
+	channel,
+	liveCurrent,
+	isAutoIDDelayEnabled,
+	autoIDDelaySeconds
+) => {
+	const delaySeconds = Number(autoIDDelaySeconds || 0)
+
+	if (isAutoIDDelayEnabled === true && delaySeconds > 0) {
+		setTimeout(() => {
+			twitchClient.say(channel, `Now playing: ${liveCurrent}`)
+		}, delaySeconds * 1000)
+		return
+	}
+
+	twitchClient.say(channel, `Now playing: ${liveCurrent}`)
+}
+
 const ensureProviderState = (providerId) => {
 	if (!songsPlayedByProvider[providerId]) songsPlayedByProvider[providerId] = []
 	if (!hasSeededSongsPlayedForContinuedPlaylistByProvider[providerId]) {
@@ -188,6 +207,8 @@ const trackCurrentSongPlaying = async (config, url, twitchClient, wss) => {
 	const isSpotifyEnabled = config.isSpotifyEnabled
 	const isAutoIDEnabled = config.isAutoIDEnabled
 	const isAutoIDCleanupEnabled = config.isAutoIDCleanupEnabled
+	const isAutoIDDelayEnabled = config.isAutoIDDelayEnabled
+	const autoIDDelaySeconds = Number(config.autoIDDelaySeconds || 0)
 	const spotifyPlaylistId = config.currentSpotifyPlaylistId
 	const continueLastPlaylist = config.continueLastPlaylist
 
@@ -357,7 +378,13 @@ const trackCurrentSongPlaying = async (config, url, twitchClient, wss) => {
 			// return the current song playing if the Auto ID feature is enabled
 			if (isAutoIDEnabled === true) {
 				const liveCurrent = trackLogStore.getCurrentSong()
-				twitchClient.say(channel, `Now playing: ${liveCurrent}`)
+				sendAutoIdMessage(
+					twitchClient,
+					channel,
+					liveCurrent,
+					isAutoIDDelayEnabled,
+					autoIDDelaySeconds
+				)
 			}
 			// update the user's Spotify playlist with the current song playing
 			if (enabledProviders.length > 0) {
@@ -393,6 +420,7 @@ const endTrackCurrentSongPlaying = () => {
 }
 
 module.exports = {
+	sendAutoIdMessage,
 	trackCurrentSongPlaying,
 	endTrackCurrentSongPlaying,
 }

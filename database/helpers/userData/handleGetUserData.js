@@ -35,6 +35,8 @@ const handleGetUserData = async () => {
 					continueLastPlaylist: !!user.continueLastPlaylist,
 					isAutoIDEnabled: !!user.isAutoIDEnabled,
 					isAutoIDCleanupEnabled: !!user.isAutoIDCleanupEnabled,
+					isAutoIDDelayEnabled: !!user.isAutoIDDelayEnabled,
+					autoIDDelaySeconds: String(user.autoIDDelaySeconds ?? ''),
 					isReportEnabled: !!user.isReportEnabled,
 					intervalMessageDuration: String(user.intervalMessageDuration ?? ''),
 					obsClearDisplayTime: String(user.obsClearDisplayTime ?? ''),

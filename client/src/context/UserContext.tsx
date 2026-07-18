@@ -14,8 +14,12 @@ export type UserContextType = {
 	setIsAutoIDEnabled: (v: boolean) => void
 	isAutoIDCleanupEnabled: boolean
 	setIsAutoIDCleanupEnabled: (v: boolean) => void
+	isAutoIDDelayEnabled: boolean
+	setIsAutoIDDelayEnabled: (v: boolean) => void
 	continueLastPlaylist: boolean
 	setContinueLastPlaylist: (v: boolean) => void
+	autoIDDelaySeconds: number
+	setAutoIDDelaySeconds: (v: number) => void
 	obsClearDisplayTime: number
 	setObsClearDisplayTime: (v: number) => void
 	intervalMessageDuration: number
@@ -50,6 +54,8 @@ export type UserContextType = {
 		continueLastPlaylist: boolean
 		isAutoIDEnabled: boolean
 		isAutoIDCleanupEnabled: boolean
+		isAutoIDDelayEnabled: boolean
+		autoIDDelaySeconds: string
 	}
 	setFormData: (patch: Partial<UserContextType['formData']>) => void
 	initialFormData: UserContextType['formData']
@@ -60,7 +66,9 @@ export type UserContextType = {
 		isSpotifyEnabled: boolean
 		isAutoIDEnabled: boolean
 		isAutoIDCleanupEnabled: boolean
+		isAutoIDDelayEnabled: boolean
 		continueLastPlaylist: boolean
+		autoIDDelaySeconds: number
 		obsClearDisplayTime: number
 		intervalMessageDuration: number
 	}
@@ -74,7 +82,9 @@ export type UserContextType = {
 			isSpotifyEnabled: boolean
 			isAutoIDEnabled: boolean
 			isAutoIDCleanupEnabled: boolean
+			isAutoIDDelayEnabled: boolean
 			continueLastPlaylist: boolean
+			autoIDDelaySeconds: number
 			obsClearDisplayTime: number
 			intervalMessageDuration: number
 		}

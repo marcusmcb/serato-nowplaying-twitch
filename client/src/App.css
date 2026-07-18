@@ -270,7 +270,7 @@ button:disabled:hover {
 .right-bottom {
 	flex: 0 0 auto;
 	min-height: 0;
-	margin-top: 40px;
+	margin-top: 8px;
 }
 
 .main-grid {

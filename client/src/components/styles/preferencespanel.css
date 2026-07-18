@@ -41,9 +41,45 @@
 }
 
 .pref-input {
-	width: 80px;
+	width: 44px;
+	text-align: center;
+}
+
+.session-pref-field label {
+	flex: 0 0 220px;
+	min-width: 0;
+	white-space: nowrap;
 }
 
 .interval-prefs-element {
 	margin-top: 6px;
+}
+
+.auto-id-delay-control {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	min-width: 200px;
+	margin-left: 5px;
+}
+
+.auto-id-delay-control label {
+	min-width: auto;
+	margin-left: 0;
+}
+
+.auto-id-delay-input {
+	width: 44px;
+	text-align: center;
+}
+
+.auto-id-delay-input::-webkit-outer-spin-button,
+.auto-id-delay-input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+.auto-id-delay-input[type='number'] {
+	appearance: textfield;
+	-moz-appearance: textfield;
 }

@@ -62,7 +62,7 @@ const SessionPreferencesPanel: React.FC<SessionPreferencesPanelProps> = (props) 
 				</label>
 			</div>
 
-			<div className='form-field'>
+			<div className='form-field session-pref-field'>
 				<label
 					htmlFor='obs-clear-display-time'
 					className={
@@ -126,7 +126,7 @@ const SessionPreferencesPanel: React.FC<SessionPreferencesPanelProps> = (props) 
 				</label>
 			</div>
 
-			<div className='form-field'>
+			<div className='form-field session-pref-field'>
 				<label
 					htmlFor='obs-interval-duration'
 					className={

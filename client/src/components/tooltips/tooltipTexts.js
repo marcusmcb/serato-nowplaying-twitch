@@ -22,6 +22,8 @@ const tooltipTexts = {
 		'Enable this feature to automatically display the song currently playing in your chat as it updates.',
 	autoIDCleanupEnabled:
 		"With Auto ID enabled, this feature removes any text within brackets or parentheses from the current song's artist & title when displayed in your chat.",
+	autoIDDelayEnabled:
+		'With Auto ID enabled, this waits the entered number of seconds before posting each newly detected song to Twitch chat.',
 	intervalMessageToggle:
 		'Enable this feature to send automatic interval messages to chat while connected.',
 }

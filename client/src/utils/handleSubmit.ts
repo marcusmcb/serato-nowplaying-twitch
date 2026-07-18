@@ -12,6 +12,8 @@ const handleSubmit = async (
 	isSpotifyEnabled: boolean,
 	isAutoIDEnabled: boolean,
 	isAutoIDCleanupEnabled: boolean,
+	isAutoIDDelayEnabled: boolean,
+	autoIDDelaySeconds: number,
 	continueLastPlaylist: boolean
 ) => {
 	setError('')
@@ -45,6 +47,8 @@ const handleSubmit = async (
 		isSpotifyEnabled,
 		isAutoIDEnabled,
 		isAutoIDCleanupEnabled,
+		isAutoIDDelayEnabled,
+		autoIDDelaySeconds,
 		continueLastPlaylist,
 	}
 
@@ -72,6 +76,10 @@ const handleSubmit = async (
 					isSpotifyEnabled: !!response.data.isSpotifyEnabled,
 					isAutoIDEnabled: !!response.data.isAutoIDEnabled,
 					isAutoIDCleanupEnabled: !!response.data.isAutoIDCleanupEnabled,
+					isAutoIDDelayEnabled: !!response.data.isAutoIDDelayEnabled,
+					autoIDDelaySeconds: Number(
+						response.data.autoIDDelaySeconds ?? 0
+					),
 					continueLastPlaylist: !!response.data.continueLastPlaylist,
 					obsClearDisplayTime: Number(
 						response.data.obsClearDisplayTime ?? 0
